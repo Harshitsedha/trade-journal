@@ -13,4 +13,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       from: process.env.EMAIL_FROM ?? 'noreply@yourdomain.com',
     }),
   ],
+  logger: {
+    error: (error) => {
+      console.error('[NextAuth error]', error)
+    },
+    warn: (code) => {
+      console.warn('[NextAuth warn]', code)
+    },
+  },
 })

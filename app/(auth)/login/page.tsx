@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { AuthError } from 'next-auth'
 import { auth, signIn } from '@/lib/auth'
 
 interface LoginPageProps {
@@ -42,7 +43,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <form
             action={async (formData: FormData) => {
               'use server'
-              await signIn('resend', formData)
+              try {
+                await signIn('resend', formData)
+              } catch (err) {
+                if (err instanceof AuthError) {
+                  console.error('[Auth] signIn action error:', err.type, err.message)
+                  redirect(`/login?error=${err.type}`)
+                }
+                throw err
+              }
             }}
             className="flex flex-col gap-4"
           >

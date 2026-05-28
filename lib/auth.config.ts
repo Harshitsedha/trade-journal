@@ -15,17 +15,29 @@ export const authConfig: NextAuthConfig = {
       return isLoggedIn
     },
     signIn: async ({ user }) => {
-      return user.email === process.env.ALLOWED_EMAIL
+      const allowed = user.email === process.env.ALLOWED_EMAIL
+      if (!allowed) console.error('[Auth] sign-in rejected for email:', user.email)
+      return allowed
     },
     jwt: async ({ token, user }) => {
-      if (user) token.id = user.id
-      return token
+      try {
+        if (user) token.id = user.id
+        return token
+      } catch (err) {
+        console.error('[Auth] jwt callback error:', err)
+        return token
+      }
     },
     session: async ({ session, token }) => {
-      if (token?.id && session.user) {
-        session.user.id = token.id as string
+      try {
+        if (token?.id && session.user) {
+          session.user.id = token.id as string
+        }
+        return session
+      } catch (err) {
+        console.error('[Auth] session callback error:', err)
+        return session
       }
-      return session
     },
   },
 }
