@@ -1,0 +1,197 @@
+import Decimal from 'decimal.js'
+import type { TradeWithRelations } from '@/types'
+import { Badge } from '@/components/ui/Badge'
+import { ImageUploader } from './ImageUploader'
+import { CloseTradeForm } from './CloseTradeForm'
+
+interface TradeDetailProps {
+  trade: TradeWithRelations
+}
+
+export function TradeDetail({ trade }: TradeDetailProps) {
+  const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
+  const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
+
+  return (
+    <div className="flex flex-col gap-6 p-6 max-w-3xl">
+      {/* Header row */}
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-semibold font-mono text-[var(--color-ink)]">
+              {trade.instrument}
+            </h2>
+            <Badge variant={trade.direction === 'LONG' ? 'accent' : 'loss'}>
+              {trade.direction}
+            </Badge>
+            <Badge
+              variant={
+                trade.status === 'CLOSED'
+                  ? 'profit'
+                  : trade.status === 'SCRATCHED'
+                  ? 'muted'
+                  : 'open'
+              }
+            >
+              {trade.status}
+            </Badge>
+          </div>
+          <p className="mt-1 text-sm text-[var(--color-ink-secondary)]">
+            {trade.setup.name}
+            {trade.subSetup && ` · ${trade.subSetup.name}`}
+            {' · '}
+            {new Date(trade.tradeDate).toLocaleDateString('en-IN', {
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: '2-digit',
+            })}
+          </p>
+        </div>
+
+        {/* R & P&L */}
+        <div className="text-right">
+          {r !== null && (
+            <p
+              className={`text-2xl font-semibold font-mono ${
+                r.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
+              }`}
+            >
+              {r.gt(0) ? '+' : ''}
+              {r.toFixed(2)}R
+            </p>
+          )}
+          {pnl !== null && (
+            <p
+              className={`text-sm font-mono ${
+                pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
+              }`}
+            >
+              {pnl.gt(0) ? '+' : ''}₹{pnl.toFixed(0)}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Pricing grid */}
+      <div
+        className="grid grid-cols-4 gap-px bg-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden"
+      >
+        {[
+          { label: 'Entry', value: trade.entryPrice.toString() },
+          { label: 'Stop', value: trade.stopLoss.toString() },
+          { label: 'Exit', value: trade.exitPrice?.toString() ?? '—' },
+          { label: 'Qty', value: trade.quantity.toString() },
+        ].map(({ label, value }) => (
+          <div
+            key={label}
+            className="flex flex-col gap-1 px-4 py-3 bg-[var(--color-surface)]"
+          >
+            <span className="text-[11px] uppercase tracking-wider text-[var(--color-ink-muted)]">
+              {label}
+            </span>
+            <span className="font-mono text-sm font-semibold text-[var(--color-ink)]">
+              {value}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Targets */}
+      {trade.targets.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
+            Targets
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            {trade.targets.map((t, i) => (
+              <span
+                key={i}
+                className="px-3 py-1.5 rounded-[var(--radius-sm)] bg-[var(--color-surface-sunken)] font-mono text-sm text-[var(--color-ink)]"
+              >
+                T{i + 1}: {t.toString()}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Thesis */}
+      {trade.thesis && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
+            Entry Thesis
+          </p>
+          <p className="text-sm text-[var(--color-ink-secondary)] leading-relaxed">
+            {trade.thesis}
+          </p>
+        </div>
+      )}
+
+      {/* Notes */}
+      {trade.notes && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
+            Notes
+          </p>
+          <p className="text-sm text-[var(--color-ink-secondary)] leading-relaxed">
+            {trade.notes}
+          </p>
+        </div>
+      )}
+
+      {/* Rule break */}
+      {trade.ruleBreak && (
+        <div
+          className="flex flex-col gap-3 p-4 rounded-[var(--radius-lg)] border border-[var(--color-loss)] bg-[var(--color-loss-bg)]"
+          style={{ borderWidth: '0.5px' }}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-loss)]">
+            Rule Break · {trade.ruleBreak.breakType.replace(/_/g, ' ')}
+          </p>
+          <p className="text-sm text-[var(--color-ink-secondary)]">
+            {trade.ruleBreak.ruleDescription}
+          </p>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-[var(--color-ink-muted)]">P&L Impact: </span>
+              <span className="font-mono text-[var(--color-loss)]">
+                ₹{new Decimal(trade.ruleBreak.pnlImpact.toString()).toFixed(0)}
+              </span>
+            </div>
+            <div>
+              <span className="text-[var(--color-ink-muted)]">R Impact: </span>
+              <span className="font-mono text-[var(--color-loss)]">
+                {new Decimal(trade.ruleBreak.rMultipleImpact.toString()).toFixed(2)}R
+              </span>
+            </div>
+          </div>
+          {trade.ruleBreak.notes && (
+            <p className="text-xs text-[var(--color-ink-secondary)] italic">
+              {trade.ruleBreak.notes}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Chart images */}
+      <div className="flex flex-col gap-3">
+        <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
+          Charts
+        </p>
+        <ImageUploader tradeId={trade.id} images={trade.images} />
+      </div>
+
+      {/* Close trade form */}
+      {trade.status === 'OPEN' && (
+        <div
+          className="flex flex-col gap-4 p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
+          style={{ borderWidth: '0.5px' }}
+        >
+          <p className="text-sm font-semibold text-[var(--color-ink)]">Close Trade</p>
+          <CloseTradeForm trade={trade} />
+        </div>
+      )}
+    </div>
+  )
+}
