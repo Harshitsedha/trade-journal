@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { auth, signOut } from '@/lib/auth'
 import { getSetups } from '@/lib/queries/trades'
-import type { Setup } from '@prisma/client'
+import type { Setup } from '@/generated/prisma/client'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
