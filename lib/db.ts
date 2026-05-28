@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '../generated/prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { PrismaNeon } from '@prisma/adapter-neon'
 
 function createPrismaClient() {

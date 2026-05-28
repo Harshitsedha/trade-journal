@@ -8,7 +8,7 @@ import type {
   Direction,
   TradeStatus,
   RuleBreakType,
-} from '../generated/prisma/client'
+} from '@prisma/client'
 
 export type {
   Trade,
