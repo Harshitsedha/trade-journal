@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Remove-Item \"c:\\\\Users\\\\sedha\\\\trading-journal\\\\proxy.ts\")"
+      "Bash(Remove-Item \"c:\\\\Users\\\\sedha\\\\trading-journal\\\\proxy.ts\")",
+      "Bash(Test-Path \"c:/Users/sedha/trading-journal/generated/prisma/client\")",
+      "Bash(grep -n '$TradePayload\\\\|TradeModel' c:/Users/sedha/trading-journal/generated/prisma/client/internal/prismaNamespace.ts)",
+      "Bash(grep -n 'export type $TradePayload\\\\|TradeModel = ' c:/Users/sedha/trading-journal/generated/prisma/client/internal/prismaNamespace.ts)",
+      "Bash(grep -n 'TradeModel\\\\|$TradePayload' c:/Users/sedha/trading-journal/generated/prisma/client/internal/prismaNamespace.ts)",
+      "Bash(grep -n 'TradeModel\\\\|$TradePayload' c:/Users/sedha/trading-journal/generated/prisma/client/models/Trade.ts)",
+      "Bash(npx eslint *)"
     ]
   }
 }

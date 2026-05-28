@@ -59,12 +59,11 @@ export function TradeForm({ setups }: TradeFormProps) {
 
   // Load sub-setups when setup changes
   useEffect(() => {
-    if (!setupId) { setSubSetups([]); setSubSetupId(''); return }
+    if (!setupId) return
     fetch(`/api/setups/${setupId}/subsetups`)
       .then((r) => r.json())
       .then(setSubSetups)
       .catch(() => setSubSetups([]))
-    setSubSetupId('')
   }, [setupId])
 
   const rr = computeRR(entryPrice, stopLoss, target1)
@@ -188,7 +187,7 @@ export function TradeForm({ setups }: TradeFormProps) {
         label="Setup"
         placeholder="Select setup..."
         value={setupId}
-        onChange={(e) => setSetupId(e.target.value)}
+        onChange={(e) => { setSetupId(e.target.value); setSubSetupId(''); setSubSetups([]) }}
         options={setups.map((s) => ({ value: s.id, label: s.name }))}
       />
       {subSetups.length > 0 && (

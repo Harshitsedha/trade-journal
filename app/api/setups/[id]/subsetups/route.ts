@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server'
-import { z } from 'zod'
 import { auth } from '@/lib/auth'
 import { getSubSetupsBySetup } from '@/lib/queries/trades'
 import { CreateSubSetupSchema } from '@/lib/validations/trade'

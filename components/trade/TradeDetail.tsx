@@ -104,7 +104,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             Targets
           </p>
           <div className="flex gap-2 flex-wrap">
-            {trade.targets.map((t, i) => (
+            {trade.targets.map((t: Decimal, i: number) => (
               <span
                 key={i}
                 className="px-3 py-1.5 rounded-[var(--radius-sm)] bg-[var(--color-surface-sunken)] font-mono text-sm text-[var(--color-ink)]"

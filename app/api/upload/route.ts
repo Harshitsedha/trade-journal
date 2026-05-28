@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { auth } from '@/lib/auth'
 import { generateSignedUploadParams, deleteImage } from '@/lib/cloudinary'
 import { addChartImage, deleteChartImage } from '@/lib/queries/trades'
-import { db } from '@/lib/db'
 
 const SaveImageSchema = z.object({
   tradeId: z.string().cuid(),

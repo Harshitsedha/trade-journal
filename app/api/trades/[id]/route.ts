@@ -7,7 +7,6 @@ import {
   closeTrade,
   updateTrade,
   deleteTrade,
-  addChartImage,
 } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
 

@@ -170,7 +170,7 @@ export async function getDashboardStats() {
 
   const closed = closedStats._count.id
   const wins = recentTrades.filter(
-    (t) => new Decimal(t.rMultiple!.toString()).gt(0)
+    (t: { rMultiple: Decimal | null }) => new Decimal(t.rMultiple!.toString()).gt(0)
   ).length
   const winRate = closed > 0 ? (wins / closed) * 100 : 0
 

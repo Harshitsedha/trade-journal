@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { TradeTable } from '@/components/trade/TradeTable'
@@ -6,6 +5,7 @@ import { StatStrip } from '@/components/trade/StatStrip'
 import { getTrades, getDashboardStats } from '@/lib/queries/trades'
 import { TradeFilterSchema } from '@/lib/validations/trade'
 import { Button } from '@/components/ui/Button'
+import type { TradeWithRelations } from '@/types'
 
 interface DashboardPageProps {
   searchParams: Promise<Record<string, string>>
@@ -39,7 +39,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       />
       <StatStrip stats={stats} />
       <div className="flex-1 overflow-auto">
-        <TradeTable trades={trades as any} total={total} page={page} limit={limit} />
+        <TradeTable trades={trades as TradeWithRelations[]} total={total} page={page} limit={limit} />
       </div>
     </div>
   )
