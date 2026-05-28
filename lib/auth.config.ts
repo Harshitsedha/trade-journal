@@ -17,8 +17,10 @@ export const authConfig: NextAuthConfig = {
     signIn: async ({ user }) => {
       console.log('ALLOWED_EMAIL env:', process.env.ALLOWED_EMAIL)
       console.log('User email attempting login:', user.email)
-      console.log('Match:', user.email === process.env.ALLOWED_EMAIL)
-      const allowed = user.email === process.env.ALLOWED_EMAIL
+      const userEmail = user.email?.toLowerCase().trim() ?? ''
+      const allowedEmail = process.env.ALLOWED_EMAIL?.toLowerCase().trim() ?? ''
+      console.log('Match:', userEmail === allowedEmail)
+      const allowed = !!userEmail && userEmail === allowedEmail
       if (!allowed) console.error('[Auth] sign-in rejected for email:', user.email)
       return allowed
     },
