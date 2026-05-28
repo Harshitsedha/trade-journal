@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { auth, signOut } from '@/lib/auth'
 import { getSetups } from '@/lib/queries/trades'
+import type { Setup } from '@prisma/client'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -40,7 +41,7 @@ export async function Sidebar() {
             <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
               Setups
             </p>
-            {setups.map((setup) => (
+            {setups.map((setup: Setup) => (
               <Link
                 key={setup.id}
                 href={`/dashboard?setup=${setup.id}`}
