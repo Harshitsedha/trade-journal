@@ -86,3 +86,13 @@ export type ChartImage = Prisma.ChartImageModel
  * 
  */
 export type RuleBreak = Prisma.RuleBreakModel
+/**
+ * Model TriggerRule
+ * 
+ */
+export type TriggerRule = Prisma.TriggerRuleModel
+/**
+ * Model TradeTrigger
+ * 
+ */
+export type TradeTrigger = Prisma.TradeTriggerModel

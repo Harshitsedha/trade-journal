@@ -28,6 +28,8 @@ export type SetupMinAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  pdfUrl: string | null
+  pdfCloudinaryId: string | null
   createdAt: Date | null
 }
 
@@ -35,6 +37,8 @@ export type SetupMaxAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  pdfUrl: string | null
+  pdfCloudinaryId: string | null
   createdAt: Date | null
 }
 
@@ -42,6 +46,8 @@ export type SetupCountAggregateOutputType = {
   id: number
   name: number
   description: number
+  pdfUrl: number
+  pdfCloudinaryId: number
   createdAt: number
   _all: number
 }
@@ -51,6 +57,8 @@ export type SetupMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  pdfUrl?: true
+  pdfCloudinaryId?: true
   createdAt?: true
 }
 
@@ -58,6 +66,8 @@ export type SetupMaxAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  pdfUrl?: true
+  pdfCloudinaryId?: true
   createdAt?: true
 }
 
@@ -65,6 +75,8 @@ export type SetupCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  pdfUrl?: true
+  pdfCloudinaryId?: true
   createdAt?: true
   _all?: true
 }
@@ -145,6 +157,8 @@ export type SetupGroupByOutputType = {
   id: string
   name: string
   description: string | null
+  pdfUrl: string | null
+  pdfCloudinaryId: string | null
   createdAt: Date
   _count: SetupCountAggregateOutputType | null
   _min: SetupMinAggregateOutputType | null
@@ -173,18 +187,24 @@ export type SetupWhereInput = {
   id?: Prisma.StringFilter<"Setup"> | string
   name?: Prisma.StringFilter<"Setup"> | string
   description?: Prisma.StringNullableFilter<"Setup"> | string | null
+  pdfUrl?: Prisma.StringNullableFilter<"Setup"> | string | null
+  pdfCloudinaryId?: Prisma.StringNullableFilter<"Setup"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Setup"> | Date | string
   trades?: Prisma.TradeListRelationFilter
   subSetups?: Prisma.SubSetupListRelationFilter
+  triggerRules?: Prisma.TriggerRuleListRelationFilter
 }
 
 export type SetupOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  pdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  pdfCloudinaryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   trades?: Prisma.TradeOrderByRelationAggregateInput
   subSetups?: Prisma.SubSetupOrderByRelationAggregateInput
+  triggerRules?: Prisma.TriggerRuleOrderByRelationAggregateInput
 }
 
 export type SetupWhereUniqueInput = Prisma.AtLeast<{
@@ -194,15 +214,20 @@ export type SetupWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.SetupWhereInput[]
   NOT?: Prisma.SetupWhereInput | Prisma.SetupWhereInput[]
   description?: Prisma.StringNullableFilter<"Setup"> | string | null
+  pdfUrl?: Prisma.StringNullableFilter<"Setup"> | string | null
+  pdfCloudinaryId?: Prisma.StringNullableFilter<"Setup"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Setup"> | Date | string
   trades?: Prisma.TradeListRelationFilter
   subSetups?: Prisma.SubSetupListRelationFilter
+  triggerRules?: Prisma.TriggerRuleListRelationFilter
 }, "id" | "name">
 
 export type SetupOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  pdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  pdfCloudinaryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.SetupCountOrderByAggregateInput
   _max?: Prisma.SetupMaxOrderByAggregateInput
@@ -216,6 +241,8 @@ export type SetupScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Setup"> | string
   name?: Prisma.StringWithAggregatesFilter<"Setup"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Setup"> | string | null
+  pdfUrl?: Prisma.StringNullableWithAggregatesFilter<"Setup"> | string | null
+  pdfCloudinaryId?: Prisma.StringNullableWithAggregatesFilter<"Setup"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Setup"> | Date | string
 }
 
@@ -223,42 +250,56 @@ export type SetupCreateInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
   trades?: Prisma.TradeCreateNestedManyWithoutSetupInput
   subSetups?: Prisma.SubSetupCreateNestedManyWithoutSetupInput
+  triggerRules?: Prisma.TriggerRuleCreateNestedManyWithoutSetupInput
 }
 
 export type SetupUncheckedCreateInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
   trades?: Prisma.TradeUncheckedCreateNestedManyWithoutSetupInput
   subSetups?: Prisma.SubSetupUncheckedCreateNestedManyWithoutSetupInput
+  triggerRules?: Prisma.TriggerRuleUncheckedCreateNestedManyWithoutSetupInput
 }
 
 export type SetupUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUpdateManyWithoutSetupNestedInput
+  triggerRules?: Prisma.TriggerRuleUpdateManyWithoutSetupNestedInput
 }
 
 export type SetupUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUncheckedUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUncheckedUpdateManyWithoutSetupNestedInput
+  triggerRules?: Prisma.TriggerRuleUncheckedUpdateManyWithoutSetupNestedInput
 }
 
 export type SetupCreateManyInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
 }
 
@@ -266,6 +307,8 @@ export type SetupUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -273,6 +316,8 @@ export type SetupUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -280,6 +325,8 @@ export type SetupCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  pdfUrl?: Prisma.SortOrder
+  pdfCloudinaryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -287,6 +334,8 @@ export type SetupMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  pdfUrl?: Prisma.SortOrder
+  pdfCloudinaryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -294,6 +343,8 @@ export type SetupMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  pdfUrl?: Prisma.SortOrder
+  pdfCloudinaryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -330,20 +381,40 @@ export type SetupUpdateOneRequiredWithoutTradesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SetupUpdateToOneWithWhereWithoutTradesInput, Prisma.SetupUpdateWithoutTradesInput>, Prisma.SetupUncheckedUpdateWithoutTradesInput>
 }
 
+export type SetupCreateNestedOneWithoutTriggerRulesInput = {
+  create?: Prisma.XOR<Prisma.SetupCreateWithoutTriggerRulesInput, Prisma.SetupUncheckedCreateWithoutTriggerRulesInput>
+  connectOrCreate?: Prisma.SetupCreateOrConnectWithoutTriggerRulesInput
+  connect?: Prisma.SetupWhereUniqueInput
+}
+
+export type SetupUpdateOneRequiredWithoutTriggerRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.SetupCreateWithoutTriggerRulesInput, Prisma.SetupUncheckedCreateWithoutTriggerRulesInput>
+  connectOrCreate?: Prisma.SetupCreateOrConnectWithoutTriggerRulesInput
+  upsert?: Prisma.SetupUpsertWithoutTriggerRulesInput
+  connect?: Prisma.SetupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SetupUpdateToOneWithWhereWithoutTriggerRulesInput, Prisma.SetupUpdateWithoutTriggerRulesInput>, Prisma.SetupUncheckedUpdateWithoutTriggerRulesInput>
+}
+
 export type SetupCreateWithoutSubSetupsInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
   trades?: Prisma.TradeCreateNestedManyWithoutSetupInput
+  triggerRules?: Prisma.TriggerRuleCreateNestedManyWithoutSetupInput
 }
 
 export type SetupUncheckedCreateWithoutSubSetupsInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
   trades?: Prisma.TradeUncheckedCreateNestedManyWithoutSetupInput
+  triggerRules?: Prisma.TriggerRuleUncheckedCreateNestedManyWithoutSetupInput
 }
 
 export type SetupCreateOrConnectWithoutSubSetupsInput = {
@@ -366,32 +437,44 @@ export type SetupUpdateWithoutSubSetupsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUpdateManyWithoutSetupNestedInput
+  triggerRules?: Prisma.TriggerRuleUpdateManyWithoutSetupNestedInput
 }
 
 export type SetupUncheckedUpdateWithoutSubSetupsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUncheckedUpdateManyWithoutSetupNestedInput
+  triggerRules?: Prisma.TriggerRuleUncheckedUpdateManyWithoutSetupNestedInput
 }
 
 export type SetupCreateWithoutTradesInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
   subSetups?: Prisma.SubSetupCreateNestedManyWithoutSetupInput
+  triggerRules?: Prisma.TriggerRuleCreateNestedManyWithoutSetupInput
 }
 
 export type SetupUncheckedCreateWithoutTradesInput = {
   id?: string
   name: string
   description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
   createdAt?: Date | string
   subSetups?: Prisma.SubSetupUncheckedCreateNestedManyWithoutSetupInput
+  triggerRules?: Prisma.TriggerRuleUncheckedCreateNestedManyWithoutSetupInput
 }
 
 export type SetupCreateOrConnectWithoutTradesInput = {
@@ -414,15 +497,81 @@ export type SetupUpdateWithoutTradesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subSetups?: Prisma.SubSetupUpdateManyWithoutSetupNestedInput
+  triggerRules?: Prisma.TriggerRuleUpdateManyWithoutSetupNestedInput
 }
 
 export type SetupUncheckedUpdateWithoutTradesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subSetups?: Prisma.SubSetupUncheckedUpdateManyWithoutSetupNestedInput
+  triggerRules?: Prisma.TriggerRuleUncheckedUpdateManyWithoutSetupNestedInput
+}
+
+export type SetupCreateWithoutTriggerRulesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
+  createdAt?: Date | string
+  trades?: Prisma.TradeCreateNestedManyWithoutSetupInput
+  subSetups?: Prisma.SubSetupCreateNestedManyWithoutSetupInput
+}
+
+export type SetupUncheckedCreateWithoutTriggerRulesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  pdfUrl?: string | null
+  pdfCloudinaryId?: string | null
+  createdAt?: Date | string
+  trades?: Prisma.TradeUncheckedCreateNestedManyWithoutSetupInput
+  subSetups?: Prisma.SubSetupUncheckedCreateNestedManyWithoutSetupInput
+}
+
+export type SetupCreateOrConnectWithoutTriggerRulesInput = {
+  where: Prisma.SetupWhereUniqueInput
+  create: Prisma.XOR<Prisma.SetupCreateWithoutTriggerRulesInput, Prisma.SetupUncheckedCreateWithoutTriggerRulesInput>
+}
+
+export type SetupUpsertWithoutTriggerRulesInput = {
+  update: Prisma.XOR<Prisma.SetupUpdateWithoutTriggerRulesInput, Prisma.SetupUncheckedUpdateWithoutTriggerRulesInput>
+  create: Prisma.XOR<Prisma.SetupCreateWithoutTriggerRulesInput, Prisma.SetupUncheckedCreateWithoutTriggerRulesInput>
+  where?: Prisma.SetupWhereInput
+}
+
+export type SetupUpdateToOneWithWhereWithoutTriggerRulesInput = {
+  where?: Prisma.SetupWhereInput
+  data: Prisma.XOR<Prisma.SetupUpdateWithoutTriggerRulesInput, Prisma.SetupUncheckedUpdateWithoutTriggerRulesInput>
+}
+
+export type SetupUpdateWithoutTriggerRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  trades?: Prisma.TradeUpdateManyWithoutSetupNestedInput
+  subSetups?: Prisma.SubSetupUpdateManyWithoutSetupNestedInput
+}
+
+export type SetupUncheckedUpdateWithoutTriggerRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  trades?: Prisma.TradeUncheckedUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUncheckedUpdateManyWithoutSetupNestedInput
 }
 
@@ -434,11 +583,13 @@ export type SetupUncheckedUpdateWithoutTradesInput = {
 export type SetupCountOutputType = {
   trades: number
   subSetups: number
+  triggerRules: number
 }
 
 export type SetupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trades?: boolean | SetupCountOutputTypeCountTradesArgs
   subSetups?: boolean | SetupCountOutputTypeCountSubSetupsArgs
+  triggerRules?: boolean | SetupCountOutputTypeCountTriggerRulesArgs
 }
 
 /**
@@ -465,14 +616,24 @@ export type SetupCountOutputTypeCountSubSetupsArgs<ExtArgs extends runtime.Types
   where?: Prisma.SubSetupWhereInput
 }
 
+/**
+ * SetupCountOutputType without action
+ */
+export type SetupCountOutputTypeCountTriggerRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TriggerRuleWhereInput
+}
+
 
 export type SetupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
+  pdfUrl?: boolean
+  pdfCloudinaryId?: boolean
   createdAt?: boolean
   trades?: boolean | Prisma.Setup$tradesArgs<ExtArgs>
   subSetups?: boolean | Prisma.Setup$subSetupsArgs<ExtArgs>
+  triggerRules?: boolean | Prisma.Setup$triggerRulesArgs<ExtArgs>
   _count?: boolean | Prisma.SetupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["setup"]>
 
@@ -480,6 +641,8 @@ export type SetupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   name?: boolean
   description?: boolean
+  pdfUrl?: boolean
+  pdfCloudinaryId?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["setup"]>
 
@@ -487,6 +650,8 @@ export type SetupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   name?: boolean
   description?: boolean
+  pdfUrl?: boolean
+  pdfCloudinaryId?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["setup"]>
 
@@ -494,13 +659,16 @@ export type SetupSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
+  pdfUrl?: boolean
+  pdfCloudinaryId?: boolean
   createdAt?: boolean
 }
 
-export type SetupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt", ExtArgs["result"]["setup"]>
+export type SetupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "pdfUrl" | "pdfCloudinaryId" | "createdAt", ExtArgs["result"]["setup"]>
 export type SetupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trades?: boolean | Prisma.Setup$tradesArgs<ExtArgs>
   subSetups?: boolean | Prisma.Setup$subSetupsArgs<ExtArgs>
+  triggerRules?: boolean | Prisma.Setup$triggerRulesArgs<ExtArgs>
   _count?: boolean | Prisma.SetupCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SetupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -511,11 +679,14 @@ export type $SetupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     trades: Prisma.$TradePayload<ExtArgs>[]
     subSetups: Prisma.$SubSetupPayload<ExtArgs>[]
+    triggerRules: Prisma.$TriggerRulePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     description: string | null
+    pdfUrl: string | null
+    pdfCloudinaryId: string | null
     createdAt: Date
   }, ExtArgs["result"]["setup"]>
   composites: {}
@@ -913,6 +1084,7 @@ export interface Prisma__SetupClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   trades<T extends Prisma.Setup$tradesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Setup$tradesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TradePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subSetups<T extends Prisma.Setup$subSetupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Setup$subSetupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubSetupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  triggerRules<T extends Prisma.Setup$triggerRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Setup$triggerRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TriggerRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -945,6 +1117,8 @@ export interface SetupFieldRefs {
   readonly id: Prisma.FieldRef<"Setup", 'String'>
   readonly name: Prisma.FieldRef<"Setup", 'String'>
   readonly description: Prisma.FieldRef<"Setup", 'String'>
+  readonly pdfUrl: Prisma.FieldRef<"Setup", 'String'>
+  readonly pdfCloudinaryId: Prisma.FieldRef<"Setup", 'String'>
   readonly createdAt: Prisma.FieldRef<"Setup", 'DateTime'>
 }
     
@@ -1384,6 +1558,30 @@ export type Setup$subSetupsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.SubSetupScalarFieldEnum | Prisma.SubSetupScalarFieldEnum[]
+}
+
+/**
+ * Setup.triggerRules
+ */
+export type Setup$triggerRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TriggerRule
+   */
+  select?: Prisma.TriggerRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TriggerRule
+   */
+  omit?: Prisma.TriggerRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TriggerRuleInclude<ExtArgs> | null
+  where?: Prisma.TriggerRuleWhereInput
+  orderBy?: Prisma.TriggerRuleOrderByWithRelationInput | Prisma.TriggerRuleOrderByWithRelationInput[]
+  cursor?: Prisma.TriggerRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TriggerRuleScalarFieldEnum | Prisma.TriggerRuleScalarFieldEnum[]
 }
 
 /**

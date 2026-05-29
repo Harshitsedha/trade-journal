@@ -392,7 +392,9 @@ export const ModelName = {
   SubSetup: 'SubSetup',
   Trade: 'Trade',
   ChartImage: 'ChartImage',
-  RuleBreak: 'RuleBreak'
+  RuleBreak: 'RuleBreak',
+  TriggerRule: 'TriggerRule',
+  TradeTrigger: 'TradeTrigger'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "session" | "user" | "verificationToken" | "setup" | "subSetup" | "trade" | "chartImage" | "ruleBreak"
+    modelProps: "account" | "session" | "user" | "verificationToken" | "setup" | "subSetup" | "trade" | "chartImage" | "ruleBreak" | "triggerRule" | "tradeTrigger"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1078,6 +1080,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TriggerRule: {
+      payload: Prisma.$TriggerRulePayload<ExtArgs>
+      fields: Prisma.TriggerRuleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TriggerRuleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TriggerRuleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>
+        }
+        findFirst: {
+          args: Prisma.TriggerRuleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TriggerRuleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>
+        }
+        findMany: {
+          args: Prisma.TriggerRuleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>[]
+        }
+        create: {
+          args: Prisma.TriggerRuleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>
+        }
+        createMany: {
+          args: Prisma.TriggerRuleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TriggerRuleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>[]
+        }
+        delete: {
+          args: Prisma.TriggerRuleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>
+        }
+        update: {
+          args: Prisma.TriggerRuleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>
+        }
+        deleteMany: {
+          args: Prisma.TriggerRuleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TriggerRuleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TriggerRuleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>[]
+        }
+        upsert: {
+          args: Prisma.TriggerRuleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TriggerRulePayload>
+        }
+        aggregate: {
+          args: Prisma.TriggerRuleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTriggerRule>
+        }
+        groupBy: {
+          args: Prisma.TriggerRuleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TriggerRuleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TriggerRuleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TriggerRuleCountAggregateOutputType> | number
+        }
+      }
+    }
+    TradeTrigger: {
+      payload: Prisma.$TradeTriggerPayload<ExtArgs>
+      fields: Prisma.TradeTriggerFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TradeTriggerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TradeTriggerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>
+        }
+        findFirst: {
+          args: Prisma.TradeTriggerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TradeTriggerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>
+        }
+        findMany: {
+          args: Prisma.TradeTriggerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>[]
+        }
+        create: {
+          args: Prisma.TradeTriggerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>
+        }
+        createMany: {
+          args: Prisma.TradeTriggerCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TradeTriggerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>[]
+        }
+        delete: {
+          args: Prisma.TradeTriggerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>
+        }
+        update: {
+          args: Prisma.TradeTriggerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>
+        }
+        deleteMany: {
+          args: Prisma.TradeTriggerDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TradeTriggerUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TradeTriggerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>[]
+        }
+        upsert: {
+          args: Prisma.TradeTriggerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TradeTriggerPayload>
+        }
+        aggregate: {
+          args: Prisma.TradeTriggerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTradeTrigger>
+        }
+        groupBy: {
+          args: Prisma.TradeTriggerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TradeTriggerGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TradeTriggerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TradeTriggerCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1169,6 +1319,8 @@ export const SetupScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  pdfUrl: 'pdfUrl',
+  pdfCloudinaryId: 'pdfCloudinaryId',
   createdAt: 'createdAt'
 } as const
 
@@ -1239,6 +1391,30 @@ export const RuleBreakScalarFieldEnum = {
 } as const
 
 export type RuleBreakScalarFieldEnum = (typeof RuleBreakScalarFieldEnum)[keyof typeof RuleBreakScalarFieldEnum]
+
+
+export const TriggerRuleScalarFieldEnum = {
+  id: 'id',
+  setupId: 'setupId',
+  precedence: 'precedence',
+  name: 'name',
+  description: 'description',
+  direction: 'direction',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TriggerRuleScalarFieldEnum = (typeof TriggerRuleScalarFieldEnum)[keyof typeof TriggerRuleScalarFieldEnum]
+
+
+export const TradeTriggerScalarFieldEnum = {
+  tradeId: 'tradeId',
+  triggerRuleId: 'triggerRuleId',
+  isPrimary: 'isPrimary'
+} as const
+
+export type TradeTriggerScalarFieldEnum = (typeof TradeTriggerScalarFieldEnum)[keyof typeof TradeTriggerScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1384,6 +1560,27 @@ export type ListEnumRuleBreakTypeFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'TriggerDirection'
+ */
+export type EnumTriggerDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TriggerDirection'>
+    
+
+
+/**
+ * Reference to a field of type 'TriggerDirection[]'
+ */
+export type ListEnumTriggerDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TriggerDirection[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1515,6 +1712,8 @@ export type GlobalOmitConfig = {
   trade?: Prisma.TradeOmit
   chartImage?: Prisma.ChartImageOmit
   ruleBreak?: Prisma.RuleBreakOmit
+  triggerRule?: Prisma.TriggerRuleOmit
+  tradeTrigger?: Prisma.TradeTriggerOmit
 }
 
 /* Types for Logging */

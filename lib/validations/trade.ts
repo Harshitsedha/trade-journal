@@ -31,6 +31,14 @@ export const CreateTradeSchema = z.object({
   thesis: z.string().max(2000).optional().nullable(),
   notes: z.string().max(5000).optional().nullable(),
   tradeDate: z.string().datetime(),
+  triggerRules: z
+    .array(
+      z.object({
+        triggerRuleId: z.string().cuid(),
+        isPrimary: z.boolean(),
+      })
+    )
+    .optional(),
 })
 
 export const UpdateTradeSchema = z.object({

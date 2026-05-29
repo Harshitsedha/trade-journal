@@ -59,7 +59,9 @@ export const ModelName = {
   SubSetup: 'SubSetup',
   Trade: 'Trade',
   ChartImage: 'ChartImage',
-  RuleBreak: 'RuleBreak'
+  RuleBreak: 'RuleBreak',
+  TriggerRule: 'TriggerRule',
+  TradeTrigger: 'TradeTrigger'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -130,6 +132,8 @@ export const SetupScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  pdfUrl: 'pdfUrl',
+  pdfCloudinaryId: 'pdfCloudinaryId',
   createdAt: 'createdAt'
 } as const
 
@@ -200,6 +204,30 @@ export const RuleBreakScalarFieldEnum = {
 } as const
 
 export type RuleBreakScalarFieldEnum = (typeof RuleBreakScalarFieldEnum)[keyof typeof RuleBreakScalarFieldEnum]
+
+
+export const TriggerRuleScalarFieldEnum = {
+  id: 'id',
+  setupId: 'setupId',
+  precedence: 'precedence',
+  name: 'name',
+  description: 'description',
+  direction: 'direction',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TriggerRuleScalarFieldEnum = (typeof TriggerRuleScalarFieldEnum)[keyof typeof TriggerRuleScalarFieldEnum]
+
+
+export const TradeTriggerScalarFieldEnum = {
+  tradeId: 'tradeId',
+  triggerRuleId: 'triggerRuleId',
+  isPrimary: 'isPrimary'
+} as const
+
+export type TradeTriggerScalarFieldEnum = (typeof TradeTriggerScalarFieldEnum)[keyof typeof TradeTriggerScalarFieldEnum]
 
 
 export const SortOrder = {

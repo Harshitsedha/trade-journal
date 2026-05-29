@@ -7,6 +7,18 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import type { Setup, SubSetup } from '@/types'
+import type { TriggerRule, TriggerDirection } from '@/generated/prisma/client'
+
+interface SelectedTrigger {
+  triggerRuleId: string
+  isPrimary: boolean
+}
+
+const directionColors: Record<TriggerDirection, string> = {
+  LONG: 'text-[var(--color-profit)]',
+  SHORT: 'text-[var(--color-loss)]',
+  BOTH: 'text-[var(--color-accent)]',
+}
 
 interface TradeFormProps {
   setups: Setup[]
@@ -44,6 +56,8 @@ export function TradeForm({ setups }: TradeFormProps) {
   const [setupId, setSetupId] = useState('')
   const [subSetupId, setSubSetupId] = useState('')
   const [subSetups, setSubSetups] = useState<SubSetup[]>([])
+  const [triggerRules, setTriggerRules] = useState<TriggerRule[]>([])
+  const [selectedTriggers, setSelectedTriggers] = useState<SelectedTrigger[]>([])
   const [direction, setDirection] = useState<'LONG' | 'SHORT'>('LONG')
   const [entryPrice, setEntryPrice] = useState('')
   const [stopLoss, setStopLoss] = useState('')
@@ -57,14 +71,43 @@ export function TradeForm({ setups }: TradeFormProps) {
     new Date().toISOString().slice(0, 16)
   )
 
-  // Load sub-setups when setup changes
+  // Load sub-setups and trigger rules when setup changes
   useEffect(() => {
-    if (!setupId) return
-    fetch(`/api/setups/${setupId}/subsetups`)
-      .then((r) => r.json())
-      .then(setSubSetups)
-      .catch(() => setSubSetups([]))
+    if (!setupId) {
+      setSubSetups([])
+      setTriggerRules([])
+      setSelectedTriggers([])
+      return
+    }
+    Promise.all([
+      fetch(`/api/setups/${setupId}/subsetups`).then(r => r.json()).catch(() => []),
+      fetch(`/api/setups/${setupId}/trigger-rules`).then(r => r.json()).catch(() => []),
+    ]).then(([subs, rules]) => {
+      setSubSetups(subs)
+      setTriggerRules(rules)
+      setSelectedTriggers([])
+    })
   }, [setupId])
+
+  function handleTriggerClick(ruleId: string) {
+    setSelectedTriggers(prev => {
+      const existing = prev.find(t => t.triggerRuleId === ruleId)
+      if (!existing) {
+        // Not selected → select as CONFLUENCE
+        return [...prev, { triggerRuleId: ruleId, isPrimary: false }]
+      }
+      if (!existing.isPrimary) {
+        // CONFLUENCE → toggle to PRIMARY (demote current primary first)
+        return prev.map(t =>
+          t.triggerRuleId === ruleId
+            ? { ...t, isPrimary: true }
+            : { ...t, isPrimary: false }
+        )
+      }
+      // Already PRIMARY → deselect
+      return prev.filter(t => t.triggerRuleId !== ruleId)
+    })
+  }
 
   const rr = computeRR(entryPrice, stopLoss, target1)
   const needsExpiry = assetClass === 'FUTURES' || assetClass === 'OPTIONS'
@@ -107,6 +150,7 @@ export function TradeForm({ setups }: TradeFormProps) {
             thesis: thesis || null,
             notes: null,
             tradeDate: new Date(tradeDate).toISOString(),
+            triggerRules: selectedTriggers.length > 0 ? selectedTriggers : undefined,
           }),
         })
 
@@ -127,7 +171,7 @@ export function TradeForm({ setups }: TradeFormProps) {
     [
       canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
-      quantity, riskAmount, thesis, tradeDate, router,
+      quantity, riskAmount, thesis, tradeDate, selectedTriggers, router,
     ]
   )
 
@@ -198,6 +242,84 @@ export function TradeForm({ setups }: TradeFormProps) {
           onChange={(e) => setSubSetupId(e.target.value)}
           options={subSetups.map((s) => ({ value: s.id, label: s.name }))}
         />
+      )}
+
+      {/* Trigger Rules */}
+      {triggerRules.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-[var(--color-ink-secondary)]">
+            Trigger Rules
+            <span className="ml-1 text-[var(--color-ink-muted)] font-normal">
+              (click once = confluence, click again = primary, click again = remove)
+            </span>
+          </span>
+          <div className="flex flex-col gap-1">
+            {triggerRules.map(rule => {
+              const sel = selectedTriggers.find(t => t.triggerRuleId === rule.id)
+              const isPrimary = sel?.isPrimary ?? false
+              const isConfluence = sel && !isPrimary
+              return (
+                <button
+                  key={rule.id}
+                  type="button"
+                  onClick={() => handleTriggerClick(rule.id)}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] border text-left transition-all cursor-pointer ${
+                    isPrimary
+                      ? 'bg-[var(--color-ink)] border-[var(--color-ink)]'
+                      : isConfluence
+                      ? 'bg-[var(--color-surface-sunken)] border-[var(--color-accent)]'
+                      : 'bg-transparent border-[var(--color-border)] hover:bg-[var(--color-surface-sunken)]'
+                  }`}
+                  style={{ borderWidth: '0.5px' }}
+                >
+                  <span
+                    className={`shrink-0 text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded ${
+                      isPrimary ? 'text-[var(--color-surface)]' : directionColors[rule.direction]
+                    }`}
+                  >
+                    {rule.precedence}
+                  </span>
+                  <span
+                    className={`flex-1 text-xs ${
+                      isPrimary ? 'text-[var(--color-surface)]' : 'text-[var(--color-ink)]'
+                    }`}
+                  >
+                    {rule.name}
+                  </span>
+                  {isPrimary && (
+                    <span className="text-[10px] font-semibold text-[var(--color-surface)] uppercase tracking-wide">
+                      PRIMARY
+                    </span>
+                  )}
+                  {isConfluence && (
+                    <span className="text-[10px] text-[var(--color-accent)]">confluence</span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+          {selectedTriggers.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {selectedTriggers.map(sel => {
+                const rule = triggerRules.find(r => r.id === sel.triggerRuleId)
+                if (!rule) return null
+                return (
+                  <span
+                    key={sel.triggerRuleId}
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${
+                      sel.isPrimary
+                        ? 'bg-[var(--color-ink)] text-[var(--color-surface)]'
+                        : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border border-[var(--color-border)]'
+                    }`}
+                    style={{ borderWidth: sel.isPrimary ? '0' : '0.5px' }}
+                  >
+                    R{rule.precedence} {sel.isPrimary ? '· PRIMARY' : ''}
+                  </span>
+                )
+              })}
+            </div>
+          )}
+        </div>
       )}
 
       {/* Pricing */}

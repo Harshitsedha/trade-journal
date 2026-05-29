@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
-import { getSetups } from '@/lib/queries/trades'
-import { CreateSetupSchema } from '@/lib/validations/trade'
+import { getSetups } from '@/lib/queries/playbook'
+import { CreateSetupSchema } from '@/lib/validations/playbook'
 import { db } from '@/lib/db'
 
 export async function GET() {

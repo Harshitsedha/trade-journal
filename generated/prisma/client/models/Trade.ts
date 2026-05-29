@@ -372,6 +372,7 @@ export type TradeWhereInput = {
   subSetup?: Prisma.XOR<Prisma.SubSetupNullableScalarRelationFilter, Prisma.SubSetupWhereInput> | null
   images?: Prisma.ChartImageListRelationFilter
   ruleBreak?: Prisma.XOR<Prisma.RuleBreakNullableScalarRelationFilter, Prisma.RuleBreakWhereInput> | null
+  triggerRules?: Prisma.TradeTriggerListRelationFilter
 }
 
 export type TradeOrderByWithRelationInput = {
@@ -400,6 +401,7 @@ export type TradeOrderByWithRelationInput = {
   subSetup?: Prisma.SubSetupOrderByWithRelationInput
   images?: Prisma.ChartImageOrderByRelationAggregateInput
   ruleBreak?: Prisma.RuleBreakOrderByWithRelationInput
+  triggerRules?: Prisma.TradeTriggerOrderByRelationAggregateInput
 }
 
 export type TradeWhereUniqueInput = Prisma.AtLeast<{
@@ -431,6 +433,7 @@ export type TradeWhereUniqueInput = Prisma.AtLeast<{
   subSetup?: Prisma.XOR<Prisma.SubSetupNullableScalarRelationFilter, Prisma.SubSetupWhereInput> | null
   images?: Prisma.ChartImageListRelationFilter
   ruleBreak?: Prisma.XOR<Prisma.RuleBreakNullableScalarRelationFilter, Prisma.RuleBreakWhereInput> | null
+  triggerRules?: Prisma.TradeTriggerListRelationFilter
 }, "id">
 
 export type TradeOrderByWithAggregationInput = {
@@ -513,6 +516,7 @@ export type TradeCreateInput = {
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
 }
 
 export type TradeUncheckedCreateInput = {
@@ -539,6 +543,7 @@ export type TradeUncheckedCreateInput = {
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerUncheckedCreateNestedManyWithoutTradeInput
 }
 
 export type TradeUpdateInput = {
@@ -565,6 +570,7 @@ export type TradeUpdateInput = {
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateInput = {
@@ -591,6 +597,7 @@ export type TradeUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUncheckedUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeCreateManyInput = {
@@ -927,6 +934,20 @@ export type TradeUpdateOneRequiredWithoutRuleBreakNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TradeUpdateToOneWithWhereWithoutRuleBreakInput, Prisma.TradeUpdateWithoutRuleBreakInput>, Prisma.TradeUncheckedUpdateWithoutRuleBreakInput>
 }
 
+export type TradeCreateNestedOneWithoutTriggerRulesInput = {
+  create?: Prisma.XOR<Prisma.TradeCreateWithoutTriggerRulesInput, Prisma.TradeUncheckedCreateWithoutTriggerRulesInput>
+  connectOrCreate?: Prisma.TradeCreateOrConnectWithoutTriggerRulesInput
+  connect?: Prisma.TradeWhereUniqueInput
+}
+
+export type TradeUpdateOneRequiredWithoutTriggerRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.TradeCreateWithoutTriggerRulesInput, Prisma.TradeUncheckedCreateWithoutTriggerRulesInput>
+  connectOrCreate?: Prisma.TradeCreateOrConnectWithoutTriggerRulesInput
+  upsert?: Prisma.TradeUpsertWithoutTriggerRulesInput
+  connect?: Prisma.TradeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TradeUpdateToOneWithWhereWithoutTriggerRulesInput, Prisma.TradeUpdateWithoutTriggerRulesInput>, Prisma.TradeUncheckedUpdateWithoutTriggerRulesInput>
+}
+
 export type TradeCreateWithoutSetupInput = {
   id?: string
   instrument: string
@@ -950,6 +971,7 @@ export type TradeCreateWithoutSetupInput = {
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
 }
 
 export type TradeUncheckedCreateWithoutSetupInput = {
@@ -975,6 +997,7 @@ export type TradeUncheckedCreateWithoutSetupInput = {
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerUncheckedCreateNestedManyWithoutTradeInput
 }
 
 export type TradeCreateOrConnectWithoutSetupInput = {
@@ -1053,6 +1076,7 @@ export type TradeCreateWithoutSubSetupInput = {
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
 }
 
 export type TradeUncheckedCreateWithoutSubSetupInput = {
@@ -1078,6 +1102,7 @@ export type TradeUncheckedCreateWithoutSubSetupInput = {
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerUncheckedCreateNestedManyWithoutTradeInput
 }
 
 export type TradeCreateOrConnectWithoutSubSetupInput = {
@@ -1129,6 +1154,7 @@ export type TradeCreateWithoutImagesInput = {
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
 }
 
 export type TradeUncheckedCreateWithoutImagesInput = {
@@ -1154,6 +1180,7 @@ export type TradeUncheckedCreateWithoutImagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerUncheckedCreateNestedManyWithoutTradeInput
 }
 
 export type TradeCreateOrConnectWithoutImagesInput = {
@@ -1195,6 +1222,7 @@ export type TradeUpdateWithoutImagesInput = {
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateWithoutImagesInput = {
@@ -1220,6 +1248,7 @@ export type TradeUncheckedUpdateWithoutImagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUncheckedUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeCreateWithoutRuleBreakInput = {
@@ -1245,6 +1274,7 @@ export type TradeCreateWithoutRuleBreakInput = {
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
 }
 
 export type TradeUncheckedCreateWithoutRuleBreakInput = {
@@ -1270,6 +1300,7 @@ export type TradeUncheckedCreateWithoutRuleBreakInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerUncheckedCreateNestedManyWithoutTradeInput
 }
 
 export type TradeCreateOrConnectWithoutRuleBreakInput = {
@@ -1311,6 +1342,7 @@ export type TradeUpdateWithoutRuleBreakInput = {
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateWithoutRuleBreakInput = {
@@ -1336,6 +1368,127 @@ export type TradeUncheckedUpdateWithoutRuleBreakInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUncheckedUpdateManyWithoutTradeNestedInput
+}
+
+export type TradeCreateWithoutTriggerRulesInput = {
+  id?: string
+  instrument: string
+  assetClass: $Enums.AssetClass
+  expiry?: Date | string | null
+  direction: $Enums.Direction
+  entryPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss: runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeCreatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.TradeStatus
+  thesis?: string | null
+  notes?: string | null
+  tradeDate?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  setup: Prisma.SetupCreateNestedOneWithoutTradesInput
+  subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
+  images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
+  ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
+}
+
+export type TradeUncheckedCreateWithoutTriggerRulesInput = {
+  id?: string
+  instrument: string
+  assetClass: $Enums.AssetClass
+  expiry?: Date | string | null
+  setupId: string
+  subSetupId?: string | null
+  direction: $Enums.Direction
+  entryPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss: runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeCreatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.TradeStatus
+  thesis?: string | null
+  notes?: string | null
+  tradeDate?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
+  ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
+}
+
+export type TradeCreateOrConnectWithoutTriggerRulesInput = {
+  where: Prisma.TradeWhereUniqueInput
+  create: Prisma.XOR<Prisma.TradeCreateWithoutTriggerRulesInput, Prisma.TradeUncheckedCreateWithoutTriggerRulesInput>
+}
+
+export type TradeUpsertWithoutTriggerRulesInput = {
+  update: Prisma.XOR<Prisma.TradeUpdateWithoutTriggerRulesInput, Prisma.TradeUncheckedUpdateWithoutTriggerRulesInput>
+  create: Prisma.XOR<Prisma.TradeCreateWithoutTriggerRulesInput, Prisma.TradeUncheckedCreateWithoutTriggerRulesInput>
+  where?: Prisma.TradeWhereInput
+}
+
+export type TradeUpdateToOneWithWhereWithoutTriggerRulesInput = {
+  where?: Prisma.TradeWhereInput
+  data: Prisma.XOR<Prisma.TradeUpdateWithoutTriggerRulesInput, Prisma.TradeUncheckedUpdateWithoutTriggerRulesInput>
+}
+
+export type TradeUpdateWithoutTriggerRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
+  expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  direction?: Prisma.EnumDirectionFieldUpdateOperationsInput | $Enums.Direction
+  entryPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeUpdatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
+  thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
+  subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
+  images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
+  ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
+}
+
+export type TradeUncheckedUpdateWithoutTriggerRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
+  expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  setupId?: Prisma.StringFieldUpdateOperationsInput | string
+  subSetupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  direction?: Prisma.EnumDirectionFieldUpdateOperationsInput | $Enums.Direction
+  entryPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeUpdatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
+  thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
+  ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
 }
 
 export type TradeCreateManySetupInput = {
@@ -1384,6 +1537,7 @@ export type TradeUpdateWithoutSetupInput = {
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateWithoutSetupInput = {
@@ -1409,6 +1563,7 @@ export type TradeUncheckedUpdateWithoutSetupInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUncheckedUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateManyWithoutSetupInput = {
@@ -1480,6 +1635,7 @@ export type TradeUpdateWithoutSubSetupInput = {
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateWithoutSubSetupInput = {
@@ -1505,6 +1661,7 @@ export type TradeUncheckedUpdateWithoutSubSetupInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUncheckedUpdateManyWithoutTradeNestedInput
 }
 
 export type TradeUncheckedUpdateManyWithoutSubSetupInput = {
@@ -1537,10 +1694,12 @@ export type TradeUncheckedUpdateManyWithoutSubSetupInput = {
 
 export type TradeCountOutputType = {
   images: number
+  triggerRules: number
 }
 
 export type TradeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   images?: boolean | TradeCountOutputTypeCountImagesArgs
+  triggerRules?: boolean | TradeCountOutputTypeCountTriggerRulesArgs
 }
 
 /**
@@ -1558,6 +1717,13 @@ export type TradeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
  */
 export type TradeCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChartImageWhereInput
+}
+
+/**
+ * TradeCountOutputType without action
+ */
+export type TradeCountOutputTypeCountTriggerRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TradeTriggerWhereInput
 }
 
 
@@ -1587,6 +1753,7 @@ export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
   images?: boolean | Prisma.Trade$imagesArgs<ExtArgs>
   ruleBreak?: boolean | Prisma.Trade$ruleBreakArgs<ExtArgs>
+  triggerRules?: boolean | Prisma.Trade$triggerRulesArgs<ExtArgs>
   _count?: boolean | Prisma.TradeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["trade"]>
 
@@ -1672,6 +1839,7 @@ export type TradeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
   images?: boolean | Prisma.Trade$imagesArgs<ExtArgs>
   ruleBreak?: boolean | Prisma.Trade$ruleBreakArgs<ExtArgs>
+  triggerRules?: boolean | Prisma.Trade$triggerRulesArgs<ExtArgs>
   _count?: boolean | Prisma.TradeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TradeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1690,6 +1858,7 @@ export type $TradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     subSetup: Prisma.$SubSetupPayload<ExtArgs> | null
     images: Prisma.$ChartImagePayload<ExtArgs>[]
     ruleBreak: Prisma.$RuleBreakPayload<ExtArgs> | null
+    triggerRules: Prisma.$TradeTriggerPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2111,6 +2280,7 @@ export interface Prisma__TradeClient<T, Null = never, ExtArgs extends runtime.Ty
   subSetup<T extends Prisma.Trade$subSetupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$subSetupArgs<ExtArgs>>): Prisma.Prisma__SubSetupClient<runtime.Types.Result.GetResult<Prisma.$SubSetupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   images<T extends Prisma.Trade$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChartImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ruleBreak<T extends Prisma.Trade$ruleBreakArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$ruleBreakArgs<ExtArgs>>): Prisma.Prisma__RuleBreakClient<runtime.Types.Result.GetResult<Prisma.$RuleBreakPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  triggerRules<T extends Prisma.Trade$triggerRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$triggerRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TradeTriggerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2621,6 +2791,30 @@ export type Trade$ruleBreakArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   include?: Prisma.RuleBreakInclude<ExtArgs> | null
   where?: Prisma.RuleBreakWhereInput
+}
+
+/**
+ * Trade.triggerRules
+ */
+export type Trade$triggerRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TradeTrigger
+   */
+  select?: Prisma.TradeTriggerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TradeTrigger
+   */
+  omit?: Prisma.TradeTriggerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TradeTriggerInclude<ExtArgs> | null
+  where?: Prisma.TradeTriggerWhereInput
+  orderBy?: Prisma.TradeTriggerOrderByWithRelationInput | Prisma.TradeTriggerOrderByWithRelationInput[]
+  cursor?: Prisma.TradeTriggerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TradeTriggerScalarFieldEnum | Prisma.TradeTriggerScalarFieldEnum[]
 }
 
 /**

@@ -7,7 +7,16 @@
       "Bash(grep -n 'export type $TradePayload\\\\|TradeModel = ' c:/Users/sedha/trading-journal/generated/prisma/client/internal/prismaNamespace.ts)",
       "Bash(grep -n 'TradeModel\\\\|$TradePayload' c:/Users/sedha/trading-journal/generated/prisma/client/internal/prismaNamespace.ts)",
       "Bash(grep -n 'TradeModel\\\\|$TradePayload' c:/Users/sedha/trading-journal/generated/prisma/client/models/Trade.ts)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(git clone *)",
+      "PowerShell(git clone https://github.com/Harshitsedha/Face-Recognition.git \"C:\\\\Users\\\\sedha\\\\Face-Recognition\")",
+      "Bash(xargs ls -la)",
+      "Bash(npx dotenv *)",
+      "Bash(Get-Content .env)",
+      "Bash(Select-String \"DATABASE_URL\")",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx prisma db push)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx tsc --noEmit)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx prisma generate)"
     ]
   }
 }

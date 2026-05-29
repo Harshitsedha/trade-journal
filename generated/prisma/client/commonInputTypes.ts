@@ -284,6 +284,63 @@ export type EnumRuleBreakTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumRuleBreakTypeFilter<$PrismaModel>
 }
 
+export type IntFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntFilter<$PrismaModel> | number
+}
+
+export type EnumTriggerDirectionFilter<$PrismaModel = never> = {
+  equals?: $Enums.TriggerDirection | Prisma.EnumTriggerDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel> | $Enums.TriggerDirection
+}
+
+export type BoolFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type IntWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedIntFilter<$PrismaModel>
+  _max?: Prisma.NestedIntFilter<$PrismaModel>
+}
+
+export type EnumTriggerDirectionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TriggerDirection | Prisma.EnumTriggerDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTriggerDirectionWithAggregatesFilter<$PrismaModel> | $Enums.TriggerDirection
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
+}
+
+export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -565,6 +622,63 @@ export type NestedEnumRuleBreakTypeWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumRuleBreakTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumRuleBreakTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumTriggerDirectionFilter<$PrismaModel = never> = {
+  equals?: $Enums.TriggerDirection | Prisma.EnumTriggerDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel> | $Enums.TriggerDirection
+}
+
+export type NestedBoolFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedIntFilter<$PrismaModel>
+  _max?: Prisma.NestedIntFilter<$PrismaModel>
+}
+
+export type NestedFloatFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatFilter<$PrismaModel> | number
+}
+
+export type NestedEnumTriggerDirectionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TriggerDirection | Prisma.EnumTriggerDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TriggerDirection[] | Prisma.ListEnumTriggerDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTriggerDirectionWithAggregatesFilter<$PrismaModel> | $Enums.TriggerDirection
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
+}
+
+export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
 

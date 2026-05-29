@@ -45,3 +45,12 @@ export const RuleBreakType = {
 } as const
 
 export type RuleBreakType = (typeof RuleBreakType)[keyof typeof RuleBreakType]
+
+
+export const TriggerDirection = {
+  LONG: 'LONG',
+  SHORT: 'SHORT',
+  BOTH: 'BOTH'
+} as const
+
+export type TriggerDirection = (typeof TriggerDirection)[keyof typeof TriggerDirection]

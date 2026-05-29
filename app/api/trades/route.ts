@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 import { CreateTradeSchema, TradeFilterSchema } from '@/lib/validations/trade'
 import { createTrade, getTrades } from '@/lib/queries/trades'
+import { db } from '@/lib/db'
 
 export async function GET(req: NextRequest) {
   const session = await auth()
@@ -27,6 +28,18 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const trade = await createTrade(parsed.data)
+  const { triggerRules, ...tradeData } = parsed.data
+  const trade = await createTrade(tradeData)
+
+  if (triggerRules && triggerRules.length > 0) {
+    await db.tradeTrigger.createMany({
+      data: triggerRules.map(tr => ({
+        tradeId: trade.id,
+        triggerRuleId: tr.triggerRuleId,
+        isPrimary: tr.isPrimary,
+      })),
+    })
+  }
+
   return Response.json(trade, { status: 201 })
 }

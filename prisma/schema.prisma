@@ -33,6 +33,12 @@ enum RuleBreakType {
   OTHER
 }
 
+enum TriggerDirection {
+  LONG
+  SHORT
+  BOTH
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -78,12 +84,15 @@ model VerificationToken {
 }
 
 model Setup {
-  id          String     @id @default(cuid())
-  name        String     @unique
-  description String?
-  trades      Trade[]
-  subSetups   SubSetup[]
-  createdAt   DateTime   @default(now())
+  id               String        @id @default(cuid())
+  name             String        @unique
+  description      String?
+  pdfUrl           String?
+  pdfCloudinaryId  String?
+  trades           Trade[]
+  subSetups        SubSetup[]
+  triggerRules     TriggerRule[]
+  createdAt        DateTime      @default(now())
 }
 
 model SubSetup {
@@ -123,8 +132,9 @@ model Trade {
   tradeDate  DateTime    @default(now())
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-  images     ChartImage[]
-  ruleBreak  RuleBreak?
+  images        ChartImage[]
+  ruleBreak     RuleBreak?
+  triggerRules  TradeTrigger[]
 
   @@index([tradeDate])
   @@index([setupId])
@@ -154,4 +164,31 @@ model RuleBreak {
   rMultipleImpact  Decimal       @db.Decimal(8, 2)
   notes            String?
   createdAt        DateTime      @default(now())
+}
+
+model TriggerRule {
+  id          String           @id @default(cuid())
+  setupId     String
+  setup       Setup            @relation(fields: [setupId], references: [id], onDelete: Cascade)
+  precedence  Int
+  name        String
+  description String?
+  direction   TriggerDirection @default(BOTH)
+  isActive    Boolean          @default(true)
+  trades      TradeTrigger[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([setupId, precedence])
+  @@index([setupId])
+}
+
+model TradeTrigger {
+  tradeId       String
+  triggerRuleId String
+  isPrimary     Boolean     @default(false)
+  trade         Trade       @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  triggerRule   TriggerRule @relation(fields: [triggerRuleId], references: [id], onDelete: Cascade)
+
+  @@id([tradeId, triggerRuleId])
 }

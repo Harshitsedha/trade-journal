@@ -6,6 +6,7 @@ import type { Setup } from '@/generated/prisma/client'
 const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/trades/new', label: 'Log Trade' },
+  { href: '/playbook', label: 'Playbook' },
 ]
 
 export async function Sidebar() {
