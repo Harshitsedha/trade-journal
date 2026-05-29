@@ -1,14 +1,20 @@
+'use client'
+
+import { useState } from 'react'
 import Decimal from 'decimal.js'
 import type { TradeWithRelations } from '@/types'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import { ImageUploader } from './ImageUploader'
-import { CloseTradeForm } from './CloseTradeForm'
+import { EditTradeForm } from './EditTradeForm'
 
 interface TradeDetailProps {
   trade: TradeWithRelations
 }
 
 export function TradeDetail({ trade }: TradeDetailProps) {
+  const [isEditing, setIsEditing] = useState(false)
+
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
 
@@ -49,34 +55,42 @@ export function TradeDetail({ trade }: TradeDetailProps) {
           </p>
         </div>
 
-        {/* R & P&L */}
-        <div className="text-right">
-          {r !== null && (
-            <p
-              className={`text-2xl font-semibold font-mono ${
-                r.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
-              }`}
-            >
-              {r.gt(0) ? '+' : ''}
-              {r.toFixed(2)}R
-            </p>
-          )}
-          {pnl !== null && (
-            <p
-              className={`text-sm font-mono ${
-                pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
-              }`}
-            >
-              {pnl.gt(0) ? '+' : ''}₹{pnl.toFixed(0)}
-            </p>
-          )}
+        <div className="flex items-start gap-4">
+          {/* R & P&L */}
+          <div className="text-right">
+            {r !== null && (
+              <p
+                className={`text-2xl font-semibold font-mono ${
+                  r.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
+                }`}
+              >
+                {r.gt(0) ? '+' : ''}
+                {r.toFixed(2)}R
+              </p>
+            )}
+            {pnl !== null && (
+              <p
+                className={`text-sm font-mono ${
+                  pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
+                }`}
+              >
+                {pnl.gt(0) ? '+' : ''}₹{pnl.toFixed(0)}
+              </p>
+            )}
+          </div>
+
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsEditing(v => !v)}
+          >
+            {isEditing ? 'Cancel' : 'Edit'}
+          </Button>
         </div>
       </div>
 
       {/* Pricing grid */}
-      <div
-        className="grid grid-cols-4 gap-px bg-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden"
-      >
+      <div className="grid grid-cols-4 gap-px bg-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden">
         {[
           { label: 'Entry', value: trade.entryPrice.toString() },
           { label: 'Stop', value: trade.stopLoss.toString() },
@@ -116,8 +130,38 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         </div>
       )}
 
-      {/* Thesis */}
-      {trade.thesis && (
+      {/* Trigger rules (read-only) */}
+      {!isEditing && trade.triggerRules.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
+            Trigger Rules
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {trade.triggerRules
+              .slice()
+              .sort((a, b) => a.triggerRule.precedence - b.triggerRule.precedence)
+              .map(t => (
+                <span
+                  key={t.triggerRuleId}
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
+                    t.isPrimary
+                      ? 'bg-[var(--color-ink)] text-[var(--color-surface)]'
+                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border border-[var(--color-border)]'
+                  }`}
+                  style={{ borderWidth: t.isPrimary ? '0' : '0.5px' }}
+                >
+                  R{t.triggerRule.precedence} · {t.triggerRule.name}
+                  {t.isPrimary && (
+                    <span className="ml-1 text-[10px] opacity-70 uppercase tracking-wide">primary</span>
+                  )}
+                </span>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Thesis (read-only) */}
+      {!isEditing && trade.thesis && (
         <div className="flex flex-col gap-2">
           <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
             Entry Thesis
@@ -128,8 +172,8 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         </div>
       )}
 
-      {/* Notes */}
-      {trade.notes && (
+      {/* Notes (read-only) */}
+      {!isEditing && trade.notes && (
         <div className="flex flex-col gap-2">
           <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
             Notes
@@ -137,6 +181,19 @@ export function TradeDetail({ trade }: TradeDetailProps) {
           <p className="text-sm text-[var(--color-ink-secondary)] leading-relaxed">
             {trade.notes}
           </p>
+        </div>
+      )}
+
+      {/* Edit form */}
+      {isEditing && (
+        <div
+          className="flex flex-col gap-4 p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
+          style={{ borderWidth: '0.5px' }}
+        >
+          <p className="text-sm font-semibold text-[var(--color-ink)]">
+            {trade.status === 'OPEN' ? 'Edit / Close Trade' : 'Edit Trade'}
+          </p>
+          <EditTradeForm trade={trade} onDone={() => setIsEditing(false)} />
         </div>
       )}
 
@@ -181,17 +238,6 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         </p>
         <ImageUploader tradeId={trade.id} images={trade.images} />
       </div>
-
-      {/* Close trade form */}
-      {trade.status === 'OPEN' && (
-        <div
-          className="flex flex-col gap-4 p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
-          style={{ borderWidth: '0.5px' }}
-        >
-          <p className="text-sm font-semibold text-[var(--color-ink)]">Close Trade</p>
-          <CloseTradeForm trade={trade} />
-        </div>
-      )}
     </div>
   )
 }

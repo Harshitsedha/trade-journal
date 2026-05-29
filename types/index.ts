@@ -4,10 +4,13 @@ import type {
   SubSetup,
   ChartImage,
   RuleBreak,
+  TradeTrigger,
+  TriggerRule,
   AssetClass,
   Direction,
   TradeStatus,
   RuleBreakType,
+  TriggerDirection,
 } from '@/generated/prisma/client'
 
 export type {
@@ -16,17 +19,23 @@ export type {
   SubSetup,
   ChartImage,
   RuleBreak,
+  TradeTrigger,
+  TriggerRule,
   AssetClass,
   Direction,
   TradeStatus,
   RuleBreakType,
+  TriggerDirection,
 }
+
+export type TradeTriggerWithRule = TradeTrigger & { triggerRule: TriggerRule }
 
 export type TradeWithRelations = Trade & {
   setup: Setup
   subSetup: SubSetup | null
   images: ChartImage[]
   ruleBreak: RuleBreak | null
+  triggerRules: TradeTriggerWithRule[]
 }
 
 export type DashboardStats = {

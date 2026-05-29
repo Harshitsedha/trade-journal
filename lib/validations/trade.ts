@@ -46,6 +46,9 @@ export const UpdateTradeSchema = z.object({
   status: TradeStatusSchema.optional(),
   notes: z.string().max(5000).optional().nullable(),
   thesis: z.string().max(2000).optional().nullable(),
+  triggerRules: z
+    .array(z.object({ triggerRuleId: z.string().cuid(), isPrimary: z.boolean() }))
+    .optional(),
   ruleBreak: z
     .object({
       breakType: RuleBreakTypeSchema,

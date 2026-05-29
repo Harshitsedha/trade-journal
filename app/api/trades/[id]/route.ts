@@ -36,8 +36,9 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
   const existing = await getTradeById(id)
   if (!existing) return Response.json({ error: 'Not found' }, { status: 404 })
 
-  const { exitPrice, status, notes, thesis, ruleBreak } = parsed.data
+  const { exitPrice, status, notes, thesis, triggerRules, ruleBreak } = parsed.data
 
+  // exitPrice always triggers closeTrade which recomputes rMultiple/pnl regardless of current status
   let trade
   if (exitPrice) {
     trade = await closeTrade(id, exitPrice, notes)
@@ -91,6 +92,20 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
       },
     })
 
+    trade = await getTradeById(id)
+  }
+
+  if (triggerRules !== undefined) {
+    await db.tradeTrigger.deleteMany({ where: { tradeId: id } })
+    if (triggerRules.length > 0) {
+      await db.tradeTrigger.createMany({
+        data: triggerRules.map(tr => ({
+          tradeId: id,
+          triggerRuleId: tr.triggerRuleId,
+          isPrimary: tr.isPrimary,
+        })),
+      })
+    }
     trade = await getTradeById(id)
   }
 

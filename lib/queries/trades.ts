@@ -7,6 +7,7 @@ const TRADE_INCLUDE = {
   subSetup: true,
   images: true,
   ruleBreak: true,
+  triggerRules: { include: { triggerRule: true } },
 } as const
 
 export async function getTrades(filters: TradeFilterInput) {
