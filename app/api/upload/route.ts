@@ -1,6 +1,6 @@
-import { NextRequest } from 'next/server'
+﻿import { NextRequest } from 'next/server'
 import { z } from 'zod'
-import { auth } from '@/lib/auth'
+import { auth } from '@/auth'
 import { generateSignedUploadParams, deleteImage } from '@/lib/cloudinary'
 import { addChartImage, deleteChartImage } from '@/lib/queries/trades'
 

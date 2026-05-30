@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
+import { auth } from '@/auth'
 import { db } from '@/lib/db'
 import { deleteImage } from '@/lib/cloudinary'
 import { SetupPdfSchema } from '@/lib/validations/playbook'

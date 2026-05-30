@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
+﻿import { NextRequest } from 'next/server'
+import { auth } from '@/auth'
 import { getSetups } from '@/lib/queries/playbook'
 import { CreateSetupSchema } from '@/lib/validations/playbook'
 import { db } from '@/lib/db'

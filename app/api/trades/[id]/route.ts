@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server'
-import Decimal from 'decimal.js'
-import { auth } from '@/lib/auth'
+import { auth } from '@/auth'
 import { UpdateTradeSchema } from '@/lib/validations/trade'
 import {
   getTradeById,
@@ -9,6 +8,7 @@ import {
   deleteTrade,
 } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
+import { computeRuleBreakImpact } from '@/lib/calculations'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -53,30 +53,20 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
   if (ruleBreak && exitPrice) {
     const { breakType, ruleDescription, actualExitPrice, ruleExitPrice, notes: rbNotes } = ruleBreak
 
-    const entry = new Decimal(existing.entryPrice.toString())
-    const stop = new Decimal(existing.stopLoss.toString())
-    const actual = new Decimal(actualExitPrice)
-    const ruleExit = ruleExitPrice ? new Decimal(ruleExitPrice) : null
-    const qty = new Decimal(existing.quantity.toString())
+    let pnlImpact = '0'
+    let rMultipleImpact = '0'
 
-    const stopDistance =
-      existing.direction === 'LONG'
-        ? entry.minus(stop)
-        : stop.minus(entry)
-
-    let pnlImpact = new Decimal(0)
-    let rMultipleImpact = new Decimal(0)
-
-    if (ruleExit) {
-      const priceDelta =
-        existing.direction === 'LONG'
-          ? ruleExit.minus(actual)
-          : actual.minus(ruleExit)
-
-      pnlImpact = priceDelta.times(qty)
-      rMultipleImpact = stopDistance.isZero()
-        ? new Decimal(0)
-        : priceDelta.div(stopDistance)
+    if (ruleExitPrice) {
+      const impact = computeRuleBreakImpact({
+        direction: existing.direction,
+        entryPrice: existing.entryPrice,
+        stopLoss: existing.stopLoss,
+        actualExitPrice,
+        ruleExitPrice,
+        quantity: existing.quantity,
+      })
+      pnlImpact = impact.pnlImpact.toDecimalPlaces(2).toString()
+      rMultipleImpact = impact.rMultipleImpact.toDecimalPlaces(2).toString()
     }
 
     await db.ruleBreak.create({
@@ -86,8 +76,8 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
         ruleDescription,
         actualExitPrice,
         ruleExitPrice: ruleExitPrice ?? null,
-        pnlImpact: pnlImpact.toDecimalPlaces(2).toString(),
-        rMultipleImpact: rMultipleImpact.toDecimalPlaces(2).toString(),
+        pnlImpact,
+        rMultipleImpact,
         notes: rbNotes ?? null,
       },
     })

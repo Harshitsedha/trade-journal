@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
+import { auth } from '@/auth'
 import { db } from '@/lib/db'
 import { UpdateTriggerRuleSchema } from '@/lib/validations/playbook'
 

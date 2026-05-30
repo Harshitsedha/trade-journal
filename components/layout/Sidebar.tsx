@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { auth, signOut } from '@/lib/auth'
+﻿import Link from 'next/link'
+import { auth, signOut } from '@/auth'
 import { getSetups } from '@/lib/queries/trades'
 import type { Setup } from '@/generated/prisma/client'
 

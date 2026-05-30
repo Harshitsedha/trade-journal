@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
+import { auth } from '@/auth'
 import { getSubSetupsBySetup } from '@/lib/queries/trades'
 import { CreateSubSetupSchema } from '@/lib/validations/trade'
 import { db } from '@/lib/db'

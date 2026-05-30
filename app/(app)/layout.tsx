@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
+﻿import { redirect } from 'next/navigation'
+import { auth } from '@/auth'
 import { Sidebar } from '@/components/layout/Sidebar'
 
 export default async function AppLayout({

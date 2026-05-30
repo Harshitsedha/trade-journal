@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js'
 import { db } from '@/lib/db'
+import { computeRMultiple, computePnl } from '@/lib/calculations'
 import type { TradeFilterInput, CreateTradeInput } from '@/lib/validations/trade'
 
 const TRADE_INCLUDE = {
@@ -79,26 +80,8 @@ export async function closeTrade(
     },
   })
 
-  const entry = new Decimal(trade.entryPrice.toString())
-  const stop = new Decimal(trade.stopLoss.toString())
-  const exit = new Decimal(exitPrice)
-  const qty = new Decimal(trade.quantity.toString())
-
-  const priceDelta =
-    trade.direction === 'LONG'
-      ? exit.minus(entry)
-      : entry.minus(exit)
-
-  const stopDistance =
-    trade.direction === 'LONG'
-      ? entry.minus(stop)
-      : stop.minus(entry)
-
-  const rMultiple = stopDistance.isZero()
-    ? new Decimal(0)
-    : priceDelta.div(stopDistance)
-
-  const pnl = priceDelta.times(qty)
+  const rMultiple = computeRMultiple(trade.direction, trade.entryPrice, trade.stopLoss, exitPrice)
+  const pnl = computePnl(trade.direction, trade.entryPrice, exitPrice, trade.quantity)
 
   return db.trade.update({
     where: { id },

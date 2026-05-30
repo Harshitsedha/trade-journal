@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
+﻿import { NextRequest } from 'next/server'
+import { auth } from '@/auth'
 import { CreateTradeSchema, TradeFilterSchema } from '@/lib/validations/trade'
 import { createTrade, getTrades } from '@/lib/queries/trades'
 import { db } from '@/lib/db'

@@ -1,6 +1,6 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { AuthError } from 'next-auth'
-import { auth, signIn } from '@/lib/auth'
+import { auth, signIn } from '@/auth'
 
 interface LoginPageProps {
   searchParams: Promise<{ verify?: string; error?: string }>

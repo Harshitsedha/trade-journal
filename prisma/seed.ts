@@ -6,26 +6,30 @@ const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! })
 const options: Prisma.PrismaClientOptions = { adapter }
 const db = new PrismaClient(options)
 
-const defaultSetups = [
-  { name: 'ORB', description: 'Opening Range Breakout — first 5-15min candle break' },
-  { name: 'VWAP Reclaim', description: 'Price reclaims VWAP after deviation' },
-  { name: 'Breakout', description: 'Key level breakout with volume confirmation' },
-  { name: 'Reversal', description: 'Mean reversion at key support/resistance' },
-  { name: 'Earnings Play', description: 'Post-earnings continuation or reversal' },
-  { name: 'Trend Continuation', description: 'Pullback entry in an established trend' },
+const legacySetupNames = [
+  'ORB',
+  'VWAP Reclaim',
+  'Breakout',
+  'Reversal',
+  'Earnings Play',
+  'Trend Continuation',
 ]
 
 async function main() {
-  for (const setup of defaultSetups) {
-    await db.setup.upsert({
-      where: { name: setup.name },
-      update: {},
-      create: setup,
-    })
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Seed: skipped in production environment')
+    return
   }
-  console.log(`Seeded ${defaultSetups.length} default setups.`)
+
+  const deleted = await db.setup.deleteMany({
+    where: { name: { in: legacySetupNames } },
+  })
+  console.log(`Removed ${deleted.count} legacy seed setups.`)
 }
 
 main()
-  .catch(console.error)
+  .catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })
   .finally(() => db.$disconnect())

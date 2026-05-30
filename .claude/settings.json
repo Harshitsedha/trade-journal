@@ -16,7 +16,17 @@
       "Bash(Select-String \"DATABASE_URL\")",
       "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx prisma db push)",
       "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx tsc --noEmit)",
-      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx prisma generate)"
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx prisma generate)",
+      "Bash(npm install *)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx vitest run)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_BWPb7sp9Meno@ep-calm-dawn-ao7a4u2t.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\" npx vitest run --coverage)",
+      "Bash(npx tsx *)",
+      "Bash(node -e \"require\\('ws'\\); console.log\\('ws installed'\\)\")",
+      "PowerShell(npx tsc --noEmit 2>&1)",
+      "PowerShell(New-Item -ItemType Directory -Force \"scripts\")",
+      "PowerShell(\"scripts dir ready\")",
+      "PowerShell(npx prisma generate 2>&1)",
+      "PowerShell(npm run build 2>&1)"
     ]
   }
 }
