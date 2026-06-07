@@ -22,6 +22,7 @@ enum TradeStatus {
   OPEN
   CLOSED
   SCRATCHED
+  MISSED
 }
 
 enum RuleBreakType {
@@ -126,12 +127,18 @@ model Trade {
   riskAmount Decimal     @db.Decimal(18, 2)
   rMultiple  Decimal?    @db.Decimal(8, 2)
   pnl        Decimal?    @db.Decimal(18, 2)
-  status     TradeStatus @default(OPEN)
-  thesis     String?
-  notes      String?
-  tradeDate  DateTime    @default(now())
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  status        TradeStatus @default(OPEN)
+  thesis        String?
+  notes         String?
+  tradeDate     DateTime    @default(now())
+  idealEntry    Decimal?    @db.Decimal(18, 6)
+  idealStop     Decimal?    @db.Decimal(18, 6)
+  idealExit     Decimal?    @db.Decimal(18, 6)
+  idealDirection Direction?
+  sideCorrect   Boolean?
+  executionPnl  Decimal?    @db.Decimal(18, 2)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   images        ChartImage[]
   ruleBreak     RuleBreak?
   triggerRules  TradeTrigger[]

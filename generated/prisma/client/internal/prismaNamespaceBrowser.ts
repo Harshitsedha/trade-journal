@@ -171,6 +171,12 @@ export const TradeScalarFieldEnum = {
   thesis: 'thesis',
   notes: 'notes',
   tradeDate: 'tradeDate',
+  idealEntry: 'idealEntry',
+  idealStop: 'idealStop',
+  idealExit: 'idealExit',
+  idealDirection: 'idealDirection',
+  sideCorrect: 'sideCorrect',
+  executionPnl: 'executionPnl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

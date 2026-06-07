@@ -1,3 +1,4 @@
+import { TradeStatus, Prisma } from '@/generated/prisma/client'
 import { db } from '@/lib/db'
 import type { TradeForStat } from '@/lib/analytics/compute'
 
@@ -12,13 +13,8 @@ export interface AnalysisFilters {
   cleanliness?: 'clean' | 'broken'
 }
 
-export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeForStat[]> {
-  const where: Record<string, unknown> = {
-    status: 'CLOSED',
-    pnl: { not: null },
-    rMultiple: { not: null },
-  }
-
+function buildBaseWhere(f: AnalysisFilters): Prisma.TradeWhereInput {
+  const where: Prisma.TradeWhereInput = {}
   if (f.from || f.to) {
     where.tradeDate = {
       ...(f.from ? { gte: f.from } : {}),
@@ -29,15 +25,23 @@ export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeFor
   if (f.setupId) where.setupId = f.setupId
   if (f.subSetupId) where.subSetupId = f.subSetupId
   if (f.instrument) where.instrument = f.instrument
-
   if (f.cleanliness === 'broken') {
     where.ruleBreak = { isNot: null }
   } else if (f.cleanliness === 'clean') {
     where.ruleBreak = null
   }
-
   if (f.tagId) {
     where.triggerRules = { some: { triggerRuleId: f.tagId } }
+  }
+  return where
+}
+
+export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeForStat[]> {
+  const where = {
+    ...buildBaseWhere(f),
+    status: TradeStatus.CLOSED,
+    pnl: { not: null },
+    rMultiple: { not: null },
   }
 
   const trades = await db.trade.findMany({
@@ -64,5 +68,24 @@ export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeFor
     hasRuleBreak: t.ruleBreak !== null,
     ruleBreakPnlImpact: t.ruleBreak ? Number(t.ruleBreak.pnlImpact.toString()) : undefined,
     ruleBreakRImpact: t.ruleBreak ? Number(t.ruleBreak.rMultipleImpact.toString()) : undefined,
+    executionPnl: t.executionPnl != null ? Number(t.executionPnl.toString()) : null,
+    status: t.status,
   }))
+}
+
+/** Sum of executionPnl across CLOSED + MISSED, respecting the same filters. Skips nulls. */
+export async function getExecutionPnlSum(f: AnalysisFilters): Promise<number | null> {
+  const where = {
+    ...buildBaseWhere(f),
+    status: { in: [TradeStatus.CLOSED, TradeStatus.MISSED] },
+    executionPnl: { not: null },
+  }
+
+  const result = await db.trade.aggregate({
+    where,
+    _sum: { executionPnl: true },
+  })
+
+  const sum = result._sum?.executionPnl
+  return sum != null ? Number(sum.toString()) : null
 }

@@ -17,6 +17,8 @@ function makeTrade(overrides: Partial<TradeForStat> & { pnl: number; rMultiple: 
     subSetupName: null,
     tagNames: [],
     hasRuleBreak: false,
+    executionPnl: null,
+    status: 'CLOSED',
     ...overrides,
   }
 }
@@ -28,8 +30,9 @@ describe('computeStat', () => {
     expect(s.winRate).toBe(0)
     expect(s.expectancyR).toBe(0)
     expect(s.profitFactor).toBe(0)
-    // no NaN anywhere
+    // no NaN anywhere (null is allowed for executionPnlSum when no trades)
     for (const v of Object.values(s)) {
+      if (v === null) continue
       expect(typeof v).toBe('number')
       expect(isNaN(v as number)).toBe(false)
     }

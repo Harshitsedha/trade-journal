@@ -1358,6 +1358,12 @@ export const TradeScalarFieldEnum = {
   thesis: 'thesis',
   notes: 'notes',
   tradeDate: 'tradeDate',
+  idealEntry: 'idealEntry',
+  idealStop: 'idealStop',
+  idealExit: 'idealExit',
+  idealDirection: 'idealDirection',
+  sideCorrect: 'sideCorrect',
+  executionPnl: 'executionPnl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1546,6 +1552,13 @@ export type ListEnumTradeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'RuleBreakType'
  */
 export type EnumRuleBreakTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RuleBreakType'>
@@ -1570,13 +1583,6 @@ export type EnumTriggerDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'TriggerDirection[]'
  */
 export type ListEnumTriggerDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TriggerDirection[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

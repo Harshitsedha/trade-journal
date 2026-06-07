@@ -4,6 +4,7 @@ import { UpdateTradeSchema } from '@/lib/validations/trade'
 import { getTradeById } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
 import { computeRMultiple, computePnl, computeRuleBreakImpact } from '@/lib/calculations'
+import { computeSideCorrect, computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -33,33 +34,51 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
 
   const {
     instrument, assetClass, expiry, setupId, subSetupId,
-    direction, entryPrice, stopLoss, targets, quantity, riskAmount,
+    direction: directionRaw, entryPrice: entryRaw, stopLoss: stopRaw,
+    targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate,
     exitPrice, status, triggerRules, ruleBreak,
+    idealEntry, idealStop, idealExit, idealDirection,
   } = parsed.data
+
+  const isMissed = status === 'MISSED'
+  const direction = (directionRaw ?? (idealDirection ?? existing.direction)) as 'LONG' | 'SHORT'
+  const entryPrice = entryRaw ?? (isMissed ? '0' : existing.entryPrice.toString())
+  const stopLoss = stopRaw ?? (isMissed ? '0' : existing.stopLoss.toString())
+  const targets = targetsRaw?.length ? targetsRaw : (existing.targets as { toString(): string }[]).map(t => t.toString())
+  const quantity = qtyRaw ?? existing.quantity.toString()
+  const riskAmount = riskRaw ?? existing.riskAmount.toString()
+
+  // Compute sideCorrect from manual idealDirection field
+  const newIdealDirection = idealDirection !== undefined ? (idealDirection ?? null) : (existing.idealDirection as 'LONG' | 'SHORT' | null)
+  const sideCorrect = computeSideCorrect(direction, newIdealDirection)
 
   // Update all entry fields
   const updateData: Parameters<typeof db.trade.update>[0]['data'] = {
-    instrument: instrument.toUpperCase().trim(),
-    assetClass,
-    expiry: expiry ? new Date(expiry) : null,
-    setupId,
-    subSetupId: subSetupId ?? null,
+    instrument: instrument ? instrument.toUpperCase().trim() : existing.instrument,
+    assetClass: assetClass ?? existing.assetClass,
+    expiry: expiry !== undefined ? (expiry ? new Date(expiry) : null) : existing.expiry,
+    setupId: setupId ?? existing.setupId,
+    subSetupId: subSetupId !== undefined ? (subSetupId ?? null) : existing.subSetupId,
     direction,
     entryPrice,
     stopLoss,
     targets,
     quantity,
     riskAmount,
-    thesis: thesis ?? null,
-    notes: notes ?? null,
-    tradeDate: new Date(tradeDate),
+    thesis: thesis !== undefined ? (thesis ?? null) : existing.thesis,
+    notes: notes !== undefined ? (notes ?? null) : existing.notes,
+    tradeDate: tradeDate ? new Date(tradeDate) : existing.tradeDate,
+    idealEntry: idealEntry !== undefined ? (idealEntry ?? null) : existing.idealEntry,
+    idealStop: idealStop !== undefined ? (idealStop ?? null) : existing.idealStop,
+    idealExit: idealExit !== undefined ? (idealExit ?? null) : existing.idealExit,
+    idealDirection: idealDirection !== undefined ? (idealDirection ?? null) : existing.idealDirection,
+    sideCorrect,
     ...(status && { status }),
   }
 
-  // Recompute derived values
+  // Recompute pnl / rMultiple
   if (exitPrice) {
-    // New exit price provided: close the trade and compute fresh
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, exitPrice)
     const pnl = computePnl(direction, entryPrice, exitPrice, quantity)
     updateData.exitPrice = exitPrice
@@ -67,13 +86,30 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
   } else if (existing.exitPrice) {
-    // Trade was already closed — recompute from existing exit with potentially new entry data
     const existingExit = existing.exitPrice.toString()
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, existingExit)
     const pnl = computePnl(direction, entryPrice, existingExit, quantity)
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
+  } else if (isMissed) {
+    updateData.pnl = '0'
   }
+
+  // Compute executionPnl
+  const resolvedIdealEntry = (updateData.idealEntry as string | null | undefined) ?? existing.idealEntry
+  const resolvedIdealExit = (updateData.idealExit as string | null | undefined) ?? existing.idealExit
+  const resolvedIdealDir = (updateData.idealDirection as 'LONG' | 'SHORT' | null | undefined) ?? newIdealDirection
+  const resolvedQty = quantity
+  const idealPnl = computeIdealPnl({
+    idealEntry: resolvedIdealEntry,
+    idealExit: resolvedIdealExit,
+    idealDirection: resolvedIdealDir,
+    quantity: resolvedQty,
+  })
+  const actualPnl = updateData.pnl != null
+    ? Number(String(updateData.pnl))
+    : (existing.pnl != null ? Number(existing.pnl.toString()) : (isMissed ? 0 : null))
+  updateData.executionPnl = actualPnl != null ? (computeExecutionPnl(actualPnl, idealPnl) !== null ? String(computeExecutionPnl(actualPnl, idealPnl)) : null) : null
 
   await db.trade.update({ where: { id }, data: updateData })
 

@@ -29,7 +29,8 @@ export type Direction = (typeof Direction)[keyof typeof Direction]
 export const TradeStatus = {
   OPEN: 'OPEN',
   CLOSED: 'CLOSED',
-  SCRATCHED: 'SCRATCHED'
+  SCRATCHED: 'SCRATCHED',
+  MISSED: 'MISSED'
 } as const
 
 export type TradeStatus = (typeof TradeStatus)[keyof typeof TradeStatus]

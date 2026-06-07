@@ -35,6 +35,10 @@ export type TradeAvgAggregateOutputType = {
   riskAmount: runtime.Decimal | null
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  idealEntry: runtime.Decimal | null
+  idealStop: runtime.Decimal | null
+  idealExit: runtime.Decimal | null
+  executionPnl: runtime.Decimal | null
 }
 
 export type TradeSumAggregateOutputType = {
@@ -46,6 +50,10 @@ export type TradeSumAggregateOutputType = {
   riskAmount: runtime.Decimal | null
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  idealEntry: runtime.Decimal | null
+  idealStop: runtime.Decimal | null
+  idealExit: runtime.Decimal | null
+  executionPnl: runtime.Decimal | null
 }
 
 export type TradeMinAggregateOutputType = {
@@ -67,6 +75,12 @@ export type TradeMinAggregateOutputType = {
   thesis: string | null
   notes: string | null
   tradeDate: Date | null
+  idealEntry: runtime.Decimal | null
+  idealStop: runtime.Decimal | null
+  idealExit: runtime.Decimal | null
+  idealDirection: $Enums.Direction | null
+  sideCorrect: boolean | null
+  executionPnl: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -90,6 +104,12 @@ export type TradeMaxAggregateOutputType = {
   thesis: string | null
   notes: string | null
   tradeDate: Date | null
+  idealEntry: runtime.Decimal | null
+  idealStop: runtime.Decimal | null
+  idealExit: runtime.Decimal | null
+  idealDirection: $Enums.Direction | null
+  sideCorrect: boolean | null
+  executionPnl: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -114,6 +134,12 @@ export type TradeCountAggregateOutputType = {
   thesis: number
   notes: number
   tradeDate: number
+  idealEntry: number
+  idealStop: number
+  idealExit: number
+  idealDirection: number
+  sideCorrect: number
+  executionPnl: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -129,6 +155,10 @@ export type TradeAvgAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  idealEntry?: true
+  idealStop?: true
+  idealExit?: true
+  executionPnl?: true
 }
 
 export type TradeSumAggregateInputType = {
@@ -140,6 +170,10 @@ export type TradeSumAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  idealEntry?: true
+  idealStop?: true
+  idealExit?: true
+  executionPnl?: true
 }
 
 export type TradeMinAggregateInputType = {
@@ -161,6 +195,12 @@ export type TradeMinAggregateInputType = {
   thesis?: true
   notes?: true
   tradeDate?: true
+  idealEntry?: true
+  idealStop?: true
+  idealExit?: true
+  idealDirection?: true
+  sideCorrect?: true
+  executionPnl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -184,6 +224,12 @@ export type TradeMaxAggregateInputType = {
   thesis?: true
   notes?: true
   tradeDate?: true
+  idealEntry?: true
+  idealStop?: true
+  idealExit?: true
+  idealDirection?: true
+  sideCorrect?: true
+  executionPnl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -208,6 +254,12 @@ export type TradeCountAggregateInputType = {
   thesis?: true
   notes?: true
   tradeDate?: true
+  idealEntry?: true
+  idealStop?: true
+  idealExit?: true
+  idealDirection?: true
+  sideCorrect?: true
+  executionPnl?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -319,6 +371,12 @@ export type TradeGroupByOutputType = {
   thesis: string | null
   notes: string | null
   tradeDate: Date
+  idealEntry: runtime.Decimal | null
+  idealStop: runtime.Decimal | null
+  idealExit: runtime.Decimal | null
+  idealDirection: $Enums.Direction | null
+  sideCorrect: boolean | null
+  executionPnl: runtime.Decimal | null
   createdAt: Date
   updatedAt: Date
   _count: TradeCountAggregateOutputType | null
@@ -366,6 +424,12 @@ export type TradeWhereInput = {
   thesis?: Prisma.StringNullableFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableFilter<"Trade"> | string | null
   tradeDate?: Prisma.DateTimeFilter<"Trade"> | Date | string
+  idealEntry?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.EnumDirectionNullableFilter<"Trade"> | $Enums.Direction | null
+  sideCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
+  executionPnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   setup?: Prisma.XOR<Prisma.SetupScalarRelationFilter, Prisma.SetupWhereInput>
@@ -395,6 +459,12 @@ export type TradeOrderByWithRelationInput = {
   thesis?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   tradeDate?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrderInput | Prisma.SortOrder
+  idealStop?: Prisma.SortOrderInput | Prisma.SortOrder
+  idealExit?: Prisma.SortOrderInput | Prisma.SortOrder
+  idealDirection?: Prisma.SortOrderInput | Prisma.SortOrder
+  sideCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
+  executionPnl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   setup?: Prisma.SetupOrderByWithRelationInput
@@ -427,6 +497,12 @@ export type TradeWhereUniqueInput = Prisma.AtLeast<{
   thesis?: Prisma.StringNullableFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableFilter<"Trade"> | string | null
   tradeDate?: Prisma.DateTimeFilter<"Trade"> | Date | string
+  idealEntry?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.EnumDirectionNullableFilter<"Trade"> | $Enums.Direction | null
+  sideCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
+  executionPnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   setup?: Prisma.XOR<Prisma.SetupScalarRelationFilter, Prisma.SetupWhereInput>
@@ -456,6 +532,12 @@ export type TradeOrderByWithAggregationInput = {
   thesis?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   tradeDate?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrderInput | Prisma.SortOrder
+  idealStop?: Prisma.SortOrderInput | Prisma.SortOrder
+  idealExit?: Prisma.SortOrderInput | Prisma.SortOrder
+  idealDirection?: Prisma.SortOrderInput | Prisma.SortOrder
+  sideCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
+  executionPnl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TradeCountOrderByAggregateInput
@@ -488,6 +570,12 @@ export type TradeScalarWhereWithAggregatesInput = {
   thesis?: Prisma.StringNullableWithAggregatesFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Trade"> | string | null
   tradeDate?: Prisma.DateTimeWithAggregatesFilter<"Trade"> | Date | string
+  idealEntry?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.EnumDirectionNullableWithAggregatesFilter<"Trade"> | $Enums.Direction | null
+  sideCorrect?: Prisma.BoolNullableWithAggregatesFilter<"Trade"> | boolean | null
+  executionPnl?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Trade"> | Date | string
 }
@@ -510,6 +598,12 @@ export type TradeCreateInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -539,6 +633,12 @@ export type TradeUncheckedCreateInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -564,6 +664,12 @@ export type TradeUpdateInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -593,6 +699,12 @@ export type TradeUncheckedUpdateInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -620,6 +732,12 @@ export type TradeCreateManyInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -642,6 +760,12 @@ export type TradeUpdateManyMutationInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -666,6 +790,12 @@ export type TradeUncheckedUpdateManyInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -708,6 +838,12 @@ export type TradeCountOrderByAggregateInput = {
   thesis?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   tradeDate?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrder
+  idealStop?: Prisma.SortOrder
+  idealExit?: Prisma.SortOrder
+  idealDirection?: Prisma.SortOrder
+  sideCorrect?: Prisma.SortOrder
+  executionPnl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -721,6 +857,10 @@ export type TradeAvgOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrder
+  idealStop?: Prisma.SortOrder
+  idealExit?: Prisma.SortOrder
+  executionPnl?: Prisma.SortOrder
 }
 
 export type TradeMaxOrderByAggregateInput = {
@@ -742,6 +882,12 @@ export type TradeMaxOrderByAggregateInput = {
   thesis?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   tradeDate?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrder
+  idealStop?: Prisma.SortOrder
+  idealExit?: Prisma.SortOrder
+  idealDirection?: Prisma.SortOrder
+  sideCorrect?: Prisma.SortOrder
+  executionPnl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -765,6 +911,12 @@ export type TradeMinOrderByAggregateInput = {
   thesis?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   tradeDate?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrder
+  idealStop?: Prisma.SortOrder
+  idealExit?: Prisma.SortOrder
+  idealDirection?: Prisma.SortOrder
+  sideCorrect?: Prisma.SortOrder
+  executionPnl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -778,6 +930,10 @@ export type TradeSumOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  idealEntry?: Prisma.SortOrder
+  idealStop?: Prisma.SortOrder
+  idealExit?: Prisma.SortOrder
+  executionPnl?: Prisma.SortOrder
 }
 
 export type TradeScalarRelationFilter = {
@@ -906,6 +1062,14 @@ export type EnumTradeStatusFieldUpdateOperationsInput = {
   set?: $Enums.TradeStatus
 }
 
+export type NullableEnumDirectionFieldUpdateOperationsInput = {
+  set?: $Enums.Direction | null
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
+}
+
 export type TradeCreateNestedOneWithoutImagesInput = {
   create?: Prisma.XOR<Prisma.TradeCreateWithoutImagesInput, Prisma.TradeUncheckedCreateWithoutImagesInput>
   connectOrCreate?: Prisma.TradeCreateOrConnectWithoutImagesInput
@@ -966,6 +1130,12 @@ export type TradeCreateWithoutSetupInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
@@ -993,6 +1163,12 @@ export type TradeUncheckedCreateWithoutSetupInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1049,6 +1225,12 @@ export type TradeScalarWhereInput = {
   thesis?: Prisma.StringNullableFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableFilter<"Trade"> | string | null
   tradeDate?: Prisma.DateTimeFilter<"Trade"> | Date | string
+  idealEntry?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.EnumDirectionNullableFilter<"Trade"> | $Enums.Direction | null
+  sideCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
+  executionPnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
 }
@@ -1071,6 +1253,12 @@ export type TradeCreateWithoutSubSetupInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1098,6 +1286,12 @@ export type TradeUncheckedCreateWithoutSubSetupInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1149,6 +1343,12 @@ export type TradeCreateWithoutImagesInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1177,6 +1377,12 @@ export type TradeUncheckedCreateWithoutImagesInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
@@ -1217,6 +1423,12 @@ export type TradeUpdateWithoutImagesInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1245,6 +1457,12 @@ export type TradeUncheckedUpdateWithoutImagesInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
@@ -1269,6 +1487,12 @@ export type TradeCreateWithoutRuleBreakInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1297,6 +1521,12 @@ export type TradeUncheckedCreateWithoutRuleBreakInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1337,6 +1567,12 @@ export type TradeUpdateWithoutRuleBreakInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1365,6 +1601,12 @@ export type TradeUncheckedUpdateWithoutRuleBreakInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1389,6 +1631,12 @@ export type TradeCreateWithoutTriggerRulesInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1417,6 +1665,12 @@ export type TradeUncheckedCreateWithoutTriggerRulesInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1457,6 +1711,12 @@ export type TradeUpdateWithoutTriggerRulesInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1485,6 +1745,12 @@ export type TradeUncheckedUpdateWithoutTriggerRulesInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1510,6 +1776,12 @@ export type TradeCreateManySetupInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1532,6 +1804,12 @@ export type TradeUpdateWithoutSetupInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
@@ -1559,6 +1837,12 @@ export type TradeUncheckedUpdateWithoutSetupInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1585,6 +1869,12 @@ export type TradeUncheckedUpdateManyWithoutSetupInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1608,6 +1898,12 @@ export type TradeCreateManySubSetupInput = {
   thesis?: string | null
   notes?: string | null
   tradeDate?: Date | string
+  idealEntry?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: $Enums.Direction | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1630,6 +1926,12 @@ export type TradeUpdateWithoutSubSetupInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1657,6 +1959,12 @@ export type TradeUncheckedUpdateWithoutSubSetupInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1683,6 +1991,12 @@ export type TradeUncheckedUpdateManyWithoutSubSetupInput = {
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealEntry?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealStop?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  idealDirection?: Prisma.NullableEnumDirectionFieldUpdateOperationsInput | $Enums.Direction | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1747,6 +2061,12 @@ export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   thesis?: boolean
   notes?: boolean
   tradeDate?: boolean
+  idealEntry?: boolean
+  idealStop?: boolean
+  idealExit?: boolean
+  idealDirection?: boolean
+  sideCorrect?: boolean
+  executionPnl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
@@ -1777,6 +2097,12 @@ export type TradeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   thesis?: boolean
   notes?: boolean
   tradeDate?: boolean
+  idealEntry?: boolean
+  idealStop?: boolean
+  idealExit?: boolean
+  idealDirection?: boolean
+  sideCorrect?: boolean
+  executionPnl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
@@ -1803,6 +2129,12 @@ export type TradeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   thesis?: boolean
   notes?: boolean
   tradeDate?: boolean
+  idealEntry?: boolean
+  idealStop?: boolean
+  idealExit?: boolean
+  idealDirection?: boolean
+  sideCorrect?: boolean
+  executionPnl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
@@ -1829,11 +2161,17 @@ export type TradeSelectScalar = {
   thesis?: boolean
   notes?: boolean
   tradeDate?: boolean
+  idealEntry?: boolean
+  idealStop?: boolean
+  idealExit?: boolean
+  idealDirection?: boolean
+  sideCorrect?: boolean
+  executionPnl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "instrument" | "assetClass" | "expiry" | "setupId" | "subSetupId" | "direction" | "entryPrice" | "stopLoss" | "targets" | "exitPrice" | "quantity" | "riskAmount" | "rMultiple" | "pnl" | "status" | "thesis" | "notes" | "tradeDate" | "createdAt" | "updatedAt", ExtArgs["result"]["trade"]>
+export type TradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "instrument" | "assetClass" | "expiry" | "setupId" | "subSetupId" | "direction" | "entryPrice" | "stopLoss" | "targets" | "exitPrice" | "quantity" | "riskAmount" | "rMultiple" | "pnl" | "status" | "thesis" | "notes" | "tradeDate" | "idealEntry" | "idealStop" | "idealExit" | "idealDirection" | "sideCorrect" | "executionPnl" | "createdAt" | "updatedAt", ExtArgs["result"]["trade"]>
 export type TradeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
@@ -1880,6 +2218,12 @@ export type $TradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     thesis: string | null
     notes: string | null
     tradeDate: Date
+    idealEntry: runtime.Decimal | null
+    idealStop: runtime.Decimal | null
+    idealExit: runtime.Decimal | null
+    idealDirection: $Enums.Direction | null
+    sideCorrect: boolean | null
+    executionPnl: runtime.Decimal | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["trade"]>
@@ -2329,6 +2673,12 @@ export interface TradeFieldRefs {
   readonly thesis: Prisma.FieldRef<"Trade", 'String'>
   readonly notes: Prisma.FieldRef<"Trade", 'String'>
   readonly tradeDate: Prisma.FieldRef<"Trade", 'DateTime'>
+  readonly idealEntry: Prisma.FieldRef<"Trade", 'Decimal'>
+  readonly idealStop: Prisma.FieldRef<"Trade", 'Decimal'>
+  readonly idealExit: Prisma.FieldRef<"Trade", 'Decimal'>
+  readonly idealDirection: Prisma.FieldRef<"Trade", 'Direction'>
+  readonly sideCorrect: Prisma.FieldRef<"Trade", 'Boolean'>
+  readonly executionPnl: Prisma.FieldRef<"Trade", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"Trade", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Trade", 'DateTime'>
 }

@@ -88,6 +88,26 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
     trade.triggerRules.map(t => ({ triggerRuleId: t.triggerRuleId, isPrimary: t.isPrimary }))
   )
 
+  // Ideal execution fields (manual, no auto-prefill)
+  const [idealEntry, setIdealEntry] = useState(
+    (trade as Record<string, unknown>).idealEntry != null
+      ? String((trade as Record<string, unknown>).idealEntry)
+      : ''
+  )
+  const [idealStop, setIdealStop] = useState(
+    (trade as Record<string, unknown>).idealStop != null
+      ? String((trade as Record<string, unknown>).idealStop)
+      : ''
+  )
+  const [idealExit, setIdealExit] = useState(
+    (trade as Record<string, unknown>).idealExit != null
+      ? String((trade as Record<string, unknown>).idealExit)
+      : ''
+  )
+  const [idealDirection, setIdealDirection] = useState<'' | 'LONG' | 'SHORT'>(
+    ((trade as Record<string, unknown>).idealDirection as '' | 'LONG' | 'SHORT') ?? ''
+  )
+
   // OPEN-only fields
   const [exitPrice, setExitPrice] = useState('')
   const [hasRuleBreak, setHasRuleBreak] = useState(false)
@@ -174,6 +194,10 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         notes: notes || null,
         tradeDate: new Date(tradeDate).toISOString(),
         triggerRules: selectedTriggers,
+        idealEntry: idealEntry || null,
+        idealStop: idealStop || null,
+        idealExit: idealExit || null,
+        idealDirection: idealDirection || null,
       }
 
       if (isOpen && exitPrice.trim()) {
@@ -213,6 +237,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, notes, tradeDate, selectedTriggers,
+      idealEntry, idealStop, idealExit, idealDirection,
       isOpen, exitPrice, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router, onDone,
     ]
@@ -448,6 +473,65 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
           maxLength={5000}
           className="w-full px-3 py-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[var(--color-ink)] text-sm placeholder:text-[var(--color-ink-muted)] focus:outline-none focus:border-[var(--color-accent)] resize-none transition-colors"
         />
+      </div>
+
+      {/* Ideal execution fields */}
+      <div
+        className="flex flex-col gap-4 p-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]"
+        style={{ borderWidth: '0.5px' }}
+      >
+        <p className="text-xs font-semibold text-[var(--color-ink-muted)] uppercase tracking-wider">
+          Ideal Execution (optional)
+        </p>
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Ideal Direction</span>
+          <div className="flex gap-2">
+            {(['', 'LONG', 'SHORT'] as const).map(d => (
+              <button
+                key={d || 'none'}
+                type="button"
+                onClick={() => setIdealDirection(d)}
+                className={`flex-1 py-2 rounded-[var(--radius-md)] text-sm font-medium border transition-all cursor-pointer ${
+                  idealDirection === d
+                    ? d === 'LONG'
+                      ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
+                      : d === 'SHORT'
+                      ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
+                      : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] border-[var(--color-border)]'
+                    : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] border-[var(--color-border)]'
+                }`}
+              >
+                {d || 'None'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <Input
+            label="Ideal Entry"
+            placeholder="0.00"
+            inputMode="decimal"
+            value={idealEntry}
+            onChange={e => setIdealEntry(e.target.value)}
+            className="font-mono"
+          />
+          <Input
+            label="Ideal Stop"
+            placeholder="0.00"
+            inputMode="decimal"
+            value={idealStop}
+            onChange={e => setIdealStop(e.target.value)}
+            className="font-mono"
+          />
+          <Input
+            label="Ideal Exit"
+            placeholder="0.00"
+            inputMode="decimal"
+            value={idealExit}
+            onChange={e => setIdealExit(e.target.value)}
+            className="font-mono"
+          />
+        </div>
       </div>
 
       {/* Exit fields — OPEN only */}

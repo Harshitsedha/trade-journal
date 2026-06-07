@@ -11,6 +11,42 @@ export interface TradeForStat {
   hasRuleBreak: boolean
   ruleBreakPnlImpact?: number
   ruleBreakRImpact?: number
+  executionPnl: number | null
+  status: string
+}
+
+// ── Compute helpers ──────────────────────────────────────────────────────────
+
+export function computeSideCorrect(
+  actualDirection: 'LONG' | 'SHORT',
+  idealDirection: 'LONG' | 'SHORT' | null | undefined,
+): boolean | null {
+  if (!idealDirection) return null
+  return actualDirection === idealDirection
+}
+
+type DecimalLike = { toString(): string } | string | number | null | undefined
+
+export function computeIdealPnl(t: {
+  idealEntry?: DecimalLike
+  idealExit?: DecimalLike
+  idealDirection?: 'LONG' | 'SHORT' | null
+  quantity: DecimalLike
+}): number | null {
+  if (t.idealEntry == null || t.idealExit == null || !t.idealDirection) return null
+  const entry = Number(t.idealEntry.toString())
+  const exit = Number(t.idealExit.toString())
+  const qty = Number((t.quantity ?? 0).toString())
+  const diff = t.idealDirection === 'SHORT' ? entry - exit : exit - entry
+  return diff * qty
+}
+
+export function computeExecutionPnl(
+  actualPnl: number,
+  idealPnl: number | null,
+): number | null {
+  if (idealPnl == null) return null
+  return actualPnl - idealPnl
 }
 
 export interface TradeStat {
@@ -33,6 +69,7 @@ export interface TradeStat {
   worstPnl: number
   maxWinStreak: number
   maxLossStreak: number
+  executionPnlSum: number | null
 }
 
 export interface CleanVsBroken {
@@ -50,7 +87,16 @@ export interface GroupRow {
 export function computeStat(trades: TradeForStat[]): TradeStat {
   if (trades.length === 0) return emptyStat()
 
-  const sorted = [...trades].sort((a, b) => a.tradeDate.getTime() - b.tradeDate.getTime())
+  // executionPnlSum: sum across ALL trades (CLOSED + MISSED), skipping nulls
+  const execPnlTrades = trades.filter(t => t.executionPnl != null)
+  const executionPnlSum = execPnlTrades.length > 0
+    ? execPnlTrades.reduce((sum, t) => sum + t.executionPnl!, 0)
+    : null
+
+  // Main P&L / R stats: exclude MISSED (they have pnl=0, no real exit)
+  const closedTrades = trades.filter(t => t.status !== 'MISSED')
+
+  const sorted = [...closedTrades].sort((a, b) => a.tradeDate.getTime() - b.tradeDate.getTime())
 
   let wins = 0, losses = 0, breakeven = 0
   let grossProfit = 0, grossLoss = 0
@@ -85,7 +131,7 @@ export function computeStat(trades: TradeForStat[]): TradeStat {
   const tradeable = wins + losses
   const winRate = tradeable > 0 ? wins / tradeable : 0
   const totalPnl = grossProfit + grossLoss
-  const n = trades.length
+  const n = closedTrades.length
 
   const profitFactor =
     grossLoss === 0 && grossProfit > 0
@@ -125,6 +171,7 @@ export function computeStat(trades: TradeForStat[]): TradeStat {
     worstPnl: n > 0 ? worstPnl : 0,
     maxWinStreak,
     maxLossStreak,
+    executionPnlSum,
   }
 }
 
@@ -191,5 +238,6 @@ function emptyStat(): TradeStat {
     profitFactor: 0,
     bestR: 0, worstR: 0, bestPnl: 0, worstPnl: 0,
     maxWinStreak: 0, maxLossStreak: 0,
+    executionPnlSum: null,
   }
 }

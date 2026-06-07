@@ -6,12 +6,23 @@ import Decimal from 'decimal.js'
 import type { TradeWithRelations } from '@/types'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 import { ImageUploader } from './ImageUploader'
 import { EditTradeForm } from './EditTradeForm'
 
 interface TradeDetailProps {
   trade: TradeWithRelations
 }
+
+const RULE_BREAK_OPTIONS = [
+  { value: 'EARLY_EXIT', label: 'Early Exit' },
+  { value: 'LATE_EXIT', label: 'Late Exit' },
+  { value: 'MOVED_STOP', label: 'Moved Stop' },
+  { value: 'OVERSIZED', label: 'Oversized' },
+  { value: 'REVENGE_TRADE', label: 'Revenge Trade' },
+  { value: 'OTHER', label: 'Other' },
+]
 
 export function TradeDetail({ trade }: TradeDetailProps) {
   const router = useRouter()
@@ -20,8 +31,20 @@ export function TradeDetail({ trade }: TradeDetailProps) {
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
+  // Quick exit state
+  const [qeExitPrice, setQeExitPrice] = useState('')
+  const [qeHasRuleBreak, setQeHasRuleBreak] = useState(false)
+  const [qeBreakType, setQeBreakType] = useState('EARLY_EXIT')
+  const [qeRuleDescription, setQeRuleDescription] = useState('')
+  const [qeActualExitPrice, setQeActualExitPrice] = useState('')
+  const [qeRuleExitPrice, setQeRuleExitPrice] = useState('')
+  const [qeRbNotes, setQeRbNotes] = useState('')
+  const [qeLoading, setQeLoading] = useState(false)
+  const [qeError, setQeError] = useState<string | null>(null)
+
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
+  const isOpen = trade.status === 'OPEN'
 
   async function handleDelete() {
     setDeleting(true)
@@ -38,12 +61,67 @@ export function TradeDetail({ trade }: TradeDetailProps) {
     }
   }
 
+  async function handleQuickExit() {
+    if (!qeExitPrice.trim()) return
+    setQeLoading(true)
+    setQeError(null)
+
+    const body: Record<string, unknown> = {
+      instrument: trade.instrument,
+      assetClass: trade.assetClass,
+      expiry: trade.expiry ? new Date(trade.expiry).toISOString() : null,
+      setupId: trade.setupId,
+      subSetupId: trade.subSetupId ?? null,
+      direction: trade.direction,
+      entryPrice: trade.entryPrice.toString(),
+      stopLoss: trade.stopLoss.toString(),
+      targets: (trade.targets as Decimal[]).map(t => t.toString()),
+      quantity: trade.quantity.toString(),
+      riskAmount: trade.riskAmount.toString(),
+      thesis: trade.thesis ?? null,
+      notes: trade.notes ?? null,
+      tradeDate: new Date(trade.tradeDate).toISOString(),
+      triggerRules: trade.triggerRules.map(tr => ({
+        triggerRuleId: tr.triggerRuleId,
+        isPrimary: tr.isPrimary,
+      })),
+      exitPrice: qeExitPrice,
+      status: 'CLOSED',
+    }
+
+    if (qeHasRuleBreak && qeRuleDescription.trim()) {
+      body.ruleBreak = {
+        breakType: qeBreakType,
+        ruleDescription: qeRuleDescription,
+        actualExitPrice: qeActualExitPrice || qeExitPrice,
+        ruleExitPrice: qeRuleExitPrice || null,
+        notes: qeRbNotes || null,
+      }
+    }
+
+    try {
+      const res = await fetch(`/api/trades/${trade.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) throw new Error('Failed to close trade')
+      router.refresh()
+    } catch (err) {
+      setQeError(err instanceof Error ? err.message : 'Failed to close trade')
+    } finally {
+      setQeLoading(false)
+    }
+  }
+
+  const sideCorrect: boolean | null = (trade as Record<string, unknown>).sideCorrect as boolean | null ?? null
+
   return (
     <div className="flex flex-col gap-6 p-6 max-w-3xl">
       {/* Header row */}
       <div className="flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-xl font-semibold font-mono text-[var(--color-ink)]">
               {trade.instrument}
             </h2>
@@ -61,6 +139,12 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             >
               {trade.status}
             </Badge>
+            {sideCorrect === true && (
+              <Badge variant="profit">Side ✓</Badge>
+            )}
+            {sideCorrect === false && (
+              <Badge variant="loss">Wrong Side</Badge>
+            )}
           </div>
           <p className="mt-1 text-sm text-[var(--color-ink-secondary)]">
             {trade.setup.name}
@@ -144,6 +228,105 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         <p className="text-xs text-[var(--color-loss)] bg-[var(--color-loss-bg)] px-3 py-2 rounded-[var(--radius-md)]">
           {deleteError}
         </p>
+      )}
+
+      {/* Quick Exit — visible for OPEN trades when not in full edit mode */}
+      {isOpen && !isEditing && (
+        <div
+          className="flex flex-col gap-4 p-5 rounded-[var(--radius-lg)] border border-[var(--color-accent)] bg-[var(--color-surface)]"
+          style={{ borderWidth: '0.5px' }}
+        >
+          <p className="text-sm font-semibold text-[var(--color-ink)]">Close Trade</p>
+
+          <Input
+            label="Exit Price"
+            placeholder="0.00"
+            inputMode="decimal"
+            value={qeExitPrice}
+            onChange={e => setQeExitPrice(e.target.value)}
+            className="font-mono"
+          />
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="qeHasRuleBreak"
+              checked={qeHasRuleBreak}
+              onChange={e => setQeHasRuleBreak(e.target.checked)}
+              className="w-4 h-4 accent-[var(--color-accent)] cursor-pointer"
+            />
+            <label htmlFor="qeHasRuleBreak" className="text-sm text-[var(--color-ink-secondary)] cursor-pointer">
+              Non-rule exit
+            </label>
+          </div>
+
+          {qeHasRuleBreak && (
+            <div
+              className="flex flex-col gap-3 p-4 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-loss-bg)]"
+              style={{ borderWidth: '0.5px' }}
+            >
+              <p className="text-xs font-semibold text-[var(--color-loss)] uppercase tracking-wider">Rule Break</p>
+              <Select
+                label="Break Type"
+                options={RULE_BREAK_OPTIONS}
+                value={qeBreakType}
+                onChange={e => setQeBreakType(e.target.value)}
+              />
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-[var(--color-ink-secondary)]">Rule That Was Broken</label>
+                <textarea
+                  rows={2}
+                  placeholder="Which rule did you break?"
+                  value={qeRuleDescription}
+                  onChange={e => setQeRuleDescription(e.target.value)}
+                  maxLength={500}
+                  className="w-full px-3 py-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-ink)] text-sm placeholder:text-[var(--color-ink-muted)] focus:outline-none focus:border-[var(--color-loss)] resize-none transition-colors"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Actual Exit"
+                  placeholder={qeExitPrice || '0.00'}
+                  inputMode="decimal"
+                  value={qeActualExitPrice}
+                  onChange={e => setQeActualExitPrice(e.target.value)}
+                  className="font-mono"
+                />
+                <Input
+                  label="Rule Exit"
+                  placeholder="Where should you have exited?"
+                  inputMode="decimal"
+                  value={qeRuleExitPrice}
+                  onChange={e => setQeRuleExitPrice(e.target.value)}
+                  className="font-mono"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-[var(--color-ink-secondary)]">Reflection</label>
+                <textarea
+                  rows={2}
+                  placeholder="Why did you break the rule?"
+                  value={qeRbNotes}
+                  onChange={e => setQeRbNotes(e.target.value)}
+                  maxLength={2000}
+                  className="w-full px-3 py-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-ink)] text-sm placeholder:text-[var(--color-ink-muted)] focus:outline-none focus:border-[var(--color-loss)] resize-none transition-colors"
+                />
+              </div>
+            </div>
+          )}
+
+          {qeError && (
+            <p className="text-xs text-[var(--color-loss)] bg-[var(--color-loss-bg)] px-3 py-2 rounded-[var(--radius-md)]">
+              {qeError}
+            </p>
+          )}
+
+          <div className="flex gap-2">
+            <Button onClick={handleQuickExit} disabled={!qeExitPrice.trim() || qeLoading}>
+              {qeLoading ? 'Closing…' : 'Close Trade'}
+            </Button>
+          </div>
+        </div>
       )}
 
       {/* Pricing grid */}

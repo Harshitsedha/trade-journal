@@ -9,6 +9,7 @@ export interface AnalysisResult {
   cleanVsBroken: CleanVsBroken
   equity: { date: string; cumPnl: number }[]
   tradeCount: number
+  executionPnlSum?: number | null
 }
 
 export type GroupDimension = 'setup' | 'subSetup' | 'instrument' | 'side' | 'tag'

@@ -349,6 +349,88 @@ describe('CLOSED trade remains editable', () => {
   })
 })
 
+describe('PATCH /api/trades/[id] — sideCorrect + executionPnl recompute', () => {
+  it('sets sideCorrect=true when actual direction matches idealDirection', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      idealDirection: 'LONG',
+    })
+    const res = await PatchTrade(req, ctx({ id: trade.id }))
+    expect(res.status).toBe(200)
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.sideCorrect).toBe(true)
+  })
+
+  it('sets sideCorrect=false when actual direction mismatches idealDirection', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      idealDirection: 'SHORT',
+    })
+    await PatchTrade(req, ctx({ id: trade.id }))
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.sideCorrect).toBe(false)
+  })
+
+  it('sets sideCorrect=null when idealDirection not provided', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+    })
+    await PatchTrade(req, ctx({ id: trade.id }))
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.sideCorrect).toBeNull()
+  })
+
+  it('computes executionPnl when ideal fields present on close', async () => {
+    const setup = await createTestSetup()
+    // LONG, entry 100, stop 95, exit 110, qty 2 → actualPnl = (110-100)*2 = 20
+    // idealEntry 99, idealExit 112, idealDirection LONG, qty 2 → idealPnl = (112-99)*2 = 26
+    // executionPnl = 20 - 26 = -6
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      idealEntry: '99',
+      idealExit: '112',
+      idealDirection: 'LONG',
+    })
+    const res = await PatchTrade(req, ctx({ id: trade.id }))
+    expect(res.status).toBe(200)
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(Number(row!.executionPnl)).toBe(-6)
+  })
+
+  it('executionPnl is null when ideal fields missing', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+    })
+    await PatchTrade(req, ctx({ id: trade.id }))
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.executionPnl).toBeNull()
+  })
+})
+
 describe('DELETE /api/trades/[id]', () => {
   it('returns 204 and removes the trade and its TradeTrigger children', async () => {
     const setup = await createTestSetup()

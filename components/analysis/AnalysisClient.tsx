@@ -116,7 +116,7 @@ export function AnalysisClient({ initial, options }: Props) {
       <FilterBar filters={filters} options={options} onChange={handleFiltersChange} />
 
       {/* Stat cards */}
-      <StatCards stat={result.overall} />
+      <StatCards stat={result.overall} executionPnlSum={result.executionPnlSum} />
 
       {/* Clean vs broken */}
       <CleanVsBrokenCard data={result.cleanVsBroken} />

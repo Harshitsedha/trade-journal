@@ -4,6 +4,7 @@ import { fmtPnl, fmtR, fmtPct, fmtPnlPlain } from '@/lib/analytics/format'
 
 interface Props {
   stat: TradeStat
+  executionPnlSum?: number | null
 }
 
 function Card({
@@ -67,7 +68,7 @@ function Card({
   )
 }
 
-export function StatCards({ stat }: Props) {
+export function StatCards({ stat, executionPnlSum }: Props) {
   const pnlPos = stat.totalPnl >= 0
   const eRPos = stat.expectancyR >= 0
 
@@ -98,6 +99,14 @@ export function StatCards({ stat }: Props) {
         sub={`Avg ${fmtPnlPlain(stat.avgPnl)} / trade`}
         positive={pnlPos}
       />
+      {executionPnlSum != null && (
+        <Card
+          label="Execution PnL"
+          value={fmtPnl(executionPnlSum)}
+          sub="actual − ideal"
+          positive={executionPnlSum >= 0}
+        />
+      )}
       <Card
         label="Profit Factor"
         value={

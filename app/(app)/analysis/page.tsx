@@ -1,12 +1,13 @@
 import { getAnalysisOptions } from '@/lib/queries/analysisOptions'
-import { getTradesForAnalysis } from '@/lib/queries/analytics'
+import { getTradesForAnalysis, getExecutionPnlSum } from '@/lib/queries/analytics'
 import { computeStat, groupBy, cleanVsBroken, equityCurve } from '@/lib/analytics/compute'
 import { AnalysisClient } from '@/components/analysis/AnalysisClient'
 
 export default async function AnalysisPage() {
-  const [options, trades] = await Promise.all([
+  const [options, trades, executionPnlSum] = await Promise.all([
     getAnalysisOptions(),
     getTradesForAnalysis({}),
+    getExecutionPnlSum({}),
   ])
 
   const initial = {
@@ -16,6 +17,7 @@ export default async function AnalysisPage() {
     equity: equityCurve(trades),
     rValues: trades.map(t => t.rMultiple),
     tradeCount: trades.length,
+    executionPnlSum,
   }
 
   return <AnalysisClient initial={initial} options={options} />

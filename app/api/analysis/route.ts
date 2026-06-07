@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/auth'
-import { getTradesForAnalysis } from '@/lib/queries/analytics'
+import { getTradesForAnalysis, getExecutionPnlSum } from '@/lib/queries/analytics'
 import { computeStat, groupBy, cleanVsBroken, equityCurve } from '@/lib/analytics/compute'
 
 const AnalysisQuerySchema = z.object({
@@ -34,7 +34,10 @@ export async function GET(req: NextRequest) {
     ...(to ? { to: new Date(to) } : {}),
   }
 
-  const trades = await getTradesForAnalysis(filters)
+  const [trades, executionPnlSum] = await Promise.all([
+    getTradesForAnalysis(filters),
+    getExecutionPnlSum(filters),
+  ])
 
   const groups = groupBy(trades, groupByDim).sort(
     (a, b) => b.stat.totalPnl - a.stat.totalPnl
@@ -47,5 +50,6 @@ export async function GET(req: NextRequest) {
     equity: equityCurve(trades),
     rValues: trades.map(t => t.rMultiple),
     tradeCount: trades.length,
+    executionPnlSum,
   })
 }
