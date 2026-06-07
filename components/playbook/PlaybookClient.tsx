@@ -131,7 +131,15 @@ export function PlaybookClient({ setups }: PlaybookClientProps) {
       {/* Right — detail panel */}
       <div className="flex-1 overflow-hidden bg-[var(--color-surface-raised)]">
         {selectedSetup ? (
-          <StrategyDetail setup={selectedSetup} />
+          <StrategyDetail
+            setup={selectedSetup}
+            onDeleted={() => {
+              const params = new URLSearchParams(searchParams.toString())
+              params.delete('setup')
+              router.push(`/playbook?${params.toString()}`)
+              router.refresh()
+            }}
+          />
         ) : (
           <div className="flex items-center justify-center h-full">
             <p className="text-sm text-[var(--color-ink-muted)]">Select a strategy to view details</p>

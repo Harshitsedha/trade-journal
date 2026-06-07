@@ -7,9 +7,11 @@ vi.mock('@/auth', () => ({
 }))
 
 import { GET as GetSetups, POST as PostSetup } from '@/app/api/setups/route'
-import { GET as GetById, PATCH as PatchSetup } from '@/app/api/setups/[id]/route'
+import { GET as GetById, PATCH as PatchSetup, DELETE as DeleteSetup } from '@/app/api/setups/[id]/route'
 import { GET as GetTriggerRules, POST as PostTriggerRule } from '@/app/api/setups/[id]/trigger-rules/route'
 import { PATCH as PatchTriggerRule, DELETE as DeleteTriggerRule } from '@/app/api/setups/[id]/trigger-rules/[ruleId]/route'
+import { POST as PostTrade } from '@/app/api/trades/route'
+import { tradeSeed } from '../helpers'
 
 describe('POST /api/setups', () => {
   it('creates a setup and persists to DB', async () => {
@@ -174,5 +176,41 @@ describe('Trigger Rules', () => {
 
     const row = await db.triggerRule.findUnique({ where: { id: rule.id } })
     expect(row!.name).toBe('New Name')
+  })
+})
+
+describe('DELETE /api/setups/[id]', () => {
+  it('returns 409 with SETUP_HAS_TRADES when trades exist', async () => {
+    const setup = await db.setup.create({ data: { name: 'Busy Setup' } })
+    // Create a trade using this setup
+    const req = makeRequest('POST', 'http://localhost/api/trades', tradeSeed(setup.id))
+    await PostTrade(req)
+
+    const delReq = makeRequest('DELETE', `http://localhost/api/setups/${setup.id}`)
+    const res = await DeleteSetup(delReq, ctx({ id: setup.id }))
+
+    expect(res.status).toBe(409)
+    const data = await res.json()
+    expect(data.error).toBe('SETUP_HAS_TRADES')
+    expect(data.tradesCount).toBe(1)
+
+    // Setup must still exist
+    expect(await db.setup.findUnique({ where: { id: setup.id } })).not.toBeNull()
+  })
+
+  it('returns 204 and cascade-deletes trigger rules and sub-setups when no trades', async () => {
+    const setup = await db.setup.create({ data: { name: 'Empty Setup' } })
+    const rule = await db.triggerRule.create({
+      data: { setupId: setup.id, precedence: 1, name: 'R1', direction: 'BOTH' },
+    })
+    const sub = await db.subSetup.create({ data: { setupId: setup.id, name: 'Sub A' } })
+
+    const delReq = makeRequest('DELETE', `http://localhost/api/setups/${setup.id}`)
+    const res = await DeleteSetup(delReq, ctx({ id: setup.id }))
+
+    expect(res.status).toBe(204)
+    expect(await db.setup.findUnique({ where: { id: setup.id } })).toBeNull()
+    expect(await db.triggerRule.findUnique({ where: { id: rule.id } })).toBeNull()
+    expect(await db.subSetup.findUnique({ where: { id: sub.id } })).toBeNull()
   })
 })

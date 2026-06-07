@@ -26,12 +26,16 @@ interface SetupWithFull {
 
 interface StrategyDetailProps {
   setup: SetupWithFull
+  onDeleted?: () => void
 }
 
-export function StrategyDetail({ setup }: StrategyDetailProps) {
+export function StrategyDetail({ setup, onDeleted }: StrategyDetailProps) {
   const [notes, setNotes] = useState(setup.description ?? '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   async function saveNotes() {
     setSaving(true)
@@ -48,20 +52,78 @@ export function StrategyDetail({ setup }: StrategyDetailProps) {
     }
   }
 
+  async function handleDelete() {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      const res = await fetch(`/api/setups/${setup.id}`, { method: 'DELETE' })
+      if (res.status === 409) {
+        const data = await res.json()
+        const count: number = data.tradesCount ?? 0
+        setDeleteError(
+          `Can't delete — ${count} trade${count !== 1 ? 's' : ''} use this setup. Reassign or delete those trades first.`
+        )
+        setConfirmDelete(false)
+        return
+      }
+      if (!res.ok) throw new Error('Failed to delete')
+      onDeleted?.()
+    } catch (err) {
+      if (err instanceof Error && err.message !== 'Failed to delete') throw err
+      setDeleteError('Failed to delete setup. Please try again.')
+      setConfirmDelete(false)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 p-6 overflow-y-auto h-full">
-      <div>
-        <h2 className="text-base font-semibold text-[var(--color-ink)] mb-1">{setup.name}</h2>
-        <div className="flex gap-4 text-xs text-[var(--color-ink-muted)]">
-          <span>{setup._count.trades} trades</span>
-          {setup.stats.total > 0 && (
-            <>
-              <span>{(setup.stats.winRate * 100).toFixed(0)}% win</span>
-              <span>{setup.stats.avgR > 0 ? '+' : ''}{setup.stats.avgR.toFixed(2)}R avg</span>
-            </>
-          )}
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-ink)] mb-1">{setup.name}</h2>
+          <div className="flex gap-4 text-xs text-[var(--color-ink-muted)]">
+            <span>{setup._count.trades} trades</span>
+            {setup.stats.total > 0 && (
+              <>
+                <span>{(setup.stats.winRate * 100).toFixed(0)}% win</span>
+                <span>{setup.stats.avgR > 0 ? '+' : ''}{setup.stats.avgR.toFixed(2)}R avg</span>
+              </>
+            )}
+          </div>
         </div>
+
+        {/* Delete control */}
+        {!confirmDelete ? (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setConfirmDelete(true)}
+          >
+            Delete Setup
+          </Button>
+        ) : (
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-xs text-[var(--color-loss)]">
+              Delete this setup? This cannot be undone.
+            </span>
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={handleDelete} disabled={deleting}>
+                {deleting ? 'Deleting…' : 'Confirm Delete'}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
+
+      {deleteError && (
+        <p className="text-xs text-[var(--color-loss)] bg-[var(--color-loss-bg)] px-3 py-2 rounded-[var(--radius-md)]">
+          {deleteError}
+        </p>
+      )}
 
       {/* PDF */}
       <section>

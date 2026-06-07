@@ -44,6 +44,15 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   if (!session) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
+
+  const tradesCount = await db.trade.count({ where: { setupId: id } })
+  if (tradesCount > 0) {
+    return Response.json({ error: 'SETUP_HAS_TRADES', tradesCount }, { status: 409 })
+  }
+
+  await db.tradeTrigger.deleteMany({ where: { triggerRule: { setupId: id } } })
+  await db.triggerRule.deleteMany({ where: { setupId: id } })
+  await db.subSetup.deleteMany({ where: { setupId: id } })
   await db.setup.delete({ where: { id } })
   return new Response(null, { status: 204 })
 }

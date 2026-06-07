@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Decimal from 'decimal.js'
 import type { TradeWithRelations } from '@/types'
 import { Badge } from '@/components/ui/Badge'
@@ -13,10 +14,29 @@ interface TradeDetailProps {
 }
 
 export function TradeDetail({ trade }: TradeDetailProps) {
+  const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
+
+  async function handleDelete() {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      const res = await fetch(`/api/trades/${trade.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      router.push('/dashboard')
+      router.refresh()
+    } catch {
+      setDeleteError('Failed to delete trade. Please try again.')
+      setDeleting(false)
+      setConfirmDelete(false)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6 p-6 max-w-3xl">
@@ -79,15 +99,52 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             )}
           </div>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setIsEditing(v => !v)}
-          >
-            {isEditing ? 'Cancel' : 'Edit'}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => { setIsEditing(v => !v); setConfirmDelete(false) }}
+            >
+              {isEditing ? 'Cancel' : 'Edit'}
+            </Button>
+            {!confirmDelete ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setConfirmDelete(true); setIsEditing(false) }}
+              >
+                Delete
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-loss)]">Delete this trade? This cannot be undone.</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  {deleting ? 'Deleting…' : 'Confirm'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setConfirmDelete(false)}
+                  disabled={deleting}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {deleteError && (
+        <p className="text-xs text-[var(--color-loss)] bg-[var(--color-loss-bg)] px-3 py-2 rounded-[var(--radius-md)]">
+          {deleteError}
+        </p>
+      )}
 
       {/* Pricing grid */}
       <div className="grid grid-cols-4 gap-px bg-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden">
