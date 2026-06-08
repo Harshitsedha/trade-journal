@@ -88,24 +88,16 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
     trade.triggerRules.map(t => ({ triggerRuleId: t.triggerRuleId, isPrimary: t.isPrimary }))
   )
 
-  // Ideal execution fields (manual, no auto-prefill)
-  const [idealEntry, setIdealEntry] = useState(
-    (trade as Record<string, unknown>).idealEntry != null
-      ? String((trade as Record<string, unknown>).idealEntry)
-      : ''
-  )
-  const [idealStop, setIdealStop] = useState(
-    (trade as Record<string, unknown>).idealStop != null
-      ? String((trade as Record<string, unknown>).idealStop)
-      : ''
-  )
+  // Ideal exit — captured at exit time
   const [idealExit, setIdealExit] = useState(
     (trade as Record<string, unknown>).idealExit != null
       ? String((trade as Record<string, unknown>).idealExit)
       : ''
   )
-  const [idealDirection, setIdealDirection] = useState<'' | 'LONG' | 'SHORT'>(
-    ((trade as Record<string, unknown>).idealDirection as '' | 'LONG' | 'SHORT') ?? ''
+
+  // Status toggle for OPEN/MISSED trades
+  const [tradeStatus, setTradeStatus] = useState<'OPEN' | 'MISSED' | 'SCRATCHED' | 'CLOSED'>(
+    trade.status as 'OPEN' | 'MISSED' | 'SCRATCHED' | 'CLOSED'
   )
 
   // OPEN-only fields
@@ -194,13 +186,14 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         notes: notes || null,
         tradeDate: new Date(tradeDate).toISOString(),
         triggerRules: selectedTriggers,
-        idealEntry: idealEntry || null,
-        idealStop: idealStop || null,
-        idealExit: idealExit || null,
-        idealDirection: idealDirection || null,
+        status: tradeStatus !== 'CLOSED' ? tradeStatus : undefined,
       }
 
-      if (isOpen && exitPrice.trim()) {
+      if ((isOpen || tradeStatus === 'MISSED') && idealExit.trim()) {
+        body.idealExit = idealExit
+      }
+
+      if (isOpen && tradeStatus !== 'MISSED' && exitPrice.trim()) {
         body.exitPrice = exitPrice
         if (hasRuleBreak && ruleDescription.trim()) {
           body.ruleBreak = {
@@ -237,7 +230,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, notes, tradeDate, selectedTriggers,
-      idealEntry, idealStop, idealExit, idealDirection,
+      tradeStatus, idealExit,
       isOpen, exitPrice, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router, onDone,
     ]
@@ -475,67 +468,48 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         />
       </div>
 
-      {/* Ideal execution fields */}
-      <div
-        className="flex flex-col gap-4 p-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]"
-        style={{ borderWidth: '0.5px' }}
-      >
-        <p className="text-xs font-semibold text-[var(--color-ink-muted)] uppercase tracking-wider">
-          Ideal Execution (optional)
-        </p>
+      {/* Status toggle — for non-CLOSED trades */}
+      {trade.status !== 'CLOSED' && (
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Ideal Direction</span>
+          <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Status</span>
           <div className="flex gap-2">
-            {(['', 'LONG', 'SHORT'] as const).map(d => (
+            {(['OPEN', 'MISSED', 'SCRATCHED'] as const).map(s => (
               <button
-                key={d || 'none'}
+                key={s}
                 type="button"
-                onClick={() => setIdealDirection(d)}
-                className={`flex-1 py-2 rounded-[var(--radius-md)] text-sm font-medium border transition-all cursor-pointer ${
-                  idealDirection === d
-                    ? d === 'LONG'
-                      ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
-                      : d === 'SHORT'
+                onClick={() => setTradeStatus(s)}
+                className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
+                  tradeStatus === s
+                    ? s === 'MISSED'
                       ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
-                      : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] border-[var(--color-border)]'
-                    : 'bg-[var(--color-surface)] text-[var(--color-ink-muted)] border-[var(--color-border)]'
+                      : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+                    : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
                 }`}
               >
-                {d || 'None'}
+                {s}
               </button>
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+      )}
+
+      {/* Exit fields — OPEN and MISSED */}
+      {(isOpen || tradeStatus === 'MISSED') && (
+        <>
+          {/* idealExit always shown in exit section */}
           <Input
-            label="Ideal Entry"
-            placeholder="0.00"
-            inputMode="decimal"
-            value={idealEntry}
-            onChange={e => setIdealEntry(e.target.value)}
-            className="font-mono"
-          />
-          <Input
-            label="Ideal Stop"
-            placeholder="0.00"
-            inputMode="decimal"
-            value={idealStop}
-            onChange={e => setIdealStop(e.target.value)}
-            className="font-mono"
-          />
-          <Input
-            label="Ideal Exit"
+            label="Ideal Exit (optional)"
             placeholder="0.00"
             inputMode="decimal"
             value={idealExit}
             onChange={e => setIdealExit(e.target.value)}
             className="font-mono"
           />
-        </div>
-      </div>
+        </>
+      )}
 
-      {/* Exit fields — OPEN only */}
-      {isOpen && (
+      {/* exitPrice + rule-break — OPEN and not being marked MISSED */}
+      {isOpen && tradeStatus !== 'MISSED' && (
         <>
           <Input
             label="Exit Price"

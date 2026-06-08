@@ -42,11 +42,8 @@ const tradeBaseObject = z.object({
     )
     .optional(),
   status: TradeStatusSchema.optional(),
-  // Ideal execution fields — always optional, manually set
-  idealEntry: decimalString.optional().nullable(),
-  idealStop: decimalString.optional().nullable(),
+  // Ideal exit — captured at exit time only
   idealExit: decimalString.optional().nullable(),
-  idealDirection: DirectionSchema.optional().nullable(),
 })
 
 type TradeBase = z.infer<typeof tradeBaseObject>

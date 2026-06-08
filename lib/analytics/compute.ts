@@ -19,33 +19,32 @@ export interface TradeForStat {
 
 export function computeSideCorrect(
   actualDirection: 'LONG' | 'SHORT',
-  idealDirection: 'LONG' | 'SHORT' | null | undefined,
+  primaryRuleDirection: 'LONG' | 'SHORT' | 'BOTH' | null | undefined,
 ): boolean | null {
-  if (!idealDirection) return null
-  return actualDirection === idealDirection
+  if (!primaryRuleDirection || primaryRuleDirection === 'BOTH') return null
+  return actualDirection === primaryRuleDirection
 }
 
 type DecimalLike = { toString(): string } | string | number | null | undefined
 
 export function computeIdealPnl(t: {
-  idealEntry?: DecimalLike
+  entryPrice?: DecimalLike
   idealExit?: DecimalLike
-  idealDirection?: 'LONG' | 'SHORT' | null
-  quantity: DecimalLike
+  direction?: 'LONG' | 'SHORT' | null
+  quantity: number
 }): number | null {
-  if (t.idealEntry == null || t.idealExit == null || !t.idealDirection) return null
-  const entry = Number(t.idealEntry.toString())
-  const exit = Number(t.idealExit.toString())
-  const qty = Number((t.quantity ?? 0).toString())
-  const diff = t.idealDirection === 'SHORT' ? entry - exit : exit - entry
-  return diff * qty
+  if (t.entryPrice == null || t.idealExit == null || !t.direction) return null
+  const diff = t.direction === 'SHORT'
+    ? Number(t.entryPrice) - Number(t.idealExit)
+    : Number(t.idealExit) - Number(t.entryPrice)
+  return diff * t.quantity
 }
 
 export function computeExecutionPnl(
   actualPnl: number,
   idealPnl: number | null,
-): number | null {
-  if (idealPnl == null) return null
+): number {
+  if (idealPnl == null) return 0
   return actualPnl - idealPnl
 }
 
@@ -87,7 +86,7 @@ export interface GroupRow {
 export function computeStat(trades: TradeForStat[]): TradeStat {
   if (trades.length === 0) return emptyStat()
 
-  // executionPnlSum: sum across ALL trades (CLOSED + MISSED), skipping nulls
+  // executionPnlSum: sum across all trades (executionPnl defaults to 0 when no idealExit)
   const execPnlTrades = trades.filter(t => t.executionPnl != null)
   const executionPnlSum = execPnlTrades.length > 0
     ? execPnlTrades.reduce((sum, t) => sum + t.executionPnl!, 0)

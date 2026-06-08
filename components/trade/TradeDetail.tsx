@@ -33,6 +33,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
 
   // Quick exit state
   const [qeExitPrice, setQeExitPrice] = useState('')
+  const [qeIdealExit, setQeIdealExit] = useState('')
   const [qeHasRuleBreak, setQeHasRuleBreak] = useState(false)
   const [qeBreakType, setQeBreakType] = useState('EARLY_EXIT')
   const [qeRuleDescription, setQeRuleDescription] = useState('')
@@ -86,6 +87,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         isPrimary: tr.isPrimary,
       })),
       exitPrice: qeExitPrice,
+      idealExit: qeIdealExit.trim() || null,
       status: 'CLOSED',
     }
 
@@ -238,14 +240,24 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         >
           <p className="text-sm font-semibold text-[var(--color-ink)]">Close Trade</p>
 
-          <Input
-            label="Exit Price"
-            placeholder="0.00"
-            inputMode="decimal"
-            value={qeExitPrice}
-            onChange={e => setQeExitPrice(e.target.value)}
-            className="font-mono"
-          />
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Exit Price"
+              placeholder="0.00"
+              inputMode="decimal"
+              value={qeExitPrice}
+              onChange={e => setQeExitPrice(e.target.value)}
+              className="font-mono"
+            />
+            <Input
+              label="Ideal Exit (optional)"
+              placeholder="0.00"
+              inputMode="decimal"
+              value={qeIdealExit}
+              onChange={e => setQeIdealExit(e.target.value)}
+              className="font-mono"
+            />
+          </div>
 
           <div className="flex items-center gap-3">
             <input

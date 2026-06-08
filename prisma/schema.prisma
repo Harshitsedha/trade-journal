@@ -131,10 +131,7 @@ model Trade {
   thesis        String?
   notes         String?
   tradeDate     DateTime    @default(now())
-  idealEntry    Decimal?    @db.Decimal(18, 6)
-  idealStop     Decimal?    @db.Decimal(18, 6)
   idealExit     Decimal?    @db.Decimal(18, 6)
-  idealDirection Direction?
   sideCorrect   Boolean?
   executionPnl  Decimal?    @db.Decimal(18, 2)
   createdAt     DateTime    @default(now())

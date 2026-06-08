@@ -23,12 +23,17 @@ describe('computeSideCorrect', () => {
     expect(computeSideCorrect('SHORT', 'LONG')).toBe(false)
   })
 
-  it('returns null when idealDirection is null', () => {
+  it('returns null when primaryRuleDirection is null', () => {
     expect(computeSideCorrect('LONG', null)).toBeNull()
   })
 
-  it('returns null when idealDirection is undefined', () => {
+  it('returns null when primaryRuleDirection is undefined', () => {
     expect(computeSideCorrect('SHORT', undefined)).toBeNull()
+  })
+
+  it('returns null when primaryRuleDirection is BOTH', () => {
+    expect(computeSideCorrect('LONG', 'BOTH')).toBeNull()
+    expect(computeSideCorrect('SHORT', 'BOTH')).toBeNull()
   })
 })
 
@@ -36,74 +41,73 @@ describe('computeSideCorrect', () => {
 
 describe('computeIdealPnl', () => {
   it('computes positive pnl for a winning LONG trade', () => {
-    // entry 100, exit 110, qty 10 → (110-100)*10 = 100
+    // entry 100, idealExit 110, qty 10 → (110-100)*10 = 100
     const result = computeIdealPnl({
-      idealEntry: '100',
+      entryPrice: '100',
       idealExit: '110',
-      idealDirection: 'LONG',
-      quantity: '10',
+      direction: 'LONG',
+      quantity: 10,
     })
     expect(result).toBe(100)
   })
 
   it('computes negative pnl for a losing LONG trade', () => {
-    // entry 100, exit 90, qty 10 → (90-100)*10 = -100
+    // entry 100, idealExit 90, qty 10 → (90-100)*10 = -100
     const result = computeIdealPnl({
-      idealEntry: '100',
+      entryPrice: '100',
       idealExit: '90',
-      idealDirection: 'LONG',
-      quantity: '10',
+      direction: 'LONG',
+      quantity: 10,
     })
     expect(result).toBe(-100)
   })
 
   it('computes positive pnl for a winning SHORT trade', () => {
-    // entry 100, exit 90, qty 10 → (100-90)*10 = 100
+    // entry 100, idealExit 90, qty 10 → (100-90)*10 = 100
     const result = computeIdealPnl({
-      idealEntry: '100',
+      entryPrice: '100',
       idealExit: '90',
-      idealDirection: 'SHORT',
-      quantity: '10',
+      direction: 'SHORT',
+      quantity: 10,
     })
     expect(result).toBe(100)
   })
 
   it('computes negative pnl for a losing SHORT trade', () => {
-    // entry 100, exit 110, qty 10 → (100-110)*10 = -100
+    // entry 100, idealExit 110, qty 10 → (100-110)*10 = -100
     const result = computeIdealPnl({
-      idealEntry: '100',
+      entryPrice: '100',
       idealExit: '110',
-      idealDirection: 'SHORT',
-      quantity: '10',
+      direction: 'SHORT',
+      quantity: 10,
     })
     expect(result).toBe(-100)
   })
 
-  it('returns null when idealEntry is missing', () => {
+  it('returns null when entryPrice is missing', () => {
     expect(
-      computeIdealPnl({ idealExit: '110', idealDirection: 'LONG', quantity: '10' })
+      computeIdealPnl({ idealExit: '110', direction: 'LONG', quantity: 10 })
     ).toBeNull()
   })
 
   it('returns null when idealExit is missing', () => {
     expect(
-      computeIdealPnl({ idealEntry: '100', idealDirection: 'LONG', quantity: '10' })
+      computeIdealPnl({ entryPrice: '100', direction: 'LONG', quantity: 10 })
     ).toBeNull()
   })
 
-  it('returns null when idealDirection is missing', () => {
+  it('returns null when direction is missing', () => {
     expect(
-      computeIdealPnl({ idealEntry: '100', idealExit: '110', quantity: '10' })
+      computeIdealPnl({ entryPrice: '100', idealExit: '110', quantity: 10 })
     ).toBeNull()
   })
 
   it('handles Decimal-like objects with toString()', () => {
-    const decLike = { toString: () => '50' }
     const result = computeIdealPnl({
-      idealEntry: decLike,
+      entryPrice: { toString: () => '50' },
       idealExit: { toString: () => '60' },
-      idealDirection: 'LONG',
-      quantity: { toString: () => '5' },
+      direction: 'LONG',
+      quantity: 5,
     })
     expect(result).toBe(50)
   })
@@ -113,12 +117,10 @@ describe('computeIdealPnl', () => {
 
 describe('computeExecutionPnl', () => {
   it('returns positive value when actual > ideal (better execution)', () => {
-    // ideal: 100, actual: 120 → 120 - 100 = 20
     expect(computeExecutionPnl(120, 100)).toBe(20)
   })
 
   it('returns negative value when actual < ideal (worse execution)', () => {
-    // ideal: 100, actual: 80 → 80 - 100 = -20
     expect(computeExecutionPnl(80, 100)).toBe(-20)
   })
 
@@ -127,8 +129,8 @@ describe('computeExecutionPnl', () => {
     expect(computeExecutionPnl(0, 500)).toBe(-500)
   })
 
-  it('returns null when idealPnl is null', () => {
-    expect(computeExecutionPnl(100, null)).toBeNull()
+  it('returns 0 when idealPnl is null (no idealExit set)', () => {
+    expect(computeExecutionPnl(100, null)).toBe(0)
   })
 
   it('returns zero when actual equals ideal', () => {

@@ -38,22 +38,40 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate,
     exitPrice, status, triggerRules, ruleBreak,
-    idealEntry, idealStop, idealExit, idealDirection,
+    idealExit,
   } = parsed.data
 
   const isMissed = status === 'MISSED'
-  const direction = (directionRaw ?? (idealDirection ?? existing.direction)) as 'LONG' | 'SHORT'
-  const entryPrice = entryRaw ?? (isMissed ? '0' : existing.entryPrice.toString())
-  const stopLoss = stopRaw ?? (isMissed ? '0' : existing.stopLoss.toString())
+  const direction = (directionRaw ?? existing.direction) as 'LONG' | 'SHORT'
+  const entryPrice = entryRaw ?? existing.entryPrice.toString()
+  const stopLoss = stopRaw ?? existing.stopLoss.toString()
   const targets = targetsRaw?.length ? targetsRaw : (existing.targets as { toString(): string }[]).map(t => t.toString())
   const quantity = qtyRaw ?? existing.quantity.toString()
   const riskAmount = riskRaw ?? existing.riskAmount.toString()
 
-  // Compute sideCorrect from manual idealDirection field
-  const newIdealDirection = idealDirection !== undefined ? (idealDirection ?? null) : (existing.idealDirection as 'LONG' | 'SHORT' | null)
-  const sideCorrect = computeSideCorrect(direction, newIdealDirection)
+  // sideCorrect: from primary trigger rule direction
+  // If triggerRules provided in body, use them; otherwise fall back to existing DB links
+  let primaryRuleDirection: 'LONG' | 'SHORT' | 'BOTH' | null = null
+  if (triggerRules !== undefined) {
+    const primaryTr = triggerRules.find(tr => tr.isPrimary)
+    if (primaryTr) {
+      const rule = await db.triggerRule.findUnique({
+        where: { id: primaryTr.triggerRuleId },
+        select: { direction: true },
+      })
+      primaryRuleDirection = (rule?.direction ?? null) as 'LONG' | 'SHORT' | 'BOTH' | null
+    }
+  } else {
+    const existingPrimary = existing.triggerRules.find(tr => tr.isPrimary)
+    primaryRuleDirection = (existingPrimary?.triggerRule.direction ?? null) as 'LONG' | 'SHORT' | 'BOTH' | null
+  }
+  const sideCorrect = computeSideCorrect(direction, primaryRuleDirection)
 
-  // Update all entry fields
+  // Resolve idealExit
+  const resolvedIdealExit = idealExit !== undefined
+    ? (idealExit ?? null)
+    : (existing as Record<string, unknown>).idealExit as string | null | undefined ?? null
+
   const updateData: Parameters<typeof db.trade.update>[0]['data'] = {
     instrument: instrument ? instrument.toUpperCase().trim() : existing.instrument,
     assetClass: assetClass ?? existing.assetClass,
@@ -69,10 +87,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     thesis: thesis !== undefined ? (thesis ?? null) : existing.thesis,
     notes: notes !== undefined ? (notes ?? null) : existing.notes,
     tradeDate: tradeDate ? new Date(tradeDate) : existing.tradeDate,
-    idealEntry: idealEntry !== undefined ? (idealEntry ?? null) : existing.idealEntry,
-    idealStop: idealStop !== undefined ? (idealStop ?? null) : existing.idealStop,
-    idealExit: idealExit !== undefined ? (idealExit ?? null) : existing.idealExit,
-    idealDirection: idealDirection !== undefined ? (idealDirection ?? null) : existing.idealDirection,
+    idealExit: resolvedIdealExit,
     sideCorrect,
     ...(status && { status }),
   }
@@ -95,21 +110,20 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     updateData.pnl = '0'
   }
 
-  // Compute executionPnl
-  const resolvedIdealEntry = (updateData.idealEntry as string | null | undefined) ?? existing.idealEntry
-  const resolvedIdealExit = (updateData.idealExit as string | null | undefined) ?? existing.idealExit
-  const resolvedIdealDir = (updateData.idealDirection as 'LONG' | 'SHORT' | null | undefined) ?? newIdealDirection
-  const resolvedQty = quantity
+  // executionPnl: always stored; 0 when no idealExit
   const idealPnl = computeIdealPnl({
-    idealEntry: resolvedIdealEntry,
+    entryPrice,
     idealExit: resolvedIdealExit,
-    idealDirection: resolvedIdealDir,
-    quantity: resolvedQty,
+    direction,
+    quantity: Number(quantity),
   })
-  const actualPnl = updateData.pnl != null
-    ? Number(String(updateData.pnl))
-    : (existing.pnl != null ? Number(existing.pnl.toString()) : (isMissed ? 0 : null))
-  updateData.executionPnl = actualPnl != null ? (computeExecutionPnl(actualPnl, idealPnl) !== null ? String(computeExecutionPnl(actualPnl, idealPnl)) : null) : null
+  const resolvedActualPnl = isMissed ? 0
+    : (updateData.pnl != null ? Number(String(updateData.pnl))
+      : (existing.pnl != null ? Number(existing.pnl.toString()) : null))
+  const execPnl = resolvedActualPnl !== null
+    ? computeExecutionPnl(resolvedActualPnl, idealPnl)
+    : 0  // OPEN trade with no exit yet
+  updateData.executionPnl = String(execPnl)
 
   await db.trade.update({ where: { id }, data: updateData })
 

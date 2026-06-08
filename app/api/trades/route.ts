@@ -43,27 +43,40 @@ export async function POST(req: NextRequest) {
     direction: directionRaw, entryPrice: entryRaw, stopLoss: stopRaw,
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate, triggerRules, status,
-    idealEntry, idealStop, idealExit, idealDirection,
+    idealExit,
   } = parsed.data
 
   const isMissed = status === 'MISSED'
-  const direction = (directionRaw ?? (idealDirection ?? 'LONG')) as 'LONG' | 'SHORT'
+  const direction = (directionRaw ?? 'LONG') as 'LONG' | 'SHORT'
   const entryPrice = entryRaw ?? '0'
   const stopLoss = stopRaw ?? '0'
   const targets = targetsRaw?.length ? targetsRaw : ['0']
   const quantity = qtyRaw ?? '0'
   const riskAmount = riskRaw ?? '0'
 
-  const sideCorrect = computeSideCorrect(direction, idealDirection ?? null)
-  const idealPnl = computeIdealPnl({
-    idealEntry: idealEntry ?? null,
-    idealExit: idealExit ?? null,
-    idealDirection: idealDirection ?? null,
-    quantity,
-  })
+  // sideCorrect: derived from primary trigger rule's direction
+  let primaryRuleDirection: 'LONG' | 'SHORT' | 'BOTH' | null = null
+  const primaryTr = triggerRules?.find(tr => tr.isPrimary)
+  if (primaryTr) {
+    const rule = await db.triggerRule.findUnique({
+      where: { id: primaryTr.triggerRuleId },
+      select: { direction: true },
+    })
+    primaryRuleDirection = (rule?.direction ?? null) as 'LONG' | 'SHORT' | 'BOTH' | null
+  }
+  const sideCorrect = computeSideCorrect(direction, primaryRuleDirection)
 
-  // For MISSED: actualPnl = 0 by definition
-  const executionPnlVal = isMissed ? computeExecutionPnl(0, idealPnl) : null
+  // executionPnl: always stored (0 when no idealExit)
+  const idealPnl = computeIdealPnl({
+    entryPrice,
+    idealExit: idealExit ?? null,
+    direction,
+    quantity: Number(quantity),
+  })
+  const actualPnl = isMissed ? 0 : null
+  const executionPnlVal = actualPnl !== null
+    ? computeExecutionPnl(actualPnl, idealPnl)
+    : 0  // OPEN trade, no exit yet
 
   const tradeData: Record<string, unknown> = {
     instrument: instrument.toUpperCase().trim(),
@@ -81,12 +94,9 @@ export async function POST(req: NextRequest) {
     notes: notes ?? null,
     tradeDate: new Date(tradeDate),
     status: status ?? 'OPEN',
-    idealEntry: idealEntry ?? null,
-    idealStop: idealStop ?? null,
     idealExit: idealExit ?? null,
-    idealDirection: idealDirection ?? null,
     sideCorrect,
-    executionPnl: executionPnlVal !== null ? String(executionPnlVal) : null,
+    executionPnl: String(executionPnlVal),
   }
 
   if (isMissed) {
