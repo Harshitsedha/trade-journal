@@ -2,16 +2,29 @@ import { beforeEach, afterAll } from 'vitest'
 import { db } from '@/lib/db'
 
 // ── PRODUCTION GUARD ────────────────────────────────────────────────────────
-// This must be the FIRST executable code in this file — it aborts the entire
-// run before any deleteMany can fire if the connection is not a test database.
+// Must be the FIRST executable code — aborts the entire run before any
+// deleteMany fires if the connection is not the designated test branch.
 //
-// The guard has two independent checks:
-//   1. TEST_DATABASE_URL must be set AND equal DATABASE_URL, proving the
-//      operator explicitly configured a separate test DB.
-//   2. DATABASE_URL must NOT contain the production Neon endpoint ID — a
-//      belt-and-suspenders block even if env vars are misconfigured.
+// ALLOWLIST-based (fails closed): an unknown or misconfigured endpoint is
+// rejected even if it does not match the production denylist. This prevents
+// the guard from silently passing when the project moves to a new endpoint.
+//
+// ⚠️  If the Neon project moves (new production project or new test branch),
+//     update BOTH constants together before running tests:
+//       PROD_ENDPOINT — endpoint ID of the production branch (to block)
+//       TEST_ENDPOINT — endpoint ID of the designated test branch (to allow)
+//
+// Guard checks (in order):
+//   1. TEST_DATABASE_URL must be set.
+//   2. TEST_DATABASE_URL must contain TEST_ENDPOINT (allowlist — rejects any
+//      endpoint not explicitly designated as the test branch).
+//   3. DATABASE_URL must equal TEST_DATABASE_URL (explicit test-DB assertion).
+//   4. DATABASE_URL must NOT contain PROD_ENDPOINT (denylist).
+//   5. DATABASE_URL must contain TEST_ENDPOINT (belt-and-suspenders: allowlist
+//      applied directly to the URL the Prisma client will actually use).
 
-const PROD_ENDPOINT = 'ep-calm-dawn-ao7a4u2t' // production Neon project, both pooler + direct
+const PROD_ENDPOINT = 'ep-noisy-brook-aotot7c1' // current production Neon project
+const TEST_ENDPOINT = 'ep-young-mud-aoz7e0ak'   // designated test branch on same project
 
 const url = process.env.DATABASE_URL ?? ''
 const testUrl = process.env.TEST_DATABASE_URL ?? ''
@@ -21,6 +34,14 @@ if (!testUrl) {
     '[tests] TEST_DATABASE_URL is not set.\n' +
     'Tests require a dedicated Neon test branch. Set TEST_DATABASE_URL in .env.test\n' +
     '(copy .env.test.example → .env.test and fill in your test-branch connection string).',
+  )
+}
+
+if (!testUrl.includes(TEST_ENDPOINT)) {
+  throw new Error(
+    `[tests] TEST_DATABASE_URL does not contain the expected test-branch endpoint (${TEST_ENDPOINT}).\n` +
+    'Tests are allowlist-based: only the designated test branch is permitted.\n' +
+    'If the test branch changed, update TEST_ENDPOINT in tests/setup.ts.',
   )
 }
 
@@ -36,6 +57,14 @@ if (url.includes(PROD_ENDPOINT)) {
   throw new Error(
     `[tests] DATABASE_URL contains the production Neon endpoint (${PROD_ENDPOINT}).\n` +
     'Tests must use a separate Neon test branch — never the production database.',
+  )
+}
+
+if (!url.includes(TEST_ENDPOINT)) {
+  throw new Error(
+    `[tests] DATABASE_URL does not contain the expected test-branch endpoint (${TEST_ENDPOINT}).\n` +
+    'Belt-and-suspenders: the URL the Prisma client will use must be the designated test branch.\n' +
+    'If the test branch changed, update TEST_ENDPOINT in tests/setup.ts.',
   )
 }
 // ── END GUARD ────────────────────────────────────────────────────────────────
