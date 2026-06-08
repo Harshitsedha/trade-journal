@@ -98,7 +98,7 @@ export async function closeTrade(
 
 export async function updateTrade(
   id: string,
-  data: Partial<{ notes: string | null; thesis: string | null; status: 'OPEN' | 'CLOSED' | 'SCRATCHED' }>
+  data: Partial<{ notes: string | null; thesis: string | null; status: 'OPEN' | 'CLOSED' | 'MISSED' }>
 ) {
   return db.trade.update({
     where: { id },

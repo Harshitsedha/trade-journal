@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const AssetClassSchema = z.enum(['FUTURES', 'OPTIONS', 'EQUITY'])
 export const DirectionSchema = z.enum(['LONG', 'SHORT'])
-export const TradeStatusSchema = z.enum(['OPEN', 'CLOSED', 'SCRATCHED', 'MISSED'])
+export const TradeStatusSchema = z.enum(['OPEN', 'CLOSED', 'MISSED'])
 export const RuleBreakTypeSchema = z.enum([
   'EARLY_EXIT',
   'LATE_EXIT',
