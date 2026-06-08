@@ -96,8 +96,8 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
   )
 
   // Status toggle for OPEN/MISSED trades
-  const [tradeStatus, setTradeStatus] = useState<'OPEN' | 'MISSED' | 'SCRATCHED' | 'CLOSED'>(
-    trade.status as 'OPEN' | 'MISSED' | 'SCRATCHED' | 'CLOSED'
+  const [tradeStatus, setTradeStatus] = useState<'OPEN' | 'MISSED' | 'CLOSED'>(
+    trade.status as 'OPEN' | 'MISSED' | 'CLOSED'
   )
 
   // OPEN-only fields
@@ -473,7 +473,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         <div className="flex flex-col gap-1">
           <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Status</span>
           <div className="flex gap-2">
-            {(['OPEN', 'MISSED', 'SCRATCHED'] as const).map(s => (
+            {(['OPEN', 'MISSED'] as const).map(s => (
               <button
                 key={s}
                 type="button"

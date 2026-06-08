@@ -124,9 +124,18 @@ describe('computeExecutionPnl', () => {
     expect(computeExecutionPnl(80, 100)).toBe(-20)
   })
 
-  it('returns negative for MISSED trade (actualPnl=0, positive idealPnl)', () => {
-    // missed a 500 profit trade → 0 - 500 = -500
-    expect(computeExecutionPnl(0, 500)).toBe(-500)
+  it('MISSED winning trade: executionPnl is negative (you missed gains)', () => {
+    // entry 100, idealExit 125, LONG, qty 1 → idealPnl +25 → executionPnl = 0 - 25 = -25
+    const idealPnl = computeIdealPnl({ entryPrice: '100', idealExit: '125', direction: 'LONG', quantity: 1 })
+    expect(idealPnl).toBe(25)
+    expect(computeExecutionPnl(0, idealPnl)).toBe(-25)
+  })
+
+  it('MISSED losing trade: executionPnl is positive (missing it saved you)', () => {
+    // entry 100, idealExit 90, LONG, qty 1 → idealPnl -10 → executionPnl = 0 - (-10) = +10
+    const idealPnl = computeIdealPnl({ entryPrice: '100', idealExit: '90', direction: 'LONG', quantity: 1 })
+    expect(idealPnl).toBe(-10)
+    expect(computeExecutionPnl(0, idealPnl)).toBe(10)
   })
 
   it('returns 0 when idealPnl is null (no idealExit set)', () => {
