@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const CreateSetupSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().optional(),
+  strategyType: z.enum(['STANDARD', 'ORB']).default('STANDARD'),
 })
 
 export const UpdateSetupSchema = z.object({
@@ -10,6 +11,7 @@ export const UpdateSetupSchema = z.object({
   description: z.string().optional(),
   pdfUrl: z.string().url().optional(),
   pdfCloudinaryId: z.string().optional(),
+  strategyType: z.enum(['STANDARD', 'ORB']).optional(),
 })
 
 export const CreateTriggerRuleSchema = z.object({
@@ -17,12 +19,14 @@ export const CreateTriggerRuleSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().optional(),
   direction: z.enum(['LONG', 'SHORT', 'BOTH']).default('BOTH'),
+  orbDirection: z.enum(['ORIGINAL', 'ANTI']).optional().nullable(),
 })
 
 export const UpdateTriggerRuleSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().optional(),
   direction: z.enum(['LONG', 'SHORT', 'BOTH']).optional(),
+  orbDirection: z.enum(['ORIGINAL', 'ANTI']).optional().nullable(),
   isActive: z.boolean().optional(),
   precedence: z.number().int().positive().optional(),
 })

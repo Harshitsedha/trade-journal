@@ -34,6 +34,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
   // Quick exit state
   const [qeExitPrice, setQeExitPrice] = useState('')
   const [qeIdealExit, setQeIdealExit] = useState('')
+  const [qeEntryRuleCorrect, setQeEntryRuleCorrect] = useState<boolean | null>(null)
   const [qeHasRuleBreak, setQeHasRuleBreak] = useState(false)
   const [qeBreakType, setQeBreakType] = useState('EARLY_EXIT')
   const [qeRuleDescription, setQeRuleDescription] = useState('')
@@ -88,6 +89,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
       })),
       exitPrice: qeExitPrice,
       idealExit: qeIdealExit.trim() || null,
+      entryRuleCorrect: qeEntryRuleCorrect,
       status: 'CLOSED',
     }
 
@@ -116,7 +118,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
     }
   }
 
-  const sideCorrect: boolean | null = (trade as Record<string, unknown>).sideCorrect as boolean | null ?? null
+  const entryRuleCorrect: boolean | null = (trade as Record<string, unknown>).entryRuleCorrect as boolean | null ?? null
 
   return (
     <div className="flex flex-col gap-6 p-6 max-w-3xl">
@@ -141,11 +143,11 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             >
               {trade.status}
             </Badge>
-            {sideCorrect === true && (
-              <Badge variant="profit">Side ✓</Badge>
+            {entryRuleCorrect === true && (
+              <Badge variant="profit">Rules ✓</Badge>
             )}
-            {sideCorrect === false && (
-              <Badge variant="loss">Wrong Side</Badge>
+            {entryRuleCorrect === false && (
+              <Badge variant="loss">Rules ✗</Badge>
             )}
           </div>
           <p className="mt-1 text-sm text-[var(--color-ink-secondary)]">
@@ -257,6 +259,30 @@ export function TradeDetail({ trade }: TradeDetailProps) {
               onChange={e => setQeIdealExit(e.target.value)}
               className="font-mono"
             />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Entry rules followed?</span>
+            <div className="flex gap-2">
+              {([null, true, false] as const).map(v => (
+                <button
+                  key={String(v)}
+                  type="button"
+                  onClick={() => setQeEntryRuleCorrect(v)}
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-[var(--radius-sm)] border transition-all cursor-pointer ${
+                    qeEntryRuleCorrect === v
+                      ? v === true
+                        ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
+                        : v === false
+                        ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
+                        : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-muted)] border-[var(--color-border)]'
+                  }`}
+                >
+                  {v === null ? '—' : v ? 'Yes ✓' : 'No ✗'}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">

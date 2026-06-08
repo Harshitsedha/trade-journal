@@ -162,6 +162,23 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
+export type EnumStrategyTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.StrategyType | Prisma.EnumStrategyTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStrategyTypeFilter<$PrismaModel> | $Enums.StrategyType
+}
+
+export type EnumStrategyTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StrategyType | Prisma.EnumStrategyTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStrategyTypeWithAggregatesFilter<$PrismaModel> | $Enums.StrategyType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStrategyTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStrategyTypeFilter<$PrismaModel>
+}
+
 export type EnumAssetClassFilter<$PrismaModel = never> = {
   equals?: $Enums.AssetClass | Prisma.EnumAssetClassFieldRefInput<$PrismaModel>
   in?: $Enums.AssetClass[] | Prisma.ListEnumAssetClassFieldRefInput<$PrismaModel>
@@ -315,6 +332,13 @@ export type EnumTriggerDirectionFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel> | $Enums.TriggerDirection
 }
 
+export type EnumOrbDirectionNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrbDirection | Prisma.EnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  in?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumOrbDirectionNullableFilter<$PrismaModel> | $Enums.OrbDirection | null
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -344,6 +368,16 @@ export type EnumTriggerDirectionWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
   _max?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
+}
+
+export type EnumOrbDirectionNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrbDirection | Prisma.EnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  in?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumOrbDirectionNullableWithAggregatesFilter<$PrismaModel> | $Enums.OrbDirection | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrbDirectionNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrbDirectionNullableFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -515,6 +549,23 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
+export type NestedEnumStrategyTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.StrategyType | Prisma.EnumStrategyTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStrategyTypeFilter<$PrismaModel> | $Enums.StrategyType
+}
+
+export type NestedEnumStrategyTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StrategyType | Prisma.EnumStrategyTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StrategyType[] | Prisma.ListEnumStrategyTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStrategyTypeWithAggregatesFilter<$PrismaModel> | $Enums.StrategyType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStrategyTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStrategyTypeFilter<$PrismaModel>
+}
+
 export type NestedEnumAssetClassFilter<$PrismaModel = never> = {
   equals?: $Enums.AssetClass | Prisma.EnumAssetClassFieldRefInput<$PrismaModel>
   in?: $Enums.AssetClass[] | Prisma.ListEnumAssetClassFieldRefInput<$PrismaModel>
@@ -657,6 +708,13 @@ export type NestedEnumTriggerDirectionFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel> | $Enums.TriggerDirection
 }
 
+export type NestedEnumOrbDirectionNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrbDirection | Prisma.EnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  in?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumOrbDirectionNullableFilter<$PrismaModel> | $Enums.OrbDirection | null
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -697,6 +755,16 @@ export type NestedEnumTriggerDirectionWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
   _max?: Prisma.NestedEnumTriggerDirectionFilter<$PrismaModel>
+}
+
+export type NestedEnumOrbDirectionNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrbDirection | Prisma.EnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  in?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.OrbDirection[] | Prisma.ListEnumOrbDirectionFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumOrbDirectionNullableWithAggregatesFilter<$PrismaModel> | $Enums.OrbDirection | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrbDirectionNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrbDirectionNullableFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

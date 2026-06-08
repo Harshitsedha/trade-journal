@@ -62,6 +62,7 @@ export const CreateTradeSchema = tradeBaseObject.superRefine(requireNonMissedFie
 
 const tradeUpdateObject = tradeBaseObject.extend({
   exitPrice: decimalString.optional(),
+  entryRuleCorrect: z.boolean().optional().nullable(),
   ruleBreak: z
     .object({
       breakType: RuleBreakTypeSchema,

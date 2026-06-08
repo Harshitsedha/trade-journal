@@ -1321,6 +1321,7 @@ export const SetupScalarFieldEnum = {
   description: 'description',
   pdfUrl: 'pdfUrl',
   pdfCloudinaryId: 'pdfCloudinaryId',
+  strategyType: 'strategyType',
   createdAt: 'createdAt'
 } as const
 
@@ -1361,6 +1362,7 @@ export const TradeScalarFieldEnum = {
   idealExit: 'idealExit',
   sideCorrect: 'sideCorrect',
   executionPnl: 'executionPnl',
+  entryRuleCorrect: 'entryRuleCorrect',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1403,6 +1405,7 @@ export const TriggerRuleScalarFieldEnum = {
   name: 'name',
   description: 'description',
   direction: 'direction',
+  orbDirection: 'orbDirection',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1489,6 +1492,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'StrategyType'
+ */
+export type EnumStrategyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StrategyType'>
+    
+
+
+/**
+ * Reference to a field of type 'StrategyType[]'
+ */
+export type ListEnumStrategyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StrategyType[]'>
     
 
 
@@ -1580,6 +1597,20 @@ export type EnumTriggerDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'TriggerDirection[]'
  */
 export type ListEnumTriggerDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TriggerDirection[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OrbDirection'
+ */
+export type EnumOrbDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrbDirection'>
+    
+
+
+/**
+ * Reference to a field of type 'OrbDirection[]'
+ */
+export type ListEnumOrbDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrbDirection[]'>
     
 
 

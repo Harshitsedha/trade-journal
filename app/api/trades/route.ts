@@ -4,7 +4,7 @@ import { CreateTradeSchema, TradeFilterSchema } from '@/lib/validations/trade'
 import { getTrades } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
 import { computeRMultiple, computePnl } from '@/lib/calculations'
-import { computeSideCorrect, computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
+import { computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
 
 const TRADE_INCLUDE = {
   setup: true,
@@ -54,18 +54,6 @@ export async function POST(req: NextRequest) {
   const quantity = qtyRaw ?? '0'
   const riskAmount = riskRaw ?? '0'
 
-  // sideCorrect: derived from primary trigger rule's direction
-  let primaryRuleDirection: 'LONG' | 'SHORT' | 'BOTH' | null = null
-  const primaryTr = triggerRules?.find(tr => tr.isPrimary)
-  if (primaryTr) {
-    const rule = await db.triggerRule.findUnique({
-      where: { id: primaryTr.triggerRuleId },
-      select: { direction: true },
-    })
-    primaryRuleDirection = (rule?.direction ?? null) as 'LONG' | 'SHORT' | 'BOTH' | null
-  }
-  const sideCorrect = computeSideCorrect(direction, primaryRuleDirection)
-
   // executionPnl: always stored (0 when no idealExit)
   const idealPnl = computeIdealPnl({
     entryPrice,
@@ -95,7 +83,6 @@ export async function POST(req: NextRequest) {
     tradeDate: new Date(tradeDate),
     status: status ?? 'OPEN',
     idealExit: idealExit ?? null,
-    sideCorrect,
     executionPnl: String(executionPnlVal),
   }
 

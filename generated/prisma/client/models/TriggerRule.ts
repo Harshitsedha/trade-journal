@@ -41,6 +41,7 @@ export type TriggerRuleMinAggregateOutputType = {
   name: string | null
   description: string | null
   direction: $Enums.TriggerDirection | null
+  orbDirection: $Enums.OrbDirection | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -53,6 +54,7 @@ export type TriggerRuleMaxAggregateOutputType = {
   name: string | null
   description: string | null
   direction: $Enums.TriggerDirection | null
+  orbDirection: $Enums.OrbDirection | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +67,7 @@ export type TriggerRuleCountAggregateOutputType = {
   name: number
   description: number
   direction: number
+  orbDirection: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -87,6 +90,7 @@ export type TriggerRuleMinAggregateInputType = {
   name?: true
   description?: true
   direction?: true
+  orbDirection?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +103,7 @@ export type TriggerRuleMaxAggregateInputType = {
   name?: true
   description?: true
   direction?: true
+  orbDirection?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -111,6 +116,7 @@ export type TriggerRuleCountAggregateInputType = {
   name?: true
   description?: true
   direction?: true
+  orbDirection?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -210,6 +216,7 @@ export type TriggerRuleGroupByOutputType = {
   name: string
   description: string | null
   direction: $Enums.TriggerDirection
+  orbDirection: $Enums.OrbDirection | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -245,6 +252,7 @@ export type TriggerRuleWhereInput = {
   name?: Prisma.StringFilter<"TriggerRule"> | string
   description?: Prisma.StringNullableFilter<"TriggerRule"> | string | null
   direction?: Prisma.EnumTriggerDirectionFilter<"TriggerRule"> | $Enums.TriggerDirection
+  orbDirection?: Prisma.EnumOrbDirectionNullableFilter<"TriggerRule"> | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFilter<"TriggerRule"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TriggerRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TriggerRule"> | Date | string
@@ -259,6 +267,7 @@ export type TriggerRuleOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   direction?: Prisma.SortOrder
+  orbDirection?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -277,6 +286,7 @@ export type TriggerRuleWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"TriggerRule"> | string
   description?: Prisma.StringNullableFilter<"TriggerRule"> | string | null
   direction?: Prisma.EnumTriggerDirectionFilter<"TriggerRule"> | $Enums.TriggerDirection
+  orbDirection?: Prisma.EnumOrbDirectionNullableFilter<"TriggerRule"> | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFilter<"TriggerRule"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TriggerRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TriggerRule"> | Date | string
@@ -291,6 +301,7 @@ export type TriggerRuleOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   direction?: Prisma.SortOrder
+  orbDirection?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -311,6 +322,7 @@ export type TriggerRuleScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"TriggerRule"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"TriggerRule"> | string | null
   direction?: Prisma.EnumTriggerDirectionWithAggregatesFilter<"TriggerRule"> | $Enums.TriggerDirection
+  orbDirection?: Prisma.EnumOrbDirectionNullableWithAggregatesFilter<"TriggerRule"> | $Enums.OrbDirection | null
   isActive?: Prisma.BoolWithAggregatesFilter<"TriggerRule"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TriggerRule"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TriggerRule"> | Date | string
@@ -322,6 +334,7 @@ export type TriggerRuleCreateInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -336,6 +349,7 @@ export type TriggerRuleUncheckedCreateInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -348,6 +362,7 @@ export type TriggerRuleUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -362,6 +377,7 @@ export type TriggerRuleUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -375,6 +391,7 @@ export type TriggerRuleCreateManyInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -386,6 +403,7 @@ export type TriggerRuleUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -398,6 +416,7 @@ export type TriggerRuleUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -425,6 +444,7 @@ export type TriggerRuleCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   direction?: Prisma.SortOrder
+  orbDirection?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -441,6 +461,7 @@ export type TriggerRuleMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   direction?: Prisma.SortOrder
+  orbDirection?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -453,6 +474,7 @@ export type TriggerRuleMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   direction?: Prisma.SortOrder
+  orbDirection?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -521,6 +543,10 @@ export type EnumTriggerDirectionFieldUpdateOperationsInput = {
   set?: $Enums.TriggerDirection
 }
 
+export type NullableEnumOrbDirectionFieldUpdateOperationsInput = {
+  set?: $Enums.OrbDirection | null
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
@@ -545,6 +571,7 @@ export type TriggerRuleCreateWithoutSetupInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -557,6 +584,7 @@ export type TriggerRuleUncheckedCreateWithoutSetupInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -599,6 +627,7 @@ export type TriggerRuleScalarWhereInput = {
   name?: Prisma.StringFilter<"TriggerRule"> | string
   description?: Prisma.StringNullableFilter<"TriggerRule"> | string | null
   direction?: Prisma.EnumTriggerDirectionFilter<"TriggerRule"> | $Enums.TriggerDirection
+  orbDirection?: Prisma.EnumOrbDirectionNullableFilter<"TriggerRule"> | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFilter<"TriggerRule"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TriggerRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TriggerRule"> | Date | string
@@ -610,6 +639,7 @@ export type TriggerRuleCreateWithoutTradesInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -623,6 +653,7 @@ export type TriggerRuleUncheckedCreateWithoutTradesInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -650,6 +681,7 @@ export type TriggerRuleUpdateWithoutTradesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -663,6 +695,7 @@ export type TriggerRuleUncheckedUpdateWithoutTradesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -674,6 +707,7 @@ export type TriggerRuleCreateManySetupInput = {
   name: string
   description?: string | null
   direction?: $Enums.TriggerDirection
+  orbDirection?: $Enums.OrbDirection | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -685,6 +719,7 @@ export type TriggerRuleUpdateWithoutSetupInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -697,6 +732,7 @@ export type TriggerRuleUncheckedUpdateWithoutSetupInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -709,6 +745,7 @@ export type TriggerRuleUncheckedUpdateManyWithoutSetupInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   direction?: Prisma.EnumTriggerDirectionFieldUpdateOperationsInput | $Enums.TriggerDirection
+  orbDirection?: Prisma.NullableEnumOrbDirectionFieldUpdateOperationsInput | $Enums.OrbDirection | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -752,6 +789,7 @@ export type TriggerRuleSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   name?: boolean
   description?: boolean
   direction?: boolean
+  orbDirection?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -767,6 +805,7 @@ export type TriggerRuleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   name?: boolean
   description?: boolean
   direction?: boolean
+  orbDirection?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -780,6 +819,7 @@ export type TriggerRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   name?: boolean
   description?: boolean
   direction?: boolean
+  orbDirection?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -793,12 +833,13 @@ export type TriggerRuleSelectScalar = {
   name?: boolean
   description?: boolean
   direction?: boolean
+  orbDirection?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TriggerRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "setupId" | "precedence" | "name" | "description" | "direction" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["triggerRule"]>
+export type TriggerRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "setupId" | "precedence" | "name" | "description" | "direction" | "orbDirection" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["triggerRule"]>
 export type TriggerRuleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   trades?: boolean | Prisma.TriggerRule$tradesArgs<ExtArgs>
@@ -824,6 +865,7 @@ export type $TriggerRulePayload<ExtArgs extends runtime.Types.Extensions.Interna
     name: string
     description: string | null
     direction: $Enums.TriggerDirection
+    orbDirection: $Enums.OrbDirection | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1258,6 +1300,7 @@ export interface TriggerRuleFieldRefs {
   readonly name: Prisma.FieldRef<"TriggerRule", 'String'>
   readonly description: Prisma.FieldRef<"TriggerRule", 'String'>
   readonly direction: Prisma.FieldRef<"TriggerRule", 'TriggerDirection'>
+  readonly orbDirection: Prisma.FieldRef<"TriggerRule", 'OrbDirection'>
   readonly isActive: Prisma.FieldRef<"TriggerRule", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"TriggerRule", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TriggerRule", 'DateTime'>

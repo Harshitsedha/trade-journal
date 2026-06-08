@@ -29,7 +29,6 @@ export type Direction = (typeof Direction)[keyof typeof Direction]
 export const TradeStatus = {
   OPEN: 'OPEN',
   CLOSED: 'CLOSED',
-  SCRATCHED: 'SCRATCHED',
   MISSED: 'MISSED'
 } as const
 
@@ -55,3 +54,19 @@ export const TriggerDirection = {
 } as const
 
 export type TriggerDirection = (typeof TriggerDirection)[keyof typeof TriggerDirection]
+
+
+export const StrategyType = {
+  STANDARD: 'STANDARD',
+  ORB: 'ORB'
+} as const
+
+export type StrategyType = (typeof StrategyType)[keyof typeof StrategyType]
+
+
+export const OrbDirection = {
+  ORIGINAL: 'ORIGINAL',
+  ANTI: 'ANTI'
+} as const
+
+export type OrbDirection = (typeof OrbDirection)[keyof typeof OrbDirection]

@@ -19,6 +19,7 @@ interface SetupWithStats {
   description: string | null
   pdfUrl: string | null
   pdfCloudinaryId: string | null
+  strategyType: 'STANDARD' | 'ORB'
   triggerRules: TriggerRule[]
   subSetups: (SubSetup & { _count: { trades: number } })[]
   _count: { trades: number }
@@ -37,6 +38,7 @@ export function PlaybookClient({ setups }: PlaybookClientProps) {
 
   const [showCreate, setShowCreate] = useState(false)
   const [newName, setNewName] = useState('')
+  const [newStrategyType, setNewStrategyType] = useState<'STANDARD' | 'ORB'>('STANDARD')
   const [creating, setCreating] = useState(false)
 
   const selectSetup = useCallback(
@@ -55,10 +57,11 @@ export function PlaybookClient({ setups }: PlaybookClientProps) {
       const res = await fetch('/api/setups', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName.trim() }),
+        body: JSON.stringify({ name: newName.trim(), strategyType: newStrategyType }),
       })
       if (!res.ok) throw new Error('Failed')
       setNewName('')
+      setNewStrategyType('STANDARD')
       setShowCreate(false)
       router.refresh()
     } finally {
@@ -99,6 +102,22 @@ export function PlaybookClient({ setups }: PlaybookClientProps) {
               onChange={e => setNewName(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') handleCreate() }}
             />
+            <div className="flex gap-1">
+              {(['STANDARD', 'ORB'] as const).map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setNewStrategyType(t)}
+                  className={`flex-1 py-1 text-xs font-medium rounded-[var(--radius-sm)] border transition-all cursor-pointer ${
+                    newStrategyType === t
+                      ? 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-muted)] border-[var(--color-border)]'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={handleCreate} disabled={creating || !newName.trim()}>
                 {creating ? 'Creating…' : 'Create'}

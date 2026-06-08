@@ -74,6 +74,7 @@ export type TradeMinAggregateOutputType = {
   idealExit: runtime.Decimal | null
   sideCorrect: boolean | null
   executionPnl: runtime.Decimal | null
+  entryRuleCorrect: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -100,6 +101,7 @@ export type TradeMaxAggregateOutputType = {
   idealExit: runtime.Decimal | null
   sideCorrect: boolean | null
   executionPnl: runtime.Decimal | null
+  entryRuleCorrect: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -127,6 +129,7 @@ export type TradeCountAggregateOutputType = {
   idealExit: number
   sideCorrect: number
   executionPnl: number
+  entryRuleCorrect: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -181,6 +184,7 @@ export type TradeMinAggregateInputType = {
   idealExit?: true
   sideCorrect?: true
   executionPnl?: true
+  entryRuleCorrect?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -207,6 +211,7 @@ export type TradeMaxAggregateInputType = {
   idealExit?: true
   sideCorrect?: true
   executionPnl?: true
+  entryRuleCorrect?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -234,6 +239,7 @@ export type TradeCountAggregateInputType = {
   idealExit?: true
   sideCorrect?: true
   executionPnl?: true
+  entryRuleCorrect?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -348,6 +354,7 @@ export type TradeGroupByOutputType = {
   idealExit: runtime.Decimal | null
   sideCorrect: boolean | null
   executionPnl: runtime.Decimal | null
+  entryRuleCorrect: boolean | null
   createdAt: Date
   updatedAt: Date
   _count: TradeCountAggregateOutputType | null
@@ -398,6 +405,7 @@ export type TradeWhereInput = {
   idealExit?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   executionPnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   setup?: Prisma.XOR<Prisma.SetupScalarRelationFilter, Prisma.SetupWhereInput>
@@ -430,6 +438,7 @@ export type TradeOrderByWithRelationInput = {
   idealExit?: Prisma.SortOrderInput | Prisma.SortOrder
   sideCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
   executionPnl?: Prisma.SortOrderInput | Prisma.SortOrder
+  entryRuleCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   setup?: Prisma.SetupOrderByWithRelationInput
@@ -465,6 +474,7 @@ export type TradeWhereUniqueInput = Prisma.AtLeast<{
   idealExit?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   executionPnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   setup?: Prisma.XOR<Prisma.SetupScalarRelationFilter, Prisma.SetupWhereInput>
@@ -497,6 +507,7 @@ export type TradeOrderByWithAggregationInput = {
   idealExit?: Prisma.SortOrderInput | Prisma.SortOrder
   sideCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
   executionPnl?: Prisma.SortOrderInput | Prisma.SortOrder
+  entryRuleCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TradeCountOrderByAggregateInput
@@ -532,6 +543,7 @@ export type TradeScalarWhereWithAggregatesInput = {
   idealExit?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.BoolNullableWithAggregatesFilter<"Trade"> | boolean | null
   executionPnl?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.BoolNullableWithAggregatesFilter<"Trade"> | boolean | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Trade"> | Date | string
 }
@@ -557,6 +569,7 @@ export type TradeCreateInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -589,6 +602,7 @@ export type TradeUncheckedCreateInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -617,6 +631,7 @@ export type TradeUpdateInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -649,6 +664,7 @@ export type TradeUncheckedUpdateInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -679,6 +695,7 @@ export type TradeCreateManyInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -704,6 +721,7 @@ export type TradeUpdateManyMutationInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -731,6 +749,7 @@ export type TradeUncheckedUpdateManyInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -776,6 +795,7 @@ export type TradeCountOrderByAggregateInput = {
   idealExit?: Prisma.SortOrder
   sideCorrect?: Prisma.SortOrder
   executionPnl?: Prisma.SortOrder
+  entryRuleCorrect?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -815,6 +835,7 @@ export type TradeMaxOrderByAggregateInput = {
   idealExit?: Prisma.SortOrder
   sideCorrect?: Prisma.SortOrder
   executionPnl?: Prisma.SortOrder
+  entryRuleCorrect?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -841,6 +862,7 @@ export type TradeMinOrderByAggregateInput = {
   idealExit?: Prisma.SortOrder
   sideCorrect?: Prisma.SortOrder
   executionPnl?: Prisma.SortOrder
+  entryRuleCorrect?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1051,6 +1073,7 @@ export type TradeCreateWithoutSetupInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
@@ -1081,6 +1104,7 @@ export type TradeUncheckedCreateWithoutSetupInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1140,6 +1164,7 @@ export type TradeScalarWhereInput = {
   idealExit?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   executionPnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
 }
@@ -1165,6 +1190,7 @@ export type TradeCreateWithoutSubSetupInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1195,6 +1221,7 @@ export type TradeUncheckedCreateWithoutSubSetupInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1249,6 +1276,7 @@ export type TradeCreateWithoutImagesInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1280,6 +1308,7 @@ export type TradeUncheckedCreateWithoutImagesInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
@@ -1323,6 +1352,7 @@ export type TradeUpdateWithoutImagesInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1354,6 +1384,7 @@ export type TradeUncheckedUpdateWithoutImagesInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
@@ -1381,6 +1412,7 @@ export type TradeCreateWithoutRuleBreakInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1412,6 +1444,7 @@ export type TradeUncheckedCreateWithoutRuleBreakInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1455,6 +1488,7 @@ export type TradeUpdateWithoutRuleBreakInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1486,6 +1520,7 @@ export type TradeUncheckedUpdateWithoutRuleBreakInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1513,6 +1548,7 @@ export type TradeCreateWithoutTriggerRulesInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
@@ -1544,6 +1580,7 @@ export type TradeUncheckedCreateWithoutTriggerRulesInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
@@ -1587,6 +1624,7 @@ export type TradeUpdateWithoutTriggerRulesInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1618,6 +1656,7 @@ export type TradeUncheckedUpdateWithoutTriggerRulesInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1646,6 +1685,7 @@ export type TradeCreateManySetupInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1671,6 +1711,7 @@ export type TradeUpdateWithoutSetupInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
@@ -1701,6 +1742,7 @@ export type TradeUncheckedUpdateWithoutSetupInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1730,6 +1772,7 @@ export type TradeUncheckedUpdateManyWithoutSetupInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1756,6 +1799,7 @@ export type TradeCreateManySubSetupInput = {
   idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: boolean | null
   executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1781,6 +1825,7 @@ export type TradeUpdateWithoutSubSetupInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
@@ -1811,6 +1856,7 @@ export type TradeUncheckedUpdateWithoutSubSetupInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
@@ -1840,6 +1886,7 @@ export type TradeUncheckedUpdateManyWithoutSubSetupInput = {
   idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1907,6 +1954,7 @@ export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   idealExit?: boolean
   sideCorrect?: boolean
   executionPnl?: boolean
+  entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
@@ -1940,6 +1988,7 @@ export type TradeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   idealExit?: boolean
   sideCorrect?: boolean
   executionPnl?: boolean
+  entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
@@ -1969,6 +2018,7 @@ export type TradeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   idealExit?: boolean
   sideCorrect?: boolean
   executionPnl?: boolean
+  entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
@@ -1998,11 +2048,12 @@ export type TradeSelectScalar = {
   idealExit?: boolean
   sideCorrect?: boolean
   executionPnl?: boolean
+  entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "instrument" | "assetClass" | "expiry" | "setupId" | "subSetupId" | "direction" | "entryPrice" | "stopLoss" | "targets" | "exitPrice" | "quantity" | "riskAmount" | "rMultiple" | "pnl" | "status" | "thesis" | "notes" | "tradeDate" | "idealExit" | "sideCorrect" | "executionPnl" | "createdAt" | "updatedAt", ExtArgs["result"]["trade"]>
+export type TradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "instrument" | "assetClass" | "expiry" | "setupId" | "subSetupId" | "direction" | "entryPrice" | "stopLoss" | "targets" | "exitPrice" | "quantity" | "riskAmount" | "rMultiple" | "pnl" | "status" | "thesis" | "notes" | "tradeDate" | "idealExit" | "sideCorrect" | "executionPnl" | "entryRuleCorrect" | "createdAt" | "updatedAt", ExtArgs["result"]["trade"]>
 export type TradeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
@@ -2052,6 +2103,7 @@ export type $TradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     idealExit: runtime.Decimal | null
     sideCorrect: boolean | null
     executionPnl: runtime.Decimal | null
+    entryRuleCorrect: boolean | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["trade"]>
@@ -2504,6 +2556,7 @@ export interface TradeFieldRefs {
   readonly idealExit: Prisma.FieldRef<"Trade", 'Decimal'>
   readonly sideCorrect: Prisma.FieldRef<"Trade", 'Boolean'>
   readonly executionPnl: Prisma.FieldRef<"Trade", 'Decimal'>
+  readonly entryRuleCorrect: Prisma.FieldRef<"Trade", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Trade", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Trade", 'DateTime'>
 }

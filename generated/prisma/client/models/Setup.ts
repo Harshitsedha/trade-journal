@@ -30,6 +30,7 @@ export type SetupMinAggregateOutputType = {
   description: string | null
   pdfUrl: string | null
   pdfCloudinaryId: string | null
+  strategyType: $Enums.StrategyType | null
   createdAt: Date | null
 }
 
@@ -39,6 +40,7 @@ export type SetupMaxAggregateOutputType = {
   description: string | null
   pdfUrl: string | null
   pdfCloudinaryId: string | null
+  strategyType: $Enums.StrategyType | null
   createdAt: Date | null
 }
 
@@ -48,6 +50,7 @@ export type SetupCountAggregateOutputType = {
   description: number
   pdfUrl: number
   pdfCloudinaryId: number
+  strategyType: number
   createdAt: number
   _all: number
 }
@@ -59,6 +62,7 @@ export type SetupMinAggregateInputType = {
   description?: true
   pdfUrl?: true
   pdfCloudinaryId?: true
+  strategyType?: true
   createdAt?: true
 }
 
@@ -68,6 +72,7 @@ export type SetupMaxAggregateInputType = {
   description?: true
   pdfUrl?: true
   pdfCloudinaryId?: true
+  strategyType?: true
   createdAt?: true
 }
 
@@ -77,6 +82,7 @@ export type SetupCountAggregateInputType = {
   description?: true
   pdfUrl?: true
   pdfCloudinaryId?: true
+  strategyType?: true
   createdAt?: true
   _all?: true
 }
@@ -159,6 +165,7 @@ export type SetupGroupByOutputType = {
   description: string | null
   pdfUrl: string | null
   pdfCloudinaryId: string | null
+  strategyType: $Enums.StrategyType
   createdAt: Date
   _count: SetupCountAggregateOutputType | null
   _min: SetupMinAggregateOutputType | null
@@ -189,6 +196,7 @@ export type SetupWhereInput = {
   description?: Prisma.StringNullableFilter<"Setup"> | string | null
   pdfUrl?: Prisma.StringNullableFilter<"Setup"> | string | null
   pdfCloudinaryId?: Prisma.StringNullableFilter<"Setup"> | string | null
+  strategyType?: Prisma.EnumStrategyTypeFilter<"Setup"> | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFilter<"Setup"> | Date | string
   trades?: Prisma.TradeListRelationFilter
   subSetups?: Prisma.SubSetupListRelationFilter
@@ -201,6 +209,7 @@ export type SetupOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   pdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   pdfCloudinaryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  strategyType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   trades?: Prisma.TradeOrderByRelationAggregateInput
   subSetups?: Prisma.SubSetupOrderByRelationAggregateInput
@@ -216,6 +225,7 @@ export type SetupWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Setup"> | string | null
   pdfUrl?: Prisma.StringNullableFilter<"Setup"> | string | null
   pdfCloudinaryId?: Prisma.StringNullableFilter<"Setup"> | string | null
+  strategyType?: Prisma.EnumStrategyTypeFilter<"Setup"> | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFilter<"Setup"> | Date | string
   trades?: Prisma.TradeListRelationFilter
   subSetups?: Prisma.SubSetupListRelationFilter
@@ -228,6 +238,7 @@ export type SetupOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   pdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   pdfCloudinaryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  strategyType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.SetupCountOrderByAggregateInput
   _max?: Prisma.SetupMaxOrderByAggregateInput
@@ -243,6 +254,7 @@ export type SetupScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Setup"> | string | null
   pdfUrl?: Prisma.StringNullableWithAggregatesFilter<"Setup"> | string | null
   pdfCloudinaryId?: Prisma.StringNullableWithAggregatesFilter<"Setup"> | string | null
+  strategyType?: Prisma.EnumStrategyTypeWithAggregatesFilter<"Setup"> | $Enums.StrategyType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Setup"> | Date | string
 }
 
@@ -252,6 +264,7 @@ export type SetupCreateInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   trades?: Prisma.TradeCreateNestedManyWithoutSetupInput
   subSetups?: Prisma.SubSetupCreateNestedManyWithoutSetupInput
@@ -264,6 +277,7 @@ export type SetupUncheckedCreateInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   trades?: Prisma.TradeUncheckedCreateNestedManyWithoutSetupInput
   subSetups?: Prisma.SubSetupUncheckedCreateNestedManyWithoutSetupInput
@@ -276,6 +290,7 @@ export type SetupUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUpdateManyWithoutSetupNestedInput
@@ -288,6 +303,7 @@ export type SetupUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUncheckedUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUncheckedUpdateManyWithoutSetupNestedInput
@@ -300,6 +316,7 @@ export type SetupCreateManyInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
 }
 
@@ -309,6 +326,7 @@ export type SetupUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -318,6 +336,7 @@ export type SetupUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -327,6 +346,7 @@ export type SetupCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   pdfUrl?: Prisma.SortOrder
   pdfCloudinaryId?: Prisma.SortOrder
+  strategyType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -336,6 +356,7 @@ export type SetupMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   pdfUrl?: Prisma.SortOrder
   pdfCloudinaryId?: Prisma.SortOrder
+  strategyType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -345,12 +366,17 @@ export type SetupMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   pdfUrl?: Prisma.SortOrder
   pdfCloudinaryId?: Prisma.SortOrder
+  strategyType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type SetupScalarRelationFilter = {
   is?: Prisma.SetupWhereInput
   isNot?: Prisma.SetupWhereInput
+}
+
+export type EnumStrategyTypeFieldUpdateOperationsInput = {
+  set?: $Enums.StrategyType
 }
 
 export type SetupCreateNestedOneWithoutSubSetupsInput = {
@@ -401,6 +427,7 @@ export type SetupCreateWithoutSubSetupsInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   trades?: Prisma.TradeCreateNestedManyWithoutSetupInput
   triggerRules?: Prisma.TriggerRuleCreateNestedManyWithoutSetupInput
@@ -412,6 +439,7 @@ export type SetupUncheckedCreateWithoutSubSetupsInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   trades?: Prisma.TradeUncheckedCreateNestedManyWithoutSetupInput
   triggerRules?: Prisma.TriggerRuleUncheckedCreateNestedManyWithoutSetupInput
@@ -439,6 +467,7 @@ export type SetupUpdateWithoutSubSetupsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUpdateManyWithoutSetupNestedInput
   triggerRules?: Prisma.TriggerRuleUpdateManyWithoutSetupNestedInput
@@ -450,6 +479,7 @@ export type SetupUncheckedUpdateWithoutSubSetupsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUncheckedUpdateManyWithoutSetupNestedInput
   triggerRules?: Prisma.TriggerRuleUncheckedUpdateManyWithoutSetupNestedInput
@@ -461,6 +491,7 @@ export type SetupCreateWithoutTradesInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   subSetups?: Prisma.SubSetupCreateNestedManyWithoutSetupInput
   triggerRules?: Prisma.TriggerRuleCreateNestedManyWithoutSetupInput
@@ -472,6 +503,7 @@ export type SetupUncheckedCreateWithoutTradesInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   subSetups?: Prisma.SubSetupUncheckedCreateNestedManyWithoutSetupInput
   triggerRules?: Prisma.TriggerRuleUncheckedCreateNestedManyWithoutSetupInput
@@ -499,6 +531,7 @@ export type SetupUpdateWithoutTradesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subSetups?: Prisma.SubSetupUpdateManyWithoutSetupNestedInput
   triggerRules?: Prisma.TriggerRuleUpdateManyWithoutSetupNestedInput
@@ -510,6 +543,7 @@ export type SetupUncheckedUpdateWithoutTradesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subSetups?: Prisma.SubSetupUncheckedUpdateManyWithoutSetupNestedInput
   triggerRules?: Prisma.TriggerRuleUncheckedUpdateManyWithoutSetupNestedInput
@@ -521,6 +555,7 @@ export type SetupCreateWithoutTriggerRulesInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   trades?: Prisma.TradeCreateNestedManyWithoutSetupInput
   subSetups?: Prisma.SubSetupCreateNestedManyWithoutSetupInput
@@ -532,6 +567,7 @@ export type SetupUncheckedCreateWithoutTriggerRulesInput = {
   description?: string | null
   pdfUrl?: string | null
   pdfCloudinaryId?: string | null
+  strategyType?: $Enums.StrategyType
   createdAt?: Date | string
   trades?: Prisma.TradeUncheckedCreateNestedManyWithoutSetupInput
   subSetups?: Prisma.SubSetupUncheckedCreateNestedManyWithoutSetupInput
@@ -559,6 +595,7 @@ export type SetupUpdateWithoutTriggerRulesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUpdateManyWithoutSetupNestedInput
@@ -570,6 +607,7 @@ export type SetupUncheckedUpdateWithoutTriggerRulesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfCloudinaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strategyType?: Prisma.EnumStrategyTypeFieldUpdateOperationsInput | $Enums.StrategyType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trades?: Prisma.TradeUncheckedUpdateManyWithoutSetupNestedInput
   subSetups?: Prisma.SubSetupUncheckedUpdateManyWithoutSetupNestedInput
@@ -630,6 +668,7 @@ export type SetupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   description?: boolean
   pdfUrl?: boolean
   pdfCloudinaryId?: boolean
+  strategyType?: boolean
   createdAt?: boolean
   trades?: boolean | Prisma.Setup$tradesArgs<ExtArgs>
   subSetups?: boolean | Prisma.Setup$subSetupsArgs<ExtArgs>
@@ -643,6 +682,7 @@ export type SetupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   description?: boolean
   pdfUrl?: boolean
   pdfCloudinaryId?: boolean
+  strategyType?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["setup"]>
 
@@ -652,6 +692,7 @@ export type SetupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   description?: boolean
   pdfUrl?: boolean
   pdfCloudinaryId?: boolean
+  strategyType?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["setup"]>
 
@@ -661,10 +702,11 @@ export type SetupSelectScalar = {
   description?: boolean
   pdfUrl?: boolean
   pdfCloudinaryId?: boolean
+  strategyType?: boolean
   createdAt?: boolean
 }
 
-export type SetupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "pdfUrl" | "pdfCloudinaryId" | "createdAt", ExtArgs["result"]["setup"]>
+export type SetupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "pdfUrl" | "pdfCloudinaryId" | "strategyType" | "createdAt", ExtArgs["result"]["setup"]>
 export type SetupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trades?: boolean | Prisma.Setup$tradesArgs<ExtArgs>
   subSetups?: boolean | Prisma.Setup$subSetupsArgs<ExtArgs>
@@ -687,6 +729,7 @@ export type $SetupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     description: string | null
     pdfUrl: string | null
     pdfCloudinaryId: string | null
+    strategyType: $Enums.StrategyType
     createdAt: Date
   }, ExtArgs["result"]["setup"]>
   composites: {}
@@ -1119,6 +1162,7 @@ export interface SetupFieldRefs {
   readonly description: Prisma.FieldRef<"Setup", 'String'>
   readonly pdfUrl: Prisma.FieldRef<"Setup", 'String'>
   readonly pdfCloudinaryId: Prisma.FieldRef<"Setup", 'String'>
+  readonly strategyType: Prisma.FieldRef<"Setup", 'StrategyType'>
   readonly createdAt: Prisma.FieldRef<"Setup", 'DateTime'>
 }
     

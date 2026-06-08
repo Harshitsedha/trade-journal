@@ -88,6 +88,11 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
     trade.triggerRules.map(t => ({ triggerRuleId: t.triggerRuleId, isPrimary: t.isPrimary }))
   )
 
+  // entryRuleCorrect — manually assessed at exit time
+  const [entryRuleCorrect, setEntryRuleCorrect] = useState<boolean | null>(
+    (trade as Record<string, unknown>).entryRuleCorrect as boolean | null ?? null
+  )
+
   // Ideal exit — captured at exit time
   const [idealExit, setIdealExit] = useState(
     (trade as Record<string, unknown>).idealExit != null
@@ -193,6 +198,10 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         body.idealExit = idealExit
       }
 
+      if (entryRuleCorrect !== null) {
+        body.entryRuleCorrect = entryRuleCorrect
+      }
+
       if (isOpen && tradeStatus !== 'MISSED' && exitPrice.trim()) {
         body.exitPrice = exitPrice
         if (hasRuleBreak && ruleDescription.trim()) {
@@ -230,7 +239,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, notes, tradeDate, selectedTriggers,
-      tradeStatus, idealExit,
+      tradeStatus, idealExit, entryRuleCorrect,
       isOpen, exitPrice, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router, onDone,
     ]
@@ -505,6 +514,31 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
             onChange={e => setIdealExit(e.target.value)}
             className="font-mono"
           />
+
+          {/* entryRuleCorrect tri-state */}
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Entry rules followed?</span>
+            <div className="flex gap-2">
+              {([null, true, false] as const).map(v => (
+                <button
+                  key={String(v)}
+                  type="button"
+                  onClick={() => setEntryRuleCorrect(v)}
+                  className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
+                    entryRuleCorrect === v
+                      ? v === true
+                        ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
+                        : v === false
+                        ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
+                        : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
+                  }`}
+                >
+                  {v === null ? '— Not assessed' : v ? 'Yes ✓' : 'No ✗'}
+                </button>
+              ))}
+            </div>
+          </div>
         </>
       )}
 

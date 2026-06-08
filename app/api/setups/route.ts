@@ -23,7 +23,11 @@ export async function POST(req: NextRequest) {
   }
 
   const setup = await db.setup.create({
-    data: { name: parsed.data.name, description: parsed.data.description ?? null },
+    data: {
+      name: parsed.data.name,
+      description: parsed.data.description ?? null,
+      strategyType: parsed.data.strategyType ?? 'STANDARD',
+    },
   })
   return Response.json(setup, { status: 201 })
 }

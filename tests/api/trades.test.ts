@@ -349,71 +349,7 @@ describe('CLOSED trade remains editable', () => {
   })
 })
 
-describe('PATCH /api/trades/[id] — sideCorrect + executionPnl recompute', () => {
-  it('sets sideCorrect=true when primary trigger rule direction matches trade direction', async () => {
-    const setup = await createTestSetup()
-    const rule = await db.triggerRule.create({ data: { setupId: setup.id, precedence: 1, name: 'LONG rule', direction: 'LONG' } })
-    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
-
-    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
-      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
-      exitPrice: '110',
-      triggerRules: [{ triggerRuleId: rule.id, isPrimary: true }],
-    })
-    const res = await PatchTrade(req, ctx({ id: trade.id }))
-    expect(res.status).toBe(200)
-
-    const row = await db.trade.findUnique({ where: { id: trade.id } })
-    expect(row!.sideCorrect).toBe(true)
-  })
-
-  it('sets sideCorrect=false when primary trigger rule direction mismatches trade direction', async () => {
-    const setup = await createTestSetup()
-    // Trade is LONG but primary rule is SHORT → sideCorrect=false
-    const rule = await db.triggerRule.create({ data: { setupId: setup.id, precedence: 1, name: 'SHORT rule', direction: 'SHORT' } })
-    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
-
-    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
-      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
-      exitPrice: '110',
-      triggerRules: [{ triggerRuleId: rule.id, isPrimary: true }],
-    })
-    await PatchTrade(req, ctx({ id: trade.id }))
-
-    const row = await db.trade.findUnique({ where: { id: trade.id } })
-    expect(row!.sideCorrect).toBe(false)
-  })
-
-  it('sets sideCorrect=null when primary trigger rule direction is BOTH', async () => {
-    const setup = await createTestSetup()
-    const rule = await db.triggerRule.create({ data: { setupId: setup.id, precedence: 1, name: 'BOTH rule', direction: 'BOTH' } })
-    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
-
-    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
-      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
-      exitPrice: '110',
-      triggerRules: [{ triggerRuleId: rule.id, isPrimary: true }],
-    })
-    await PatchTrade(req, ctx({ id: trade.id }))
-
-    const row = await db.trade.findUnique({ where: { id: trade.id } })
-    expect(row!.sideCorrect).toBeNull()
-  })
-
-  it('sets sideCorrect=null when no trigger rules provided', async () => {
-    const setup = await createTestSetup()
-    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
-
-    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
-      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
-      exitPrice: '110',
-    })
-    await PatchTrade(req, ctx({ id: trade.id }))
-
-    const row = await db.trade.findUnique({ where: { id: trade.id } })
-    expect(row!.sideCorrect).toBeNull()
-  })
-
+describe('PATCH /api/trades/[id] — executionPnl recompute', () => {
   it('computes executionPnl when idealExit present on close', async () => {
     const setup = await createTestSetup()
     // LONG, entry 100, stop 95, exit 110, qty 2 → actualPnl = (110-100)*2 = 20
@@ -464,6 +400,53 @@ describe('PATCH /api/trades/[id] — sideCorrect + executionPnl recompute', () =
     const row = await db.trade.findUnique({ where: { id: trade.id } })
     expect(row!.status).toBe('MISSED')
     expect(Number(row!.executionPnl)).toBe(-20)
+  })
+})
+
+describe('PATCH /api/trades/[id] — entryRuleCorrect', () => {
+  it('persists entryRuleCorrect=true when sent in PATCH body', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      entryRuleCorrect: true,
+    })
+    const res = await PatchTrade(req, ctx({ id: trade.id }))
+    expect(res.status).toBe(200)
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.entryRuleCorrect).toBe(true)
+  })
+
+  it('persists entryRuleCorrect=false when sent in PATCH body', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      entryRuleCorrect: false,
+    })
+    await PatchTrade(req, ctx({ id: trade.id }))
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.entryRuleCorrect).toBe(false)
+  })
+
+  it('leaves entryRuleCorrect null when not sent', async () => {
+    const setup = await createTestSetup()
+    const trade = await createTrade(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' })
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+    })
+    await PatchTrade(req, ctx({ id: trade.id }))
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.entryRuleCorrect).toBeNull()
   })
 })
 

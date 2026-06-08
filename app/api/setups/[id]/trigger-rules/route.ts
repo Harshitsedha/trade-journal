@@ -43,6 +43,7 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
       name: parsed.data.name,
       description: parsed.data.description ?? null,
       direction: parsed.data.direction,
+      orbDirection: parsed.data.orbDirection ?? null,
     },
   })
   return Response.json(rule, { status: 201 })

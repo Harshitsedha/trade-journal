@@ -134,6 +134,7 @@ export const SetupScalarFieldEnum = {
   description: 'description',
   pdfUrl: 'pdfUrl',
   pdfCloudinaryId: 'pdfCloudinaryId',
+  strategyType: 'strategyType',
   createdAt: 'createdAt'
 } as const
 
@@ -174,6 +175,7 @@ export const TradeScalarFieldEnum = {
   idealExit: 'idealExit',
   sideCorrect: 'sideCorrect',
   executionPnl: 'executionPnl',
+  entryRuleCorrect: 'entryRuleCorrect',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -216,6 +218,7 @@ export const TriggerRuleScalarFieldEnum = {
   name: 'name',
   description: 'description',
   direction: 'direction',
+  orbDirection: 'orbDirection',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

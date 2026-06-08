@@ -4,7 +4,7 @@ import { UpdateTradeSchema } from '@/lib/validations/trade'
 import { getTradeById } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
 import { computeRMultiple, computePnl, computeRuleBreakImpact } from '@/lib/calculations'
-import { computeSideCorrect, computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
+import { computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -38,7 +38,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate,
     exitPrice, status, triggerRules, ruleBreak,
-    idealExit,
+    idealExit, entryRuleCorrect,
   } = parsed.data
 
   const isMissed = status === 'MISSED'
@@ -48,24 +48,6 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
   const targets = targetsRaw?.length ? targetsRaw : (existing.targets as { toString(): string }[]).map(t => t.toString())
   const quantity = qtyRaw ?? existing.quantity.toString()
   const riskAmount = riskRaw ?? existing.riskAmount.toString()
-
-  // sideCorrect: from primary trigger rule direction
-  // If triggerRules provided in body, use them; otherwise fall back to existing DB links
-  let primaryRuleDirection: 'LONG' | 'SHORT' | 'BOTH' | null = null
-  if (triggerRules !== undefined) {
-    const primaryTr = triggerRules.find(tr => tr.isPrimary)
-    if (primaryTr) {
-      const rule = await db.triggerRule.findUnique({
-        where: { id: primaryTr.triggerRuleId },
-        select: { direction: true },
-      })
-      primaryRuleDirection = (rule?.direction ?? null) as 'LONG' | 'SHORT' | 'BOTH' | null
-    }
-  } else {
-    const existingPrimary = existing.triggerRules.find(tr => tr.isPrimary)
-    primaryRuleDirection = (existingPrimary?.triggerRule.direction ?? null) as 'LONG' | 'SHORT' | 'BOTH' | null
-  }
-  const sideCorrect = computeSideCorrect(direction, primaryRuleDirection)
 
   // Resolve idealExit
   const resolvedIdealExit = idealExit !== undefined
@@ -88,7 +70,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     notes: notes !== undefined ? (notes ?? null) : existing.notes,
     tradeDate: tradeDate ? new Date(tradeDate) : existing.tradeDate,
     idealExit: resolvedIdealExit,
-    sideCorrect,
+    ...(entryRuleCorrect !== undefined && { entryRuleCorrect }),
     ...(status && { status }),
   }
 

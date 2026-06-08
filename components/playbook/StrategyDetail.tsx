@@ -18,6 +18,7 @@ interface SetupWithFull {
   description: string | null
   pdfUrl: string | null
   pdfCloudinaryId: string | null
+  strategyType: 'STANDARD' | 'ORB'
   triggerRules: TriggerRule[]
   subSetups: (SubSetup & { _count: { trades: number } })[]
   _count: { trades: number }
@@ -81,7 +82,16 @@ export function StrategyDetail({ setup, onDeleted }: StrategyDetailProps) {
     <div className="flex flex-col gap-6 p-6 overflow-y-auto h-full">
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-base font-semibold text-[var(--color-ink)] mb-1">{setup.name}</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-base font-semibold text-[var(--color-ink)]">{setup.name}</h2>
+            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${
+              setup.strategyType === 'ORB'
+                ? 'bg-[var(--color-accent-bg)] text-[var(--color-accent)]'
+                : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-muted)]'
+            }`}>
+              {setup.strategyType}
+            </span>
+          </div>
           <div className="flex gap-4 text-xs text-[var(--color-ink-muted)]">
             <span>{setup._count.trades} trades</span>
             {setup.stats.total > 0 && (
@@ -142,7 +152,7 @@ export function StrategyDetail({ setup, onDeleted }: StrategyDetailProps) {
         <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-muted)] mb-2">
           Trigger Rules
         </p>
-        <TriggerRuleList setupId={setup.id} initialRules={setup.triggerRules} />
+        <TriggerRuleList setupId={setup.id} initialRules={setup.triggerRules} strategyType={setup.strategyType} />
       </section>
 
       {/* Sub-Setups */}

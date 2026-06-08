@@ -9,7 +9,7 @@ vi.mock('@/auth', () => ({
 import { POST as PostSetup } from '@/app/api/setups/route'
 import { GET as GetById, PATCH as PatchSetup } from '@/app/api/setups/[id]/route'
 import { GET as GetTriggerRules, POST as PostTriggerRule } from '@/app/api/setups/[id]/trigger-rules/route'
-import { DELETE as DeleteTriggerRule } from '@/app/api/setups/[id]/trigger-rules/[ruleId]/route'
+import { DELETE as DeleteTriggerRule, PATCH as PatchTriggerRule } from '@/app/api/setups/[id]/trigger-rules/[ruleId]/route'
 import { GET as GetSubSetups, POST as PostSubSetup } from '@/app/api/setups/[id]/subsetups/route'
 import { POST as PostPdf } from '@/app/api/setups/[id]/pdf/route'
 
@@ -106,6 +106,103 @@ describe('Playbook — soft delete trigger rule', () => {
     const allRules = detailData.triggerRules
     expect(allRules).toHaveLength(2)
     expect(allRules.find((r: { id: string }) => r.id === r2.id).isActive).toBe(false)
+  })
+})
+
+describe('Playbook — strategyType', () => {
+  it('creates setup with STANDARD strategyType by default', async () => {
+    const req = makeRequest('POST', 'http://localhost/api/setups', { name: 'Standard Setup' })
+    const res = await PostSetup(req)
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.strategyType).toBe('STANDARD')
+
+    const row = await db.setup.findUnique({ where: { id: data.id } })
+    expect(row!.strategyType).toBe('STANDARD')
+  })
+
+  it('creates setup with ORB strategyType when specified', async () => {
+    const req = makeRequest('POST', 'http://localhost/api/setups', { name: 'ORB Setup', strategyType: 'ORB' })
+    const res = await PostSetup(req)
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.strategyType).toBe('ORB')
+  })
+
+  it('updates strategyType via PATCH', async () => {
+    const setup = await db.setup.create({ data: { name: 'Patch Type Setup' } })
+    expect(setup.strategyType).toBe('STANDARD')
+
+    const req = makeRequest('PATCH', `http://localhost/api/setups/${setup.id}`, { strategyType: 'ORB' })
+    const res = await PatchSetup(req, ctx({ id: setup.id }))
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.strategyType).toBe('ORB')
+  })
+
+  it('rejects invalid strategyType with 400', async () => {
+    const req = makeRequest('POST', 'http://localhost/api/setups', { name: 'Bad Type', strategyType: 'INVALID' })
+    const res = await PostSetup(req)
+    expect(res.status).toBe(400)
+  })
+})
+
+describe('Playbook — orbDirection on trigger rules', () => {
+  it('creates trigger rule with orbDirection for ORB setup', async () => {
+    const setup = await db.setup.create({ data: { name: 'ORB Trigger Setup', strategyType: 'ORB' } })
+
+    const req = makeRequest('POST', `http://localhost/api/setups/${setup.id}/trigger-rules`, {
+      precedence: 1,
+      name: 'Opening Break',
+      direction: 'BOTH',
+      orbDirection: 'ORIGINAL',
+    })
+    const res = await PostTriggerRule(req, ctx({ id: setup.id }))
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.orbDirection).toBe('ORIGINAL')
+  })
+
+  it('creates trigger rule with ANTI orbDirection', async () => {
+    const setup = await db.setup.create({ data: { name: 'ORB Anti Setup', strategyType: 'ORB' } })
+
+    const req = makeRequest('POST', `http://localhost/api/setups/${setup.id}/trigger-rules`, {
+      precedence: 1,
+      name: 'Fade the Break',
+      direction: 'BOTH',
+      orbDirection: 'ANTI',
+    })
+    const res = await PostTriggerRule(req, ctx({ id: setup.id }))
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.orbDirection).toBe('ANTI')
+  })
+
+  it('standard setup trigger rule has null orbDirection', async () => {
+    const setup = await db.setup.create({ data: { name: 'Standard Trigger Setup' } })
+
+    const req = makeRequest('POST', `http://localhost/api/setups/${setup.id}/trigger-rules`, {
+      precedence: 1,
+      name: 'EMA Cross',
+      direction: 'LONG',
+    })
+    const res = await PostTriggerRule(req, ctx({ id: setup.id }))
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.orbDirection).toBeNull()
+  })
+
+  it('updates orbDirection via PATCH on trigger rule', async () => {
+    const setup = await db.setup.create({ data: { name: 'ORB Patch Rule Setup', strategyType: 'ORB' } })
+    const rule = await db.triggerRule.create({ data: { setupId: setup.id, precedence: 1, name: 'Break Rule', direction: 'BOTH' } })
+
+    const req = makeRequest('PATCH', `http://localhost/api/setups/${setup.id}/trigger-rules/${rule.id}`, {
+      orbDirection: 'ANTI',
+    })
+    const res = await PatchTriggerRule(req, ctx({ id: setup.id, ruleId: rule.id }))
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.orbDirection).toBe('ANTI')
   })
 })
 

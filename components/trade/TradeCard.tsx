@@ -18,7 +18,7 @@ export function TradeCard({ trade }: TradeCardProps) {
 
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
-  const sideCorrect: boolean | null = (trade as Record<string, unknown>).sideCorrect as boolean | null ?? null
+  const entryRuleCorrect: boolean | null = (trade as Record<string, unknown>).entryRuleCorrect as boolean | null ?? null
 
   function statusBadgeVariant(status: string) {
     if (status === 'CLOSED') return 'profit'
@@ -81,11 +81,11 @@ export function TradeCard({ trade }: TradeCardProps) {
 
         {/* Stats */}
         <div className="flex items-center gap-4 flex-shrink-0">
-          {sideCorrect === true && (
-            <Badge variant="profit">Side ✓</Badge>
+          {entryRuleCorrect === true && (
+            <Badge variant="profit">Rules ✓</Badge>
           )}
-          {sideCorrect === false && (
-            <Badge variant="loss">Wrong Side</Badge>
+          {entryRuleCorrect === false && (
+            <Badge variant="loss">Rules ✗</Badge>
           )}
           {r !== null && (
             <span
