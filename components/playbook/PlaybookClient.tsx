@@ -151,6 +151,7 @@ export function PlaybookClient({ setups }: PlaybookClientProps) {
       <div className="flex-1 overflow-hidden bg-[var(--color-surface-raised)]">
         {selectedSetup ? (
           <StrategyDetail
+            key={selectedSetup.id}
             setup={selectedSetup}
             onDeleted={() => {
               const params = new URLSearchParams(searchParams.toString())
