@@ -83,14 +83,16 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     updateData.status = 'CLOSED'
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
+  } else if (isMissed) {
+    // Not-taken (MISSED/SKIP): zero the realized pnl even if reclassified from a
+    // CLOSED trade that had an exit price. executionPnl below uses 0 - idealPnl.
+    updateData.pnl = '0'
   } else if (existing.exitPrice) {
     const existingExit = existing.exitPrice.toString()
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, existingExit)
     const pnl = computePnl(direction, entryPrice, existingExit, quantity)
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
-  } else if (isMissed) {
-    updateData.pnl = '0'
   }
 
   // executionPnl: always stored; 0 when no idealExit

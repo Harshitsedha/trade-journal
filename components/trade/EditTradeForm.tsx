@@ -191,7 +191,9 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         notes: notes || null,
         tradeDate: new Date(tradeDate).toISOString(),
         triggerRules: selectedTriggers,
-        status: tradeStatus !== 'CLOSED' ? tradeStatus : undefined,
+        // Always send the chosen status (closed trades can be reclassified to
+        // MISSED/SKIP). When an exit price is added below, PATCH forces CLOSED.
+        status: tradeStatus,
       }
 
       // idealExit is editable for every status; always send it so the PATCH route
@@ -477,41 +479,45 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         />
       </div>
 
-      {/* Status toggle — for non-CLOSED trades */}
-      {trade.status !== 'CLOSED' && (
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Status</span>
-          <div className="flex gap-2">
-            {(['OPEN', 'MISSED', 'SKIP'] as const).map(s => {
-              const selectedClass =
-                s === 'MISSED'
-                  ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
-                  : s === 'SKIP'
-                  ? 'bg-[var(--color-accent-bg)] text-[var(--color-accent)] border-[var(--color-accent)]'
-                  : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
-              return (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setTradeStatus(s)}
-                  className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
-                    tradeStatus === s
-                      ? selectedClass
-                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
-                  }`}
-                >
-                  {s}
-                </button>
-              )
-            })}
-          </div>
-          {tradeStatus === 'SKIP' && (
-            <p className="text-[11px] text-[var(--color-ink-muted)]">
-              You saw it and consciously passed. Set an Ideal Exit below to track the cost of skipping.
-            </p>
-          )}
+      {/* Status toggle — for every trade. CLOSED trades can be reclassified to
+          MISSED/SKIP (e.g. you decide a trade shouldn't count as taken). */}
+      <div className="flex flex-col gap-1">
+        <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Status</span>
+        <div className="flex gap-2">
+          {(trade.status === 'CLOSED'
+            ? (['CLOSED', 'MISSED', 'SKIP'] as const)
+            : (['OPEN', 'MISSED', 'SKIP'] as const)
+          ).map(s => {
+            const selectedClass =
+              s === 'MISSED'
+                ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
+                : s === 'SKIP'
+                ? 'bg-[var(--color-accent-bg)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                : s === 'CLOSED'
+                ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
+                : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setTradeStatus(s)}
+                className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
+                  tradeStatus === s
+                    ? selectedClass
+                    : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
+                }`}
+              >
+                {s}
+              </button>
+            )
+          })}
         </div>
-      )}
+        {tradeStatus === 'SKIP' && (
+          <p className="text-[11px] text-[var(--color-ink-muted)]">
+            You saw it and consciously passed. Set an Ideal Exit below to track the cost of skipping.
+          </p>
+        )}
+      </div>
 
       {/* Ideal Exit — editable for EVERY status (OPEN/CLOSED/MISSED/SKIP).
           Drives idealPnl/executionPnl. Set to entry price for a breakeven ideal. */}

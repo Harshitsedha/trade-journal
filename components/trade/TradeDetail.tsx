@@ -389,6 +389,39 @@ export function TradeDetail({ trade }: TradeDetailProps) {
         ))}
       </div>
 
+      {/* Execution quality — shown when an ideal exit is recorded */}
+      {(trade as Record<string, unknown>).idealExit != null && (() => {
+        const idealExitVal = String((trade as Record<string, unknown>).idealExit)
+        const execRaw = (trade as Record<string, unknown>).executionPnl
+        const execNum = execRaw != null ? Number(String(execRaw)) : null
+        const execColor =
+          execNum != null && execNum < 0
+            ? 'text-[var(--color-loss)]'
+            : execNum != null && execNum > 0
+            ? 'text-[var(--color-profit)]'
+            : 'text-[var(--color-ink)]'
+        return (
+          <div className="grid grid-cols-2 gap-px bg-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden">
+            <div className="flex flex-col gap-1 px-4 py-3 bg-[var(--color-surface)]">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--color-ink-muted)]">
+                Ideal Exit
+              </span>
+              <span className="font-mono text-sm font-semibold text-[var(--color-ink)]">
+                {idealExitVal}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 px-4 py-3 bg-[var(--color-surface)]">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--color-ink-muted)]">
+                Execution P&amp;L
+              </span>
+              <span className={`font-mono text-sm font-semibold ${execColor}`}>
+                {execNum != null ? `${execNum > 0 ? '+' : ''}₹${execNum.toFixed(0)}` : '—'}
+              </span>
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Targets */}
       {trade.targets.length > 0 && (
         <div className="flex flex-col gap-2">

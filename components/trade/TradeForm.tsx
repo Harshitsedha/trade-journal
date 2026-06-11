@@ -70,6 +70,10 @@ export function TradeForm({ setups }: TradeFormProps) {
   const [tradeDate, setTradeDate] = useState(
     new Date().toISOString().slice(0, 16)
   )
+  // Outcome at log time: TAKEN (OPEN) vs not-taken (MISSED/SKIP), plus the ideal exit
+  // used to grade execution / track the cost of a skip.
+  const [status, setStatus] = useState<'OPEN' | 'MISSED' | 'SKIP'>('OPEN')
+  const [idealExit, setIdealExit] = useState('')
 
   // Load sub-setups and trigger rules when setup changes
   useEffect(() => {
@@ -151,6 +155,8 @@ export function TradeForm({ setups }: TradeFormProps) {
             notes: null,
             tradeDate: new Date(tradeDate).toISOString(),
             triggerRules: selectedTriggers.length > 0 ? selectedTriggers : undefined,
+            status: status !== 'OPEN' ? status : undefined,
+            idealExit: idealExit.trim() || null,
           }),
         })
 
@@ -172,6 +178,7 @@ export function TradeForm({ setups }: TradeFormProps) {
       canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, tradeDate, selectedTriggers, router,
+      status, idealExit,
     ]
   )
 
@@ -403,6 +410,58 @@ export function TradeForm({ setups }: TradeFormProps) {
         value={tradeDate}
         onChange={(e) => setTradeDate(e.target.value)}
       />
+
+      {/* Outcome / status */}
+      <div className="flex flex-col gap-1">
+        <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Outcome</span>
+        <div className="flex gap-2">
+          {(['OPEN', 'MISSED', 'SKIP'] as const).map((s) => {
+            const selectedClass =
+              s === 'MISSED'
+                ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
+                : s === 'SKIP'
+                ? 'bg-[var(--color-accent-bg)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+            const label = s === 'OPEN' ? 'TAKEN' : s
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setStatus(s)}
+                className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
+                  status === s
+                    ? selectedClass
+                    : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
+                }`}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
+        {status !== 'OPEN' && (
+          <p className="text-[11px] text-[var(--color-ink-muted)]">
+            {status === 'SKIP'
+              ? 'You saw it and consciously passed. Set an Ideal Exit to track the cost of skipping.'
+              : 'You missed the entry. Set an Ideal Exit to track the missed move.'}
+          </p>
+        )}
+      </div>
+
+      {/* Ideal Exit — grades execution; drives executionPnl. */}
+      <div className="flex flex-col gap-1">
+        <Input
+          label="Ideal Exit (optional)"
+          placeholder="0.00"
+          inputMode="decimal"
+          value={idealExit}
+          onChange={(e) => setIdealExit(e.target.value)}
+          className="font-mono"
+        />
+        <span className="text-[11px] text-[var(--color-ink-muted)]">
+          Best exit available — use the entry price for a breakeven (BE) ideal.
+        </span>
+      </div>
 
       {/* Thesis */}
       <div className="flex flex-col gap-1">
