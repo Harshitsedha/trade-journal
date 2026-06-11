@@ -136,7 +136,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
               variant={
                 trade.status === 'CLOSED'
                   ? 'profit'
-                  : trade.status === 'MISSED'
+                  : trade.status === 'MISSED' || trade.status === 'SKIP'
                   ? 'muted'
                   : 'open'
               }

@@ -41,7 +41,8 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     idealExit, entryRuleCorrect,
   } = parsed.data
 
-  const isMissed = status === 'MISSED'
+  // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
+  const isMissed = status === 'MISSED' || status === 'SKIP'
   const direction = (directionRaw ?? existing.direction) as 'LONG' | 'SHORT'
   const entryPrice = entryRaw ?? existing.entryPrice.toString()
   const stopLoss = stopRaw ?? existing.stopLoss.toString()

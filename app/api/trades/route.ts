@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
     idealExit,
   } = parsed.data
 
-  const isMissed = status === 'MISSED'
+  // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
+  const isMissed = status === 'MISSED' || status === 'SKIP'
   const direction = (directionRaw ?? 'LONG') as 'LONG' | 'SHORT'
   const entryPrice = entryRaw ?? '0'
   const stopLoss = stopRaw ?? '0'

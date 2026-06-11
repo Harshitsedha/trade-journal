@@ -73,11 +73,11 @@ export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeFor
   }))
 }
 
-/** Sum of executionPnl across CLOSED + MISSED, respecting the same filters. Skips nulls. */
+/** Sum of executionPnl across CLOSED + MISSED + SKIP, respecting the same filters. Skips nulls. */
 export async function getExecutionPnlSum(f: AnalysisFilters): Promise<number | null> {
   const where = {
     ...buildBaseWhere(f),
-    status: { in: [TradeStatus.CLOSED, TradeStatus.MISSED] },
+    status: { in: [TradeStatus.CLOSED, TradeStatus.MISSED, TradeStatus.SKIP] },
     executionPnl: { not: null },
   }
 

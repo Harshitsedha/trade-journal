@@ -92,8 +92,8 @@ export function computeStat(trades: TradeForStat[]): TradeStat {
     ? execPnlTrades.reduce((sum, t) => sum + t.executionPnl!, 0)
     : null
 
-  // Main P&L / R stats: exclude MISSED (they have pnl=0, no real exit)
-  const closedTrades = trades.filter(t => t.status !== 'MISSED')
+  // Main P&L / R stats: exclude MISSED and SKIP (they have pnl=0, no real exit)
+  const closedTrades = trades.filter(t => t.status !== 'MISSED' && t.status !== 'SKIP')
 
   const sorted = [...closedTrades].sort((a, b) => a.tradeDate.getTime() - b.tradeDate.getTime())
 

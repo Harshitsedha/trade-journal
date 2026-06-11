@@ -100,9 +100,9 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       : ''
   )
 
-  // Status toggle for OPEN/MISSED trades
-  const [tradeStatus, setTradeStatus] = useState<'OPEN' | 'MISSED' | 'CLOSED'>(
-    trade.status as 'OPEN' | 'MISSED' | 'CLOSED'
+  // Status toggle for OPEN/MISSED/SKIP trades
+  const [tradeStatus, setTradeStatus] = useState<'OPEN' | 'MISSED' | 'CLOSED' | 'SKIP'>(
+    trade.status as 'OPEN' | 'MISSED' | 'CLOSED' | 'SKIP'
   )
 
   // OPEN-only fields
@@ -194,15 +194,15 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         status: tradeStatus !== 'CLOSED' ? tradeStatus : undefined,
       }
 
-      if ((isOpen || tradeStatus === 'MISSED') && idealExit.trim()) {
-        body.idealExit = idealExit
-      }
+      // idealExit is editable for every status; always send it so the PATCH route
+      // recomputes idealPnl/executionPnl (sending null clears a previously-set value).
+      body.idealExit = idealExit.trim() ? idealExit : null
 
       if (entryRuleCorrect !== null) {
         body.entryRuleCorrect = entryRuleCorrect
       }
 
-      if (isOpen && tradeStatus !== 'MISSED' && exitPrice.trim()) {
+      if (isOpen && tradeStatus !== 'MISSED' && tradeStatus !== 'SKIP' && exitPrice.trim()) {
         body.exitPrice = exitPrice
         if (hasRuleBreak && ruleDescription.trim()) {
           body.ruleBreak = {
@@ -482,68 +482,82 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         <div className="flex flex-col gap-1">
           <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Status</span>
           <div className="flex gap-2">
-            {(['OPEN', 'MISSED'] as const).map(s => (
+            {(['OPEN', 'MISSED', 'SKIP'] as const).map(s => {
+              const selectedClass =
+                s === 'MISSED'
+                  ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
+                  : s === 'SKIP'
+                  ? 'bg-[var(--color-accent-bg)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                  : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setTradeStatus(s)}
+                  className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
+                    tradeStatus === s
+                      ? selectedClass
+                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
+                  }`}
+                >
+                  {s}
+                </button>
+              )
+            })}
+          </div>
+          {tradeStatus === 'SKIP' && (
+            <p className="text-[11px] text-[var(--color-ink-muted)]">
+              You saw it and consciously passed. Set an Ideal Exit below to track the cost of skipping.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Ideal Exit — editable for EVERY status (OPEN/CLOSED/MISSED/SKIP).
+          Drives idealPnl/executionPnl. Set to entry price for a breakeven ideal. */}
+      <div className="flex flex-col gap-1">
+        <Input
+          label="Ideal Exit (optional)"
+          placeholder="0.00"
+          inputMode="decimal"
+          value={idealExit}
+          onChange={e => setIdealExit(e.target.value)}
+          className="font-mono"
+        />
+        <span className="text-[11px] text-[var(--color-ink-muted)]">
+          Best exit available — grades execution. Use the entry price for a breakeven (BE) ideal.
+        </span>
+      </div>
+
+      {/* entryRuleCorrect tri-state — OPEN / MISSED / SKIP */}
+      {(isOpen || tradeStatus === 'MISSED' || tradeStatus === 'SKIP') && (
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Entry rules followed?</span>
+          <div className="flex gap-2">
+            {([null, true, false] as const).map(v => (
               <button
-                key={s}
+                key={String(v)}
                 type="button"
-                onClick={() => setTradeStatus(s)}
+                onClick={() => setEntryRuleCorrect(v)}
                 className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
-                  tradeStatus === s
-                    ? s === 'MISSED'
+                  entryRuleCorrect === v
+                    ? v === true
+                      ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
+                      : v === false
                       ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
                       : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
                     : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
                 }`}
               >
-                {s}
+                {v === null ? '— Not assessed' : v ? 'Yes ✓' : 'No ✗'}
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* Exit fields — OPEN and MISSED */}
-      {(isOpen || tradeStatus === 'MISSED') && (
-        <>
-          {/* idealExit always shown in exit section */}
-          <Input
-            label="Ideal Exit (optional)"
-            placeholder="0.00"
-            inputMode="decimal"
-            value={idealExit}
-            onChange={e => setIdealExit(e.target.value)}
-            className="font-mono"
-          />
-
-          {/* entryRuleCorrect tri-state */}
-          <div className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-[var(--color-ink-secondary)]">Entry rules followed?</span>
-            <div className="flex gap-2">
-              {([null, true, false] as const).map(v => (
-                <button
-                  key={String(v)}
-                  type="button"
-                  onClick={() => setEntryRuleCorrect(v)}
-                  className={`flex-1 py-2 rounded-[var(--radius-md)] text-xs font-semibold border transition-all cursor-pointer ${
-                    entryRuleCorrect === v
-                      ? v === true
-                        ? 'bg-[var(--color-profit-bg)] text-[var(--color-profit)] border-[var(--color-profit)]'
-                        : v === false
-                        ? 'bg-[var(--color-loss-bg)] text-[var(--color-loss)] border-[var(--color-loss)]'
-                        : 'bg-[var(--color-ink)] text-[var(--color-surface)] border-[var(--color-ink)]'
-                      : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-secondary)] border-[var(--color-border)]'
-                  }`}
-                >
-                  {v === null ? '— Not assessed' : v ? 'Yes ✓' : 'No ✗'}
-                </button>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* exitPrice + rule-break — OPEN and not being marked MISSED */}
-      {isOpen && tradeStatus !== 'MISSED' && (
+      {/* exitPrice + rule-break — OPEN and not being marked MISSED/SKIP */}
+      {isOpen && tradeStatus !== 'MISSED' && tradeStatus !== 'SKIP' && (
         <>
           <Input
             label="Exit Price"

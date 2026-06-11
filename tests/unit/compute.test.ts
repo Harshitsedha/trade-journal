@@ -111,6 +111,17 @@ describe('computeIdealPnl', () => {
     })
     expect(result).toBe(50)
   })
+
+  it('returns 0 (not null) when idealExit equals entryPrice — breakeven ideal', () => {
+    // BE ideal is a real, valid result of 0 — must be distinct from "no ideal set" (null)
+    expect(
+      computeIdealPnl({ entryPrice: '1234', idealExit: '1234', direction: 'LONG', quantity: 75 })
+    ).toBe(0)
+    // Decimal-string equivalence ("1234.0" vs "1234") must still resolve to 0, not null
+    expect(
+      computeIdealPnl({ entryPrice: '1234', idealExit: '1234.0', direction: 'SHORT', quantity: 75 })
+    ).toBe(0)
+  })
 })
 
 // ── computeExecutionPnl ───────────────────────────────────────────────────────
@@ -144,6 +155,14 @@ describe('computeExecutionPnl', () => {
 
   it('returns zero when actual equals ideal', () => {
     expect(computeExecutionPnl(100, 100)).toBe(0)
+  })
+
+  it('BE ideal + losing actual: executionPnl is the full loss, NOT 0', () => {
+    // Regression: idealExit=BE -> idealPnl=0 (valid), actual exit -1R (e.g. -100).
+    // The 0 guard must trigger on null only, never on a falsy 0 idealPnl.
+    const idealPnl = computeIdealPnl({ entryPrice: '1234', idealExit: '1234', direction: 'LONG', quantity: 100 })
+    expect(idealPnl).toBe(0)
+    expect(computeExecutionPnl(-100, idealPnl)).toBe(-100)
   })
 })
 
@@ -190,6 +209,17 @@ describe('computeStat executionPnlSum', () => {
     const stat = computeStat(trades)
     expect(stat.executionPnlSum).toBe(-400)
     // MISSED trade should not count in trade count for pnl stats
+    expect(stat.trades).toBe(1)
+    expect(stat.totalPnl).toBe(1000)
+  })
+
+  it('treats SKIP like MISSED: in executionPnlSum, excluded from pnl stats', () => {
+    const trades = [
+      makeTrade({ id: '1', pnl: 1000, rMultiple: 2, executionPnl: 100, status: 'CLOSED' }),
+      makeTrade({ id: '2', pnl: 0, rMultiple: 0, executionPnl: -300, status: 'SKIP' }),
+    ]
+    const stat = computeStat(trades)
+    expect(stat.executionPnlSum).toBe(-200)
     expect(stat.trades).toBe(1)
     expect(stat.totalPnl).toBe(1000)
   })

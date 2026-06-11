@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const AssetClassSchema = z.enum(['FUTURES', 'OPTIONS', 'EQUITY'])
 export const DirectionSchema = z.enum(['LONG', 'SHORT'])
-export const TradeStatusSchema = z.enum(['OPEN', 'CLOSED', 'MISSED'])
+export const TradeStatusSchema = z.enum(['OPEN', 'CLOSED', 'MISSED', 'SKIP'])
 export const RuleBreakTypeSchema = z.enum([
   'EARLY_EXIT',
   'LATE_EXIT',
@@ -49,7 +49,9 @@ const tradeBaseObject = z.object({
 type TradeBase = z.infer<typeof tradeBaseObject>
 
 function requireNonMissedFields(data: TradeBase, ctx: z.RefinementCtx) {
-  if (data.status === 'MISSED') return
+  // MISSED and SKIP are not-taken trades: entry fields are carried over from the
+  // existing row (PATCH) and not required in the body.
+  if (data.status === 'MISSED' || data.status === 'SKIP') return
   if (!data.direction) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['direction'], message: 'Required' })
   if (!data.entryPrice) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['entryPrice'], message: 'Required' })
   if (!data.stopLoss) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['stopLoss'], message: 'Required' })

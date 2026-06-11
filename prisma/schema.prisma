@@ -22,6 +22,7 @@ enum TradeStatus {
   OPEN
   CLOSED
   MISSED
+  SKIP
 }
 
 enum RuleBreakType {

@@ -22,7 +22,7 @@ export function TradeCard({ trade }: TradeCardProps) {
 
   function statusBadgeVariant(status: string) {
     if (status === 'CLOSED') return 'profit'
-    if (status === 'MISSED') return 'muted'
+    if (status === 'MISSED' || status === 'SKIP') return 'muted'
     return 'open'
   }
 
