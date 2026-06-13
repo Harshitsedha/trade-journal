@@ -85,6 +85,16 @@ export function TradeForm({ setups }: TradeFormProps) {
   const [status, setStatus] = useState<'OPEN' | 'MISSED' | 'SKIP'>('OPEN')
   const [idealExit, setIdealExit] = useState('')
 
+  // TEMP DIAGNOSTIC (remove after root-causing the double-submit): logs each
+  // mount/unmount of THIS form instance with its clientRequestId. Two MOUNT
+  // lines for one visit ⇒ the form is remounting (fresh id per mount); one
+  // MOUNT with two SUBMIT lines ⇒ a single instance firing twice.
+  useEffect(() => {
+    console.log('[TradeForm] MOUNT', clientRequestId, new Date().toISOString())
+    return () => console.log('[TradeForm] UNMOUNT', clientRequestId, new Date().toISOString())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Load sub-setups and trigger rules when setup changes
   useEffect(() => {
     if (!setupId) {
@@ -138,6 +148,12 @@ export function TradeForm({ setups }: TradeFormProps) {
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
+      // TEMP DIAGNOSTIC (remove after root-causing): very first line — logs every
+      // invocation, even ones the guard below blocks, so we can count fires.
+      console.log('[TradeForm] handleSubmit FIRED', {
+        clientRequestId, alreadySubmitting: submittingRef.current,
+        ts: new Date().toISOString(),
+      })
       e.preventDefault()
       if (!canSubmit) return
       // Synchronous single-flight guard. Blocks any second submit — including a
@@ -152,6 +168,8 @@ export function TradeForm({ setups }: TradeFormProps) {
       const targets = [target1, target2, target3].filter(Boolean)
 
       try {
+        // TEMP DIAGNOSTIC (remove after root-causing): logs right before the POST.
+        console.log('[TradeForm] POST → /api/trades', { clientRequestId, ts: new Date().toISOString() })
         const res = await fetch('/api/trades', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -176,6 +194,10 @@ export function TradeForm({ setups }: TradeFormProps) {
             clientRequestId,
           }),
         })
+
+        // TEMP DIAGNOSTIC (remove after root-causing): 201 = new row, 200 = server
+        // collapsed a duplicate via the clientRequestId P2002 catch.
+        console.log('[TradeForm] POST response', { status: res.status, clientRequestId, ts: new Date().toISOString() })
 
         if (!res.ok) {
           const data = await res.json()
