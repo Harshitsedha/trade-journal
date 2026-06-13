@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
@@ -24,6 +24,9 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Synchronous single-flight latch — see TradeForm for the rationale. Stays
+  // latched on success (we navigate away); only an error clears it for retry.
+  const submittingRef = useRef(false)
 
   const [exitPrice, setExitPrice] = useState('')
   const [notes, setNotes] = useState(trade.notes ?? '')
@@ -40,8 +43,10 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!canSubmit) return
-      // Synchronous single-flight guard — prevents a double-submit firing two PATCHes.
-      if (loading) return
+      // Synchronous single-flight guard — blocks a second submit during the
+      // navigation-pending window, independent of React's async state.
+      if (submittingRef.current) return
+      submittingRef.current = true
       setLoading(true)
       setError(null)
 
@@ -72,16 +77,17 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
           throw new Error(JSON.stringify(data.error ?? 'Failed to close trade'))
         }
 
+        // Success: stay latched/disabled until router.push unmounts the form.
         router.push(`/trades/${trade.id}`)
         router.refresh()
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
-      } finally {
+        submittingRef.current = false
         setLoading(false)
       }
     },
     [
-      canSubmit, loading, exitPrice, notes, hasRuleBreak, breakType, ruleDescription,
+      canSubmit, exitPrice, notes, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router,
     ]
   )

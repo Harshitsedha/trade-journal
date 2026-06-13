@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Decimal from 'decimal.js'
 import { Input } from '@/components/ui/Input'
@@ -48,10 +48,16 @@ export function TradeForm({ setups }: TradeFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  // Idempotency key — one per trade. Regenerated after a successful save so the
-  // next trade gets a fresh id; a double-submit of the same trade reuses it and
-  // the server collapses it to a single row.
-  const [clientRequestId, setClientRequestId] = useState(() => crypto.randomUUID())
+  // Synchronous single-flight latch. A ref (not `loading` state) because state
+  // updates are async — a fast second click would beat the re-render that
+  // disables the button. Once a submit starts it stays latched on the success
+  // path (we navigate away and never re-arm); only an error clears it for retry.
+  const submittingRef = useRef(false)
+  // Idempotency key — one per trade, fixed for the life of this mounted form.
+  // It rotates ONLY when a fresh form mounts (this initializer), so any accidental
+  // re-fire from the same form reuses the id and the server's P2002 catch collapses
+  // it to a single row. Do NOT regenerate it on success.
+  const [clientRequestId] = useState(() => crypto.randomUUID())
 
   // Form state
   const [instrument, setInstrument] = useState('')
@@ -134,9 +140,12 @@ export function TradeForm({ setups }: TradeFormProps) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!canSubmit) return
-      // Single-flight guard: synchronous, so a rapid double-submit (double-click,
-      // Enter+click) can't fire two POSTs before `loading` disables the button.
-      if (loading) return
+      // Synchronous single-flight guard. Blocks any second submit — including a
+      // deliberate click seconds later while router.push is still resolving and
+      // the form is briefly re-displayed — because the ref flips before the next
+      // event loop turn, independent of React's async state.
+      if (submittingRef.current) return
+      submittingRef.current = true
       setLoading(true)
       setError(null)
 
@@ -174,18 +183,20 @@ export function TradeForm({ setups }: TradeFormProps) {
         }
 
         const trade = await res.json()
-        // Fresh key for the next trade so distinct trades don't collide.
-        setClientRequestId(crypto.randomUUID())
+        // Success: navigate away and DELIBERATELY stay latched — do not clear
+        // submittingRef or loading. The button remains disabled ("Logging…")
+        // until router.push unmounts this form, so no second submit is possible.
         router.push(`/trades/${trade.id}`)
         router.refresh()
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
-      } finally {
+        // Only a real failure re-arms the form for a retry.
+        submittingRef.current = false
         setLoading(false)
       }
     },
     [
-      canSubmit, loading, instrument, assetClass, expiry, setupId, subSetupId,
+      canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, tradeDate, selectedTriggers, router,
       status, idealExit, clientRequestId,

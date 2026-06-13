@@ -116,6 +116,9 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Synchronous single-flight latch — see TradeForm for the rationale. Stays
+  // latched on success (onDone unmounts the form); only an error clears it.
+  const submittingRef = useRef(false)
 
   // Fetch setups list on mount
   useEffect(() => {
@@ -172,8 +175,10 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!canSubmit) return
-      // Synchronous single-flight guard — prevents a double-submit firing two PATCHes.
-      if (loading) return
+      // Synchronous single-flight guard — blocks a second submit during the
+      // refresh/onDone window, independent of React's async state.
+      if (submittingRef.current) return
+      submittingRef.current = true
       setLoading(true)
       setError(null)
 
@@ -231,16 +236,17 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
           throw new Error(JSON.stringify(data.error ?? 'Failed to save'))
         }
 
+        // Success: stay latched/disabled until onDone unmounts the form.
         router.refresh()
         onDone()
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
-      } finally {
+        submittingRef.current = false
         setLoading(false)
       }
     },
     [
-      canSubmit, loading, instrument, assetClass, expiry, setupId, subSetupId,
+      canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, notes, tradeDate, selectedTriggers,
       tradeStatus, idealExit, entryRuleCorrect,
