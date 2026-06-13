@@ -48,6 +48,10 @@ export function TradeForm({ setups }: TradeFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Idempotency key — one per trade. Regenerated after a successful save so the
+  // next trade gets a fresh id; a double-submit of the same trade reuses it and
+  // the server collapses it to a single row.
+  const [clientRequestId, setClientRequestId] = useState(() => crypto.randomUUID())
 
   // Form state
   const [instrument, setInstrument] = useState('')
@@ -130,6 +134,9 @@ export function TradeForm({ setups }: TradeFormProps) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!canSubmit) return
+      // Single-flight guard: synchronous, so a rapid double-submit (double-click,
+      // Enter+click) can't fire two POSTs before `loading` disables the button.
+      if (loading) return
       setLoading(true)
       setError(null)
 
@@ -157,6 +164,7 @@ export function TradeForm({ setups }: TradeFormProps) {
             triggerRules: selectedTriggers.length > 0 ? selectedTriggers : undefined,
             status: status !== 'OPEN' ? status : undefined,
             idealExit: idealExit.trim() || null,
+            clientRequestId,
           }),
         })
 
@@ -166,6 +174,8 @@ export function TradeForm({ setups }: TradeFormProps) {
         }
 
         const trade = await res.json()
+        // Fresh key for the next trade so distinct trades don't collide.
+        setClientRequestId(crypto.randomUUID())
         router.push(`/trades/${trade.id}`)
         router.refresh()
       } catch (err) {
@@ -175,10 +185,10 @@ export function TradeForm({ setups }: TradeFormProps) {
       }
     },
     [
-      canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
+      canSubmit, loading, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, tradeDate, selectedTriggers, router,
-      status, idealExit,
+      status, idealExit, clientRequestId,
     ]
   )
 
@@ -485,7 +495,7 @@ export function TradeForm({ setups }: TradeFormProps) {
       )}
 
       <Button type="submit" disabled={!canSubmit || loading}>
-        {loading ? 'Saving…' : 'Save Trade Entry'}
+        {loading ? 'Logging…' : 'Save Trade Entry'}
       </Button>
     </form>
   )

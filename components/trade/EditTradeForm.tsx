@@ -172,6 +172,8 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!canSubmit) return
+      // Synchronous single-flight guard — prevents a double-submit firing two PATCHes.
+      if (loading) return
       setLoading(true)
       setError(null)
 
@@ -238,7 +240,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       }
     },
     [
-      canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
+      canSubmit, loading, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, notes, tradeDate, selectedTriggers,
       tradeStatus, idealExit, entryRuleCorrect,

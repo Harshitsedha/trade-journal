@@ -121,7 +121,8 @@ model SubSetup {
 }
 
 model Trade {
-  id         String      @id @default(cuid())
+  id              String  @id @default(cuid())
+  clientRequestId String? @unique
   instrument String
   assetClass AssetClass
   expiry     DateTime?

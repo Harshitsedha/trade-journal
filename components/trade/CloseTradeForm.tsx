@@ -40,6 +40,8 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!canSubmit) return
+      // Synchronous single-flight guard — prevents a double-submit firing two PATCHes.
+      if (loading) return
       setLoading(true)
       setError(null)
 
@@ -79,7 +81,7 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
       }
     },
     [
-      canSubmit, exitPrice, notes, hasRuleBreak, breakType, ruleDescription,
+      canSubmit, loading, exitPrice, notes, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router,
     ]
   )

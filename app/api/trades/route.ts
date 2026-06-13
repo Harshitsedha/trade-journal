@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { Prisma } from '@/generated/prisma/client'
 import { auth } from '@/auth'
 import { CreateTradeSchema, TradeFilterSchema } from '@/lib/validations/trade'
 import { getTrades } from '@/lib/queries/trades'
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
     direction: directionRaw, entryPrice: entryRaw, stopLoss: stopRaw,
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate, triggerRules, status,
-    idealExit,
+    idealExit, clientRequestId,
   } = parsed.data
 
   // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
     : 0  // OPEN trade, no exit yet
 
   const tradeData: Record<string, unknown> = {
+    clientRequestId: clientRequestId ?? null,
     instrument: instrument.toUpperCase().trim(),
     assetClass,
     expiry: expiry ? new Date(expiry) : null,
@@ -91,10 +93,29 @@ export async function POST(req: NextRequest) {
     tradeData.pnl = '0'
   }
 
-  const trade = await db.trade.create({
-    data: tradeData as Parameters<typeof db.trade.create>[0]['data'],
-    include: TRADE_INCLUDE,
-  })
+  let trade
+  try {
+    trade = await db.trade.create({
+      data: tradeData as Parameters<typeof db.trade.create>[0]['data'],
+      include: TRADE_INCLUDE,
+    })
+  } catch (err) {
+    // Idempotency: a double-submit reuses the same clientRequestId and collides
+    // on the unique index (P2002). Return the row the first request created
+    // instead of inserting a duplicate.
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === 'P2002' &&
+      clientRequestId
+    ) {
+      const existing = await db.trade.findUnique({
+        where: { clientRequestId },
+        include: TRADE_INCLUDE,
+      })
+      if (existing) return Response.json(existing, { status: 200 })
+    }
+    throw err
+  }
 
   if (triggerRules && triggerRules.length > 0) {
     await db.tradeTrigger.createMany({

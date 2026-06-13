@@ -44,6 +44,9 @@ const tradeBaseObject = z.object({
   status: TradeStatusSchema.optional(),
   // Ideal exit — captured at exit time only
   idealExit: decimalString.optional().nullable(),
+  // Idempotency key — client-generated per trade so a double-submit collapses
+  // to a single row (server catches the unique-constraint collision).
+  clientRequestId: z.string().uuid().optional(),
 })
 
 type TradeBase = z.infer<typeof tradeBaseObject>
