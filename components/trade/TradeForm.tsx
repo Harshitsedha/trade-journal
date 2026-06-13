@@ -206,10 +206,11 @@ export function TradeForm({ setups }: TradeFormProps) {
 
         const trade = await res.json()
         // Success: navigate away and DELIBERATELY stay latched — do not clear
-        // submittingRef or loading. The button remains disabled ("Logging…")
-        // until router.push unmounts this form, so no second submit is possible.
+        // submittingRef or loading. We do NOT call router.refresh() here: pairing
+        // it with router.push raced the navigation and left this form mounted and
+        // re-armed (the duplicate-submit window). The dashboard/list are kept fresh
+        // by revalidatePath() on the server instead.
         router.push(`/trades/${trade.id}`)
-        router.refresh()
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
         // Only a real failure re-arms the form for a retry.

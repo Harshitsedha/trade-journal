@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { Prisma } from '@/generated/prisma/client'
 import { auth } from '@/auth'
 import { CreateTradeSchema, TradeFilterSchema } from '@/lib/validations/trade'
@@ -93,6 +94,32 @@ export async function POST(req: NextRequest) {
     tradeData.pnl = '0'
   }
 
+  // ── Idempotency backstop (content-based) ────────────────────────────────────
+  // The decisive guard. It does NOT depend on the client behaving: if an
+  // identical trade was created in the last 10 seconds — same setup, instrument,
+  // direction, entry, stop, quantity and status — we treat this POST as a repeat
+  // of that submit and return the existing row instead of inserting a duplicate.
+  // This survives form re-mounts, a rotated clientRequestId, double-clicks, retries
+  // — anything the browser throws at us. A human cannot log two genuinely distinct
+  // trades with byte-identical sizing within 10s, so false positives are not real.
+  const recentDuplicate = await db.trade.findFirst({
+    where: {
+      setupId,
+      instrument: tradeData.instrument as string,
+      direction,
+      entryPrice,
+      stopLoss,
+      quantity,
+      status: status ?? 'OPEN',
+      createdAt: { gte: new Date(Date.now() - 10_000) },
+    },
+    orderBy: { createdAt: 'desc' },
+    include: TRADE_INCLUDE,
+  })
+  if (recentDuplicate) {
+    return Response.json(recentDuplicate, { status: 200 })
+  }
+
   let trade
   try {
     trade = await db.trade.create({
@@ -126,6 +153,11 @@ export async function POST(req: NextRequest) {
       })),
     })
   }
+
+  // Keep server-rendered lists fresh without a client-side router.refresh()
+  // (which raced navigation). Safe to call after the write.
+  revalidatePath('/dashboard')
+  revalidatePath('/trades')
 
   return Response.json(trade, { status: 201 })
 }
