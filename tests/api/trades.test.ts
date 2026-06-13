@@ -6,6 +6,10 @@ vi.mock('@/auth', () => ({
   auth: vi.fn().mockResolvedValue({ user: { email: 'test@test.com' } }),
 }))
 
+// revalidatePath needs Next's render/store context, which isn't present when the
+// route handlers are invoked directly in tests — stub it out.
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+
 import { GET as GetTrades, POST as PostTrade } from '@/app/api/trades/route'
 import { GET as GetTrade, PATCH as PatchTrade, DELETE as DeleteTrade } from '@/app/api/trades/[id]/route'
 
@@ -470,5 +474,57 @@ describe('DELETE /api/trades/[id]', () => {
     const req = makeRequest('DELETE', 'http://localhost/api/trades/nonexistent')
     const res = await DeleteTrade(req, ctx({ id: 'nonexistent' }))
     expect(res.status).toBe(404)
+  })
+})
+
+describe('PATCH /api/trades/[id] — close with pnlOverride', () => {
+  // SILVER ×5000 so the instrument-factor path is clearly distinguishable from an override.
+  // beforeEach doesn't clean Instrument, so clear it here to avoid the unique-symbol clash.
+  async function silver() {
+    await db.instrument.deleteMany()
+    return db.instrument.create({ data: { symbol: 'SILVER', name: 'Silver CFD', factor: 5000, factorOp: 'MULTIPLY' } })
+  }
+
+  it('closing WITH an override sets pnlOverride and stores pnl = the override', async () => {
+    const setup = await createTestSetup('Override Close')
+    const instr = await silver()
+    // LONG entry 100, exit 110, qty 2 → instrument path would be (10×2)×5000 = 100000.
+    const trade = await createTrade(setup.id, {
+      instrumentId: instr.id, entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2',
+    } as Record<string, unknown>)
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { instrumentId: instr.id, entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      pnlOverride: 97.5, // hand-entered platform fill (USD)
+    })
+    const res = await PatchTrade(req, ctx({ id: trade.id }))
+    expect(res.status).toBe(200)
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.pnlOverride).toBe(97.5)
+    expect(Number(row!.pnl!.toString())).toBe(97.5) // override used directly, NOT 100000
+    expect(row!.rMultiple!.toString()).toBe('2') // R unaffected by override
+  })
+
+  it('closing WITHOUT an override leaves pnlOverride null and uses the instrument-factor path', async () => {
+    const setup = await createTestSetup('No Override Close')
+    const instr = await silver()
+    const trade = await createTrade(setup.id, {
+      instrumentId: instr.id, entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2',
+    } as Record<string, unknown>)
+
+    const req = makeRequest('PATCH', `http://localhost/api/trades/${trade.id}`, {
+      ...tradeSeed(setup.id, { instrumentId: instr.id, entryPrice: '100', stopLoss: '95', targets: ['110'], quantity: '2' }),
+      exitPrice: '110',
+      // no pnlOverride
+    })
+    const res = await PatchTrade(req, ctx({ id: trade.id }))
+    expect(res.status).toBe(200)
+
+    const row = await db.trade.findUnique({ where: { id: trade.id } })
+    expect(row!.pnlOverride).toBeNull()
+    expect(Number(row!.pnl!.toString())).toBe(100000) // (10 × 2) × 5000, instrument factor
+    expect(row!.rMultiple!.toString()).toBe('2')
   })
 })

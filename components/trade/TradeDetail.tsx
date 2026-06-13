@@ -49,6 +49,12 @@ export function TradeDetail({ trade }: TradeDetailProps) {
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
   const isOpen = trade.status === 'OPEN'
 
+  // Currency symbol. The app is mixed-currency (NIFTY in ₹, Silver/DAX prop in USD)
+  // and has no currency field, so derive from the link: a trade tied to a configured
+  // Instrument is one of the USD prop instruments → $; unlinked trades keep the
+  // app-default ₹. (A per-instrument `currency` field would make this exact.)
+  const ccy = trade.instrumentId ? '$' : '₹'
+
   // Manual override: stored pnl IS the override; show the raw calculated (×1) base
   // alongside so the gap (and the implied factor) is visible.
   const pnlOverride = (trade as Record<string, unknown>).pnlOverride as number | null ?? null
@@ -195,7 +201,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
                   pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
                 }`}
               >
-                {pnl.gt(0) ? '+' : ''}₹{pnl.toFixed(0)}
+                {pnl.gt(0) ? '+' : ''}{ccy}{pnl.toFixed(0)}
                 {pnlOverride != null && (
                   <span className="ml-1 text-[10px] uppercase tracking-wide text-[var(--color-accent)]">override</span>
                 )}
@@ -203,7 +209,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             )}
             {pnlOverride != null && calcBase !== null && (
               <p className="text-[11px] font-mono text-[var(--color-ink-muted)]">
-                calculated (×1): ₹{calcBase.toFixed(2)} · implied ×{calcBase.isZero() ? '—' : new Decimal(pnlOverride).div(calcBase).toFixed(3)}
+                calculated (×1): {ccy}{calcBase.toFixed(2)} · implied ×{calcBase.isZero() ? '—' : new Decimal(pnlOverride).div(calcBase).toFixed(3)}
               </p>
             )}
           </div>
@@ -436,7 +442,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
                 Execution P&amp;L
               </span>
               <span className={`font-mono text-sm font-semibold ${execColor}`}>
-                {execNum != null ? `${execNum > 0 ? '+' : ''}₹${execNum.toFixed(0)}` : '—'}
+                {execNum != null ? `${execNum > 0 ? '+' : ''}${ccy}${execNum.toFixed(0)}` : '—'}
               </span>
             </div>
           </div>
@@ -545,7 +551,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             <div>
               <span className="text-[var(--color-ink-muted)]">P&L Impact: </span>
               <span className="font-mono text-[var(--color-loss)]">
-                ₹{new Decimal(trade.ruleBreak.pnlImpact.toString()).toFixed(0)}
+                {ccy}{new Decimal(trade.ruleBreak.pnlImpact.toString()).toFixed(0)}
               </span>
             </div>
             <div>

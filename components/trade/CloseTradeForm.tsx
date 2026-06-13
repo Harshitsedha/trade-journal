@@ -30,6 +30,9 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
 
   const [exitPrice, setExitPrice] = useState('')
   const [notes, setNotes] = useState(trade.notes ?? '')
+  // Manual PnL override at close — hand-enter the platform fill in actual USD.
+  // Blank = use the calculated/instrument-factor path.
+  const [pnlOverride, setPnlOverride] = useState('')
   const [hasRuleBreak, setHasRuleBreak] = useState(false)
   const [breakType, setBreakType] = useState('EARLY_EXIT')
   const [ruleDescription, setRuleDescription] = useState('')
@@ -53,6 +56,8 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
       const body: Record<string, unknown> = {
         exitPrice,
         notes: notes || null,
+        // number ⇒ override mode; blank ⇒ null ⇒ instrument-factor path.
+        pnlOverride: pnlOverride.trim() ? Number(pnlOverride) : null,
       }
 
       if (hasRuleBreak && ruleDescription.trim()) {
@@ -87,7 +92,7 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
       }
     },
     [
-      canSubmit, exitPrice, notes, hasRuleBreak, breakType, ruleDescription,
+      canSubmit, exitPrice, notes, pnlOverride, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router,
     ]
   )
@@ -102,6 +107,21 @@ export function CloseTradeForm({ trade }: CloseTradeFormProps) {
         onChange={(e) => setExitPrice(e.target.value)}
         className="font-mono"
       />
+
+      {/* Manual PnL override at close — the platform fill in actual USD. */}
+      <div className="flex flex-col gap-1">
+        <Input
+          label="Override PnL (actual USD, optional)"
+          placeholder="leave blank to use calculated"
+          inputMode="decimal"
+          value={pnlOverride}
+          onChange={(e) => setPnlOverride(e.target.value)}
+          className="font-mono"
+        />
+        <span className="text-[11px] text-[var(--color-ink-muted)]">
+          Enter the real USD PnL from your platform — an implied factor scales executionPnl/rule-break impact. rMultiple unaffected.
+        </span>
+      </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-[var(--color-ink-secondary)]">
