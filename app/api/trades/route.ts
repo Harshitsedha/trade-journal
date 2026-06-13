@@ -94,32 +94,12 @@ export async function POST(req: NextRequest) {
     tradeData.pnl = '0'
   }
 
-  // ── Idempotency backstop (content-based) ────────────────────────────────────
-  // The decisive guard. It does NOT depend on the client behaving: if an
-  // identical trade was created in the last 10 seconds — same setup, instrument,
-  // direction, entry, stop, quantity and status — we treat this POST as a repeat
-  // of that submit and return the existing row instead of inserting a duplicate.
-  // This survives form re-mounts, a rotated clientRequestId, double-clicks, retries
-  // — anything the browser throws at us. A human cannot log two genuinely distinct
-  // trades with byte-identical sizing within 10s, so false positives are not real.
-  const recentDuplicate = await db.trade.findFirst({
-    where: {
-      setupId,
-      instrument: tradeData.instrument as string,
-      direction,
-      entryPrice,
-      stopLoss,
-      quantity,
-      status: status ?? 'OPEN',
-      createdAt: { gte: new Date(Date.now() - 10_000) },
-    },
-    orderBy: { createdAt: 'desc' },
-    include: TRADE_INCLUDE,
-  })
-  if (recentDuplicate) {
-    return Response.json(recentDuplicate, { status: 200 })
-  }
-
+  // Idempotency is keyed on clientRequestId only (see the P2002 catch below).
+  // That collapses a true retry of the SAME submit while still allowing
+  // genuinely distinct trades — including intentional identical scale-ins at the
+  // same levels seconds apart — because each real submit carries its own id.
+  // No content/time-window matching: it can't tell a real scale-in from an
+  // accidental double-click and would silently swallow legitimate trades.
   let trade
   try {
     trade = await db.trade.create({
