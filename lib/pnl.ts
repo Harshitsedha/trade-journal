@@ -6,16 +6,22 @@ import {
 import { computeIdealPnl } from '@/lib/analytics/compute'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Single source of truth for CURRENCY PnL with the per-instrument factor.
+// Single source of truth for CURRENCY PnL.
 //
-// Three currency values are scaled — pnl, executionPnl, pnlImpact — each from
-// its OWN unscaled base, with the factor applied ONCE at the very end. The factor
-// is NEVER chained: executionPnl is computed from the unscaled actual/ideal here,
-// never from an already-scaled stored pnl, so it can't double-apply.
+// Two scaling modes, resolved per trade:
+//   • instrument-factor: pnlOverride is null → scale by the linked Instrument's
+//     factor (or 1 when unlinked). This is the original behaviour.
+//   • implied-factor: pnlOverride is set (a hand-entered actual USD pnl) →
+//       base          = unscaled calculated pnl = priceDelta × qty
+//       impliedFactor = pnlOverride / base
+//       stored pnl    = pnlOverride (used directly)
+//       idealPnl, pnlImpact = their unscaled base × impliedFactor
+//       executionPnl  = pnl − idealPnl  (now in the same USD units)
+//     Edge: base == 0 (priceDelta 0 or qty 0) → impliedFactor undefined; fall
+//     back to the instrument factor for idealPnl/pnlImpact, pnl = pnlOverride.
 //
-// rMultiple and rMultipleImpact are risk-normalized and live in calculations.ts.
-// They are NEVER scaled — this module re-exposes rMultipleImpact untouched only
-// so the rule-break path has a single call returning both values.
+// rMultiple and rMultipleImpact are risk-normalized and NEVER scaled by either
+// mode — they live in calculations.ts and are returned untouched.
 // ─────────────────────────────────────────────────────────────────────────────
 
 type Direction = 'LONG' | 'SHORT'
@@ -31,12 +37,7 @@ export interface InstrumentFactor {
 
 const NEUTRAL = { factor: 1, op: 'MULTIPLY' as FactorOp }
 
-/**
- * Resolve an instrument to a usable `{ factor, op }`. Falls back to the neutral
- * 1 × MULTIPLY (a no-op) when no instrument is linked or the stored factor is
- * non-positive/non-finite. Never throws — an unconfigured trade behaves exactly
- * as it did before this feature.
- */
+/** Resolve an instrument to a usable `{ factor, op }`; neutral fallback, never throws. */
 export function resolveFactor(
   instr: InstrumentFactor | null | undefined,
 ): { factor: number; op: FactorOp } {
@@ -47,19 +48,53 @@ export function resolveFactor(
   return { factor, op }
 }
 
-/** Apply the resolved factor ONCE to a base currency value. */
-export function applyFactor(
-  base: Decimal,
-  instr: InstrumentFactor | null | undefined,
-): Decimal {
-  const { factor, op } = resolveFactor(instr)
-  return op === 'DIVIDE' ? base.div(factor) : base.times(factor)
+function applyResolved(base: Decimal, f: { factor: number; op: FactorOp }): Decimal {
+  return f.op === 'DIVIDE' ? base.div(f.factor) : base.times(f.factor)
+}
+
+/** Apply the resolved instrument factor ONCE to a base currency value. */
+export function applyFactor(base: Decimal, instr: InstrumentFactor | null | undefined): Decimal {
+  return applyResolved(base, resolveFactor(instr))
 }
 
 /**
- * Scaled realized PnL.
- *   base = (direction-aware entry→exit) × quantity   (from calculations.computePnl)
- *   pnl  = base × factor
+ * The effective `{ factor, op }` used to scale idealPnl / pnlImpact.
+ *   • pnlOverride set & base ≠ 0 → implied factor = pnlOverride / base (MULTIPLY)
+ *   • pnlOverride set & base == 0 → instrument factor (div-by-zero fallback)
+ *   • pnlOverride null           → instrument factor
+ */
+export function effectiveFactor(
+  instr: InstrumentFactor | null | undefined,
+  base: DecimalLike,
+  pnlOverride: number | null | undefined,
+): { factor: number; op: FactorOp } {
+  if (pnlOverride != null) {
+    const b = new Decimal(base.toString())
+    if (!b.isZero()) {
+      return { factor: new Decimal(pnlOverride).div(b).toNumber(), op: 'MULTIPLY' }
+    }
+  }
+  return resolveFactor(instr)
+}
+
+/**
+ * Stickiness resolver for pnlOverride across an edit.
+ *   undefined (field absent from the request) → keep the existing value
+ *   null (explicit clear)                      → null
+ *   number                                     → that number
+ */
+export function resolvePnlOverride(
+  incoming: number | null | undefined,
+  existing: number | null,
+): number | null {
+  if (incoming === undefined) return existing ?? null
+  return incoming ?? null
+}
+
+/**
+ * Stored realized PnL.
+ *   override set → the override value, used directly.
+ *   override null → base × instrument factor.
  */
 export function computePnl(
   instr: InstrumentFactor | null | undefined,
@@ -69,21 +104,16 @@ export function computePnl(
     exitPrice: DecimalLike
     quantity: DecimalLike
   },
+  pnlOverride?: number | null,
 ): Decimal {
-  const base = baseComputePnl(args.direction, args.entryPrice, args.exitPrice, args.quantity)
-  return applyFactor(base, instr)
+  if (pnlOverride != null) return new Decimal(pnlOverride)
+  return applyFactor(baseComputePnl(args.direction, args.entryPrice, args.exitPrice, args.quantity), instr)
 }
 
 /**
- * Scaled execution PnL = (actualPnl − idealPnl) × factor.
- *
- * Both actualPnl and idealPnl are computed here in UNSCALED price terms, then
- * the factor is applied ONCE to their difference. Factor distributes over the
- * subtraction, so applying it once at the end is identical to scaling each term
- * — we apply once at the end for clarity and to guarantee no double-scaling.
- *
- * Returns 0 when there is no ideal exit (nothing to grade) or no actual exit yet
- * (OPEN trade) — matching the existing unscaled behavior, just scaled.
+ * Stored execution PnL = stored pnl − scaled idealPnl, both in the same units.
+ * The scaler is the implied factor (override) or the instrument factor.
+ * 0 when there is no ideal exit or no actual exit yet.
  */
 export function computeExecutionPnl(
   instr: InstrumentFactor | null | undefined,
@@ -92,11 +122,10 @@ export function computeExecutionPnl(
     entryPrice: DecimalLike
     idealExit: DecimalLike | null
     quantity: DecimalLike
-    /** Resolved actual exit price; null/'' for an OPEN trade with no exit. */
     exitPrice: DecimalLike | null
-    /** MISSED/SKIP ⇒ actual pnl is 0 (the move wasn't taken). */
     notTaken?: boolean
   },
+  pnlOverride?: number | null,
 ): number {
   const idealPnl = computeIdealPnl({
     entryPrice: args.entryPrice,
@@ -117,14 +146,18 @@ export function computeExecutionPnl(
   }
   if (actualBase == null) return 0
 
-  const base = actualBase.minus(idealPnl)
-  return applyFactor(base, instr).toNumber()
+  const eff = effectiveFactor(instr, actualBase, pnlOverride)
+  const storedPnl = pnlOverride != null ? new Decimal(pnlOverride) : applyResolved(actualBase, eff)
+  const scaledIdeal = applyResolved(new Decimal(idealPnl), eff)
+  return storedPnl.minus(scaledIdeal).toNumber()
 }
 
 /**
- * Rule-break impact. `pnlImpact` (currency) is scaled by the factor; the
- * `rMultipleImpact` (risk-normalized) is returned UNTOUCHED — same value
- * calculations.ts would produce.
+ * Rule-break impact. `pnlImpact` is scaled by the effective factor (implied when
+ * an override is present, else the instrument factor); `rMultipleImpact` is
+ * returned UNSCALED. When an override is in play the implied factor is derived
+ * from the TRADE's pnl base (priceDelta × qty at `tradeExitPrice`), so pnlImpact
+ * scales identically to pnl/executionPnl.
  */
 export function computeRuleBreakPnlImpact(
   instr: InstrumentFactor | null | undefined,
@@ -136,10 +169,19 @@ export function computeRuleBreakPnlImpact(
     ruleExitPrice: DecimalLike
     quantity: DecimalLike
   },
+  pnlOverride?: number | null,
+  tradeExitPrice?: DecimalLike | null,
 ): { pnlImpact: Decimal; rMultipleImpact: Decimal } {
   const base = baseRuleBreakImpact(params)
+  let eff: { factor: number; op: FactorOp }
+  if (pnlOverride != null && tradeExitPrice != null && String(tradeExitPrice) !== '') {
+    const tradeBase = baseComputePnl(params.direction, params.entryPrice, tradeExitPrice, params.quantity)
+    eff = effectiveFactor(instr, tradeBase, pnlOverride)
+  } else {
+    eff = resolveFactor(instr)
+  }
   return {
-    pnlImpact: applyFactor(base.pnlImpact, instr), // scaled currency
-    rMultipleImpact: base.rMultipleImpact,         // UNSCALED — never touched
+    pnlImpact: applyResolved(base.pnlImpact, eff),
+    rMultipleImpact: base.rMultipleImpact, // UNSCALED — never touched
   }
 }

@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     direction: directionRaw, entryPrice: entryRaw, stopLoss: stopRaw,
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate, triggerRules, status,
-    idealExit, clientRequestId, instrumentId,
+    idealExit, clientRequestId, instrumentId, pnlOverride,
   } = parsed.data
 
   // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
       })
     : null
 
-  // executionPnl: always stored, factor-scaled. A new trade has no exit yet, so
-  // OPEN ⇒ 0; MISSED/SKIP ⇒ (0 − idealPnl) × factor.
+  // executionPnl: always stored, scaled by the implied (override) or instrument
+  // factor. A new trade has no exit yet, so OPEN ⇒ 0; MISSED/SKIP ⇒ (0 − ideal)×factor.
   const executionPnlVal = computeExecutionPnl(instrumentFactor, {
     direction,
     entryPrice,
@@ -73,12 +73,13 @@ export async function POST(req: NextRequest) {
     quantity,
     exitPrice: null,
     notTaken: isMissed,
-  })
+  }, pnlOverride)
 
   const tradeData: Record<string, unknown> = {
     clientRequestId: clientRequestId ?? null,
     instrument: instrument.toUpperCase().trim(),
     instrumentId: instrumentId ?? null,
+    pnlOverride: pnlOverride ?? null,
     assetClass,
     expiry: expiry ? new Date(expiry) : null,
     setupId,
@@ -97,7 +98,10 @@ export async function POST(req: NextRequest) {
     executionPnl: String(executionPnlVal),
   }
 
-  if (isMissed) {
+  // Override wins for stored pnl (the hand-entered USD); else MISSED/SKIP ⇒ 0.
+  if (pnlOverride != null) {
+    tradeData.pnl = String(pnlOverride)
+  } else if (isMissed) {
     tradeData.pnl = '0'
   }
 

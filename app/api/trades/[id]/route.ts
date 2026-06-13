@@ -8,6 +8,7 @@ import {
   computePnl,
   computeExecutionPnl,
   computeRuleBreakPnlImpact,
+  resolvePnlOverride,
   type InstrumentFactor,
 } from '@/lib/pnl'
 
@@ -43,7 +44,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate,
     exitPrice, status, triggerRules, ruleBreak,
-    idealExit, entryRuleCorrect, instrumentId,
+    idealExit, entryRuleCorrect, instrumentId, pnlOverride,
   } = parsed.data
 
   // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
@@ -73,6 +74,14 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     ? (idealExit ?? null)
     : (existing as Record<string, unknown>).idealExit as string | null | undefined ?? null
 
+  // Sticky pnlOverride: absent from the body ⇒ keep the existing hand-entered
+  // value; null ⇒ clear to calculated; number ⇒ set. An edit that doesn't touch
+  // the override must never wipe it.
+  const resolvedPnlOverride = resolvePnlOverride(
+    pnlOverride,
+    (existing as { pnlOverride?: number | null }).pnlOverride ?? null,
+  )
+
   const updateData: Parameters<typeof db.trade.update>[0]['data'] = {
     instrument: instrument ? instrument.toUpperCase().trim() : existing.instrument,
     assetClass: assetClass ?? existing.assetClass,
@@ -90,6 +99,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     tradeDate: tradeDate ? new Date(tradeDate) : existing.tradeDate,
     idealExit: resolvedIdealExit,
     instrumentId: resolvedInstrumentId,
+    pnlOverride: resolvedPnlOverride,
     ...(entryRuleCorrect !== undefined && { entryRuleCorrect }),
     ...(status && { status }),
   }
@@ -100,27 +110,30 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
   let resolvedActualExit: string | null = null
   if (exitPrice) {
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, exitPrice)
-    const pnl = computePnl(instrumentFactor, { direction, entryPrice, exitPrice, quantity })
+    // pnl: override value when set, else base × instrument factor.
+    const pnl = computePnl(instrumentFactor, { direction, entryPrice, exitPrice, quantity }, resolvedPnlOverride)
     updateData.exitPrice = exitPrice
     updateData.status = 'CLOSED'
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
     resolvedActualExit = exitPrice
   } else if (isMissed) {
-    // Not-taken (MISSED/SKIP): zero the realized pnl even if reclassified from a
-    // CLOSED trade that had an exit price. executionPnl below uses 0 - idealPnl.
-    updateData.pnl = '0'
+    // Not-taken (MISSED/SKIP): override wins if set, else zero the realized pnl.
+    updateData.pnl = resolvedPnlOverride != null ? String(resolvedPnlOverride) : '0'
   } else if (existing.exitPrice) {
     const existingExit = existing.exitPrice.toString()
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, existingExit)
-    const pnl = computePnl(instrumentFactor, { direction, entryPrice, exitPrice: existingExit, quantity })
+    const pnl = computePnl(instrumentFactor, { direction, entryPrice, exitPrice: existingExit, quantity }, resolvedPnlOverride)
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
     resolvedActualExit = existingExit
+  } else if (resolvedPnlOverride != null) {
+    // OPEN with a manual override and no exit: store the hand-entered pnl directly.
+    updateData.pnl = String(resolvedPnlOverride)
   }
 
-  // executionPnl: always stored; factor-scaled, computed from its own UNSCALED
-  // base (actual − ideal in price terms) — never derived from the scaled pnl above.
+  // executionPnl: always stored; scaled by the implied (override) or instrument
+  // factor, computed from its own UNSCALED base — never from the scaled pnl above.
   updateData.executionPnl = String(
     computeExecutionPnl(instrumentFactor, {
       direction,
@@ -129,7 +142,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
       quantity,
       exitPrice: resolvedActualExit,
       notTaken: isMissed,
-    }),
+    }, resolvedPnlOverride),
   )
 
   await db.trade.update({ where: { id }, data: updateData })
@@ -148,7 +161,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
         actualExitPrice,
         ruleExitPrice,
         quantity,
-      })
+      }, resolvedPnlOverride, resolvedActualExit)
       pnlImpact = impact.pnlImpact.toDecimalPlaces(2).toString()
       rMultipleImpact = impact.rMultipleImpact.toDecimalPlaces(2).toString()
     }

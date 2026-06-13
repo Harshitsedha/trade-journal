@@ -90,6 +90,8 @@ export function TradeForm({ setups }: TradeFormProps) {
   // used to grade execution / track the cost of a skip.
   const [status, setStatus] = useState<'OPEN' | 'MISSED' | 'SKIP'>('OPEN')
   const [idealExit, setIdealExit] = useState('')
+  // Manual PnL override (actual USD). Blank = calculated; filled = override mode.
+  const [pnlOverride, setPnlOverride] = useState('')
 
   // Load configured instruments once for the link selector.
   useEffect(() => {
@@ -188,6 +190,7 @@ export function TradeForm({ setups }: TradeFormProps) {
             triggerRules: selectedTriggers.length > 0 ? selectedTriggers : undefined,
             status: status !== 'OPEN' ? status : undefined,
             idealExit: idealExit.trim() || null,
+            pnlOverride: pnlOverride.trim() ? Number(pnlOverride) : null,
             clientRequestId,
           }),
         })
@@ -215,7 +218,7 @@ export function TradeForm({ setups }: TradeFormProps) {
       canSubmit, instrument, instrumentId, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, tradeDate, selectedTriggers, router,
-      status, idealExit, clientRequestId,
+      status, idealExit, pnlOverride, clientRequestId,
     ]
   )
 
@@ -518,6 +521,21 @@ export function TradeForm({ setups }: TradeFormProps) {
         />
         <span className="text-[11px] text-[var(--color-ink-muted)]">
           Best exit available — use the entry price for a breakeven (BE) ideal.
+        </span>
+      </div>
+
+      {/* Manual PnL override — hand-enter the actual USD; blank = calculated. */}
+      <div className="flex flex-col gap-1">
+        <Input
+          label="Override PnL (actual USD, optional)"
+          placeholder="leave blank to use calculated"
+          inputMode="decimal"
+          value={pnlOverride}
+          onChange={(e) => setPnlOverride(e.target.value)}
+          className="font-mono"
+        />
+        <span className="text-[11px] text-[var(--color-ink-muted)]">
+          Set the real USD PnL — an implied factor scales executionPnl/rule-break impact to match. rMultiple is unaffected.
         </span>
       </div>
 

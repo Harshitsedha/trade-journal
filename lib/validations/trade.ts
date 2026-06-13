@@ -50,6 +50,9 @@ const tradeBaseObject = z.object({
   // Idempotency key — client-generated per trade so a double-submit collapses
   // to a single row (server catches the unique-constraint collision).
   clientRequestId: z.string().uuid().optional(),
+  // Manual PnL override (actual USD). undefined = leave as-is (sticky on edit),
+  // null = clear back to calculated, number = override.
+  pnlOverride: z.number().optional().nullable(),
 })
 
 type TradeBase = z.infer<typeof tradeBaseObject>

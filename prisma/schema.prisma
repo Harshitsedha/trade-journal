@@ -144,6 +144,9 @@ model Trade {
   riskAmount Decimal     @db.Decimal(18, 2)
   rMultiple  Decimal?    @db.Decimal(8, 2)
   pnl        Decimal?    @db.Decimal(18, 2)
+  // Manual PnL override (actual USD). Null = use the calculated/instrument-factor
+  // path; set = override mode (an implied factor is derived from it, see lib/pnl).
+  pnlOverride Float?
   status        TradeStatus @default(OPEN)
   thesis        String?
   notes         String?

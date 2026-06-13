@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   resolveFactor,
+  resolvePnlOverride,
   computePnl,
   computeExecutionPnl,
   computeRuleBreakPnlImpact,
@@ -104,5 +105,97 @@ describe('computeExecutionPnl — (actual − ideal) × factor, from UNSCALED ba
   })
   it('not taken (MISSED/SKIP) → (0 − ideal) × factor = -100000', () => {
     expect(computeExecutionPnl(silverMul, { ...args, exitPrice: null, notTaken: true })).toBe(-20 * 5000)
+  })
+})
+
+// ── Manual PnL override (implied-factor) ─────────────────────────────────────
+describe('pnlOverride — implied factor (DAX example)', () => {
+  // LONG entry 18000, exit 17985.42, qty 1 → base = -14.58
+  // override = -16.97 → impliedFactor = -16.97 / -14.58 ≈ 1.16392
+  const dax = { factor: 1, factorOp: 'MULTIPLY' }
+  const base = -14.58
+  const override = -16.97
+  const implied = override / base // 1.16392...
+  const trade = {
+    direction: 'LONG' as const, entryPrice: '18000', exitPrice: '17985.42',
+    stopLoss: '17970', quantity: '1', idealExit: '18010', // idealBase = 10
+  }
+
+  it('implied factor is ~1.164', () => {
+    expect(implied).toBeCloseTo(1.164, 3)
+  })
+
+  it('stored pnl = the override value, used directly', () => {
+    expect(computePnl(dax, { ...trade }, override).toNumber()).toBe(override)
+  })
+
+  it('executionPnl = override − (idealBase × implied)', () => {
+    const exec = computeExecutionPnl(dax, {
+      direction: trade.direction, entryPrice: trade.entryPrice,
+      idealExit: trade.idealExit, quantity: trade.quantity, exitPrice: trade.exitPrice,
+    }, override)
+    expect(exec).toBeCloseTo(override - 10 * implied, 6) // ≈ -28.609
+  })
+
+  it('pnlImpact scales by the implied factor; rMultipleImpact does NOT', () => {
+    // rule break: actual 17985.42, rule 17990 → impactBase = -4.58
+    const rbParams = {
+      direction: trade.direction, entryPrice: trade.entryPrice, stopLoss: trade.stopLoss,
+      actualExitPrice: '17985.42', ruleExitPrice: '17990', quantity: trade.quantity,
+    }
+    const withOverride = computeRuleBreakPnlImpact(dax, rbParams, override, trade.exitPrice)
+    const noOverride = computeRuleBreakPnlImpact(dax, rbParams) // factor 1
+    expect(withOverride.pnlImpact.toNumber()).toBeCloseTo(-4.58 * implied, 6) // ≈ -5.331
+    // rMultipleImpact identical with or without the override
+    expect(withOverride.rMultipleImpact.toNumber()).toBeCloseTo(noOverride.rMultipleImpact.toNumber(), 12)
+    expect(withOverride.rMultipleImpact.toNumber()).toBeCloseTo(-4.58 / 30, 10) // -0.1527, unscaled
+  })
+})
+
+describe('pnlOverride — base==0 fallback (no div-by-zero)', () => {
+  // entry == exit → base = priceDelta × qty = 0
+  const silver = { factor: 5000, factorOp: 'MULTIPLY' }
+  const trade = {
+    direction: 'LONG' as const, entryPrice: '100', exitPrice: '100',
+    quantity: '2', idealExit: '110', // idealBase = 20
+  }
+  it('pnl = override even when base is 0', () => {
+    expect(computePnl(silver, { ...trade }, 50).toNumber()).toBe(50)
+  })
+  it('executionPnl falls back to the INSTRUMENT factor for ideal — finite, no NaN/Infinity', () => {
+    const exec = computeExecutionPnl(silver, {
+      direction: trade.direction, entryPrice: trade.entryPrice,
+      idealExit: trade.idealExit, quantity: trade.quantity, exitPrice: trade.exitPrice,
+    }, 50)
+    expect(Number.isFinite(exec)).toBe(true)
+    // 50 (override) − (idealBase 20 × instrument 5000) = 50 − 100000
+    expect(exec).toBe(50 - 20 * 5000)
+  })
+})
+
+describe('resolvePnlOverride — stickiness across a PATCH', () => {
+  it('undefined (field absent) keeps the existing value', () => {
+    expect(resolvePnlOverride(undefined, -16.97)).toBe(-16.97)
+    expect(resolvePnlOverride(undefined, null)).toBe(null)
+  })
+  it('null clears to calculated; a number sets it', () => {
+    expect(resolvePnlOverride(null, -16.97)).toBe(null)
+    expect(resolvePnlOverride(-5, -16.97)).toBe(-5)
+  })
+})
+
+describe('pnlOverride NULL → unchanged instrument-factor behavior (Silver ×5000 regression)', () => {
+  const silver = { factor: 5000, factorOp: 'MULTIPLY' }
+  const args = { direction: 'LONG' as const, entryPrice: '100', exitPrice: '110', quantity: '2' }
+  it('computePnl with override null/undefined == no-override instrument path', () => {
+    const noArg = computePnl(silver, args).toNumber()
+    expect(computePnl(silver, args, null).toNumber()).toBe(noArg)
+    expect(computePnl(silver, args, undefined).toNumber()).toBe(noArg)
+    expect(noArg).toBe(20 * 5000) // 100000, instrument factor intact
+  })
+  it('computeExecutionPnl with override null == no-override instrument path', () => {
+    const exArgs = { ...args, idealExit: '112' as string | null, exitPrice: '110' as string | null }
+    const noArg = computeExecutionPnl(silver, exArgs)
+    expect(computeExecutionPnl(silver, exArgs, null)).toBe(noArg)
   })
 })

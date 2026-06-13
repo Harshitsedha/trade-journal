@@ -100,6 +100,13 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       : ''
   )
 
+  // Manual PnL override — pre-populated; blank clears back to calculated.
+  const [pnlOverride, setPnlOverride] = useState(
+    (trade as Record<string, unknown>).pnlOverride != null
+      ? String((trade as Record<string, unknown>).pnlOverride)
+      : ''
+  )
+
   // Status toggle for OPEN/MISSED/SKIP trades
   const [tradeStatus, setTradeStatus] = useState<'OPEN' | 'MISSED' | 'CLOSED' | 'SKIP'>(
     trade.status as 'OPEN' | 'MISSED' | 'CLOSED' | 'SKIP'
@@ -207,6 +214,11 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       // recomputes idealPnl/executionPnl (sending null clears a previously-set value).
       body.idealExit = idealExit.trim() ? idealExit : null
 
+      // pnlOverride reflects the current field: a number sets override, blank clears
+      // it. The field is pre-populated, so an untouched edit re-sends the same value
+      // and the override survives.
+      body.pnlOverride = pnlOverride.trim() ? Number(pnlOverride) : null
+
       if (entryRuleCorrect !== null) {
         body.entryRuleCorrect = entryRuleCorrect
       }
@@ -249,7 +261,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
       canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, notes, tradeDate, selectedTriggers,
-      tradeStatus, idealExit, entryRuleCorrect,
+      tradeStatus, idealExit, pnlOverride, entryRuleCorrect,
       isOpen, exitPrice, hasRuleBreak, breakType, ruleDescription,
       actualExitPrice, ruleExitPrice, rbNotes, trade.id, router, onDone,
     ]
@@ -540,6 +552,21 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
         />
         <span className="text-[11px] text-[var(--color-ink-muted)]">
           Best exit available — grades execution. Use the entry price for a breakeven (BE) ideal.
+        </span>
+      </div>
+
+      {/* Manual PnL override — hand-enter actual USD; blank = calculated. Sticky. */}
+      <div className="flex flex-col gap-1">
+        <Input
+          label="Override PnL (actual USD, optional)"
+          placeholder="leave blank to use calculated"
+          inputMode="decimal"
+          value={pnlOverride}
+          onChange={e => setPnlOverride(e.target.value)}
+          className="font-mono"
+        />
+        <span className="text-[11px] text-[var(--color-ink-muted)]">
+          Set the real USD PnL — an implied factor scales executionPnl/rule-break impact. rMultiple is unaffected.
         </span>
       </div>
 

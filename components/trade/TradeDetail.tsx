@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { ImageUploader } from './ImageUploader'
 import { EditTradeForm } from './EditTradeForm'
+import { computePnl as baseCalcPnl } from '@/lib/calculations'
 
 interface TradeDetailProps {
   trade: TradeWithRelations
@@ -47,6 +48,18 @@ export function TradeDetail({ trade }: TradeDetailProps) {
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
   const isOpen = trade.status === 'OPEN'
+
+  // Manual override: stored pnl IS the override; show the raw calculated (×1) base
+  // alongside so the gap (and the implied factor) is visible.
+  const pnlOverride = (trade as Record<string, unknown>).pnlOverride as number | null ?? null
+  const calcBase = pnlOverride != null && trade.exitPrice != null
+    ? baseCalcPnl(
+        trade.direction as 'LONG' | 'SHORT',
+        trade.entryPrice.toString(),
+        trade.exitPrice.toString(),
+        trade.quantity.toString(),
+      )
+    : null
 
   async function handleDelete() {
     setDeleting(true)
@@ -183,6 +196,14 @@ export function TradeDetail({ trade }: TradeDetailProps) {
                 }`}
               >
                 {pnl.gt(0) ? '+' : ''}₹{pnl.toFixed(0)}
+                {pnlOverride != null && (
+                  <span className="ml-1 text-[10px] uppercase tracking-wide text-[var(--color-accent)]">override</span>
+                )}
+              </p>
+            )}
+            {pnlOverride != null && calcBase !== null && (
+              <p className="text-[11px] font-mono text-[var(--color-ink-muted)]">
+                calculated (×1): ₹{calcBase.toFixed(2)} · implied ×{calcBase.isZero() ? '—' : new Decimal(pnlOverride).div(calcBase).toFixed(3)}
               </p>
             )}
           </div>
