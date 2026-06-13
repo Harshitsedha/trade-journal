@@ -24,7 +24,7 @@ import { db } from '@/lib/db'
 //      applied directly to the URL the Prisma client will actually use).
 
 const PROD_ENDPOINT = 'ep-noisy-brook-aotot7c1' // current production Neon project
-const TEST_ENDPOINT = 'ep-young-mud-aoz7e0ak'   // designated test branch on same project
+const TEST_ENDPOINT = 'ep-tiny-sound-aoersa93'  // designated test branch on same project
 
 const url = process.env.DATABASE_URL ?? ''
 const testUrl = process.env.TEST_DATABASE_URL ?? ''

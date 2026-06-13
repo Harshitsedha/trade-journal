@@ -124,6 +124,11 @@ model Trade {
   id              String  @id @default(cuid())
   clientRequestId String? @unique
   instrument String
+  // Optional FK to a configured Instrument carrying the per-instrument PnL factor.
+  // The plain `instrument` string above is kept for backfill matching (string → symbol)
+  // and as the fallback when no Instrument is linked (factor=1/MULTIPLY).
+  instrumentId  String?
+  instrumentRef Instrument? @relation(fields: [instrumentId], references: [id])
   assetClass AssetClass
   expiry     DateTime?
   setupId    String
@@ -157,6 +162,21 @@ model Trade {
   @@index([setupId])
   @@index([status])
   @@index([assetClass])
+  @@index([instrumentId])
+}
+
+model Instrument {
+  id        String   @id @default(cuid())
+  symbol    String   @unique
+  name      String
+  // Per-instrument constant applied to currency PnL (pnl, executionPnl, pnlImpact).
+  // factorOp decides whether it multiplies or divides. Defaults are a no-op so any
+  // trade not linked to an Instrument behaves exactly as before.
+  factor    Float    @default(1)
+  factorOp  String   @default("MULTIPLY") // "MULTIPLY" | "DIVIDE"
+  trades    Trade[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ChartImage {

@@ -23,6 +23,9 @@ const tradeBaseObject = z.object({
   expiry: z.string().datetime().optional().nullable(),
   setupId: z.string().cuid('Invalid setup ID'),
   subSetupId: z.string().cuid('Invalid sub-setup ID').optional().nullable(),
+  // Optional link to a configured Instrument (carries the PnL factor). Unset ⇒
+  // factor-1 fallback, never an error.
+  instrumentId: z.string().cuid('Invalid instrument ID').optional().nullable(),
   // Optional for MISSED trades (enforced below via superRefine for others)
   direction: DirectionSchema.optional(),
   entryPrice: decimalString.optional(),

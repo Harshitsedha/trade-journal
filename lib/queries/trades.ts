@@ -1,7 +1,6 @@
 import Decimal from 'decimal.js'
 import { db } from '@/lib/db'
-import { computeRMultiple, computePnl } from '@/lib/calculations'
-import type { TradeFilterInput, CreateTradeInput } from '@/lib/validations/trade'
+import type { TradeFilterInput } from '@/lib/validations/trade'
 
 const TRADE_INCLUDE = {
   setup: true,
@@ -39,70 +38,6 @@ export async function getTrades(filters: TradeFilterInput) {
 export async function getTradeById(id: string) {
   return db.trade.findUnique({
     where: { id },
-    include: TRADE_INCLUDE,
-  })
-}
-
-export async function createTrade(input: CreateTradeInput) {
-  return db.trade.create({
-    data: {
-      instrument: input.instrument,
-      assetClass: input.assetClass,
-      expiry: input.expiry ? new Date(input.expiry) : null,
-      setupId: input.setupId,
-      subSetupId: input.subSetupId ?? null,
-      direction: input.direction!,
-      entryPrice: input.entryPrice!,
-      stopLoss: input.stopLoss!,
-      targets: input.targets,
-      quantity: input.quantity!,
-      riskAmount: input.riskAmount!,
-      thesis: input.thesis ?? null,
-      notes: input.notes ?? null,
-      tradeDate: new Date(input.tradeDate),
-    },
-    include: TRADE_INCLUDE,
-  })
-}
-
-export async function closeTrade(
-  id: string,
-  exitPrice: string,
-  notes?: string | null
-) {
-  const trade = await db.trade.findUniqueOrThrow({
-    where: { id },
-    select: {
-      entryPrice: true,
-      stopLoss: true,
-      quantity: true,
-      direction: true,
-    },
-  })
-
-  const rMultiple = computeRMultiple(trade.direction, trade.entryPrice, trade.stopLoss, exitPrice)
-  const pnl = computePnl(trade.direction, trade.entryPrice, exitPrice, trade.quantity)
-
-  return db.trade.update({
-    where: { id },
-    data: {
-      exitPrice,
-      status: 'CLOSED',
-      rMultiple: rMultiple.toDecimalPlaces(2).toString(),
-      pnl: pnl.toDecimalPlaces(2).toString(),
-      ...(notes !== undefined && { notes }),
-    },
-    include: TRADE_INCLUDE,
-  })
-}
-
-export async function updateTrade(
-  id: string,
-  data: Partial<{ notes: string | null; thesis: string | null; status: 'OPEN' | 'CLOSED' | 'MISSED' }>
-) {
-  return db.trade.update({
-    where: { id },
-    data,
     include: TRADE_INCLUDE,
   })
 }

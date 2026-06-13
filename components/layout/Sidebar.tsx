@@ -8,6 +8,7 @@ const navItems = [
   { href: '/trades/new', label: 'Log Trade' },
   { href: '/playbook', label: 'Playbook' },
   { href: '/analysis', label: 'Analysis' },
+  { href: '/settings/instruments', label: 'Instruments' },
 ]
 
 export async function Sidebar() {

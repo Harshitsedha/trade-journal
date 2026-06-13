@@ -61,6 +61,12 @@ export function TradeForm({ setups }: TradeFormProps) {
 
   // Form state
   const [instrument, setInstrument] = useState('')
+  // Optional link to a configured Instrument → its PnL factor applies on create.
+  // Empty = no link = factor-1 fallback (behaves exactly as before).
+  const [instrumentId, setInstrumentId] = useState('')
+  const [instruments, setInstruments] = useState<
+    { id: string; symbol: string; name: string; factor: number; factorOp: string }[]
+  >([])
   const [assetClass, setAssetClass] = useState('FUTURES')
   const [expiry, setExpiry] = useState('')
   const [setupId, setSetupId] = useState('')
@@ -84,6 +90,14 @@ export function TradeForm({ setups }: TradeFormProps) {
   // used to grade execution / track the cost of a skip.
   const [status, setStatus] = useState<'OPEN' | 'MISSED' | 'SKIP'>('OPEN')
   const [idealExit, setIdealExit] = useState('')
+
+  // Load configured instruments once for the link selector.
+  useEffect(() => {
+    fetch('/api/instruments')
+      .then(r => r.json())
+      .then(d => setInstruments(Array.isArray(d) ? d : []))
+      .catch(() => setInstruments([]))
+  }, [])
 
   // Load sub-setups and trigger rules when setup changes
   useEffect(() => {
@@ -157,6 +171,7 @@ export function TradeForm({ setups }: TradeFormProps) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             instrument: instrument.toUpperCase().trim(),
+            instrumentId: instrumentId || null,
             assetClass,
             expiry: expiry ? new Date(expiry).toISOString() : null,
             setupId,
@@ -197,7 +212,7 @@ export function TradeForm({ setups }: TradeFormProps) {
       }
     },
     [
-      canSubmit, instrument, assetClass, expiry, setupId, subSetupId,
+      canSubmit, instrument, instrumentId, assetClass, expiry, setupId, subSetupId,
       direction, entryPrice, stopLoss, target1, target2, target3,
       quantity, riskAmount, thesis, tradeDate, selectedTriggers, router,
       status, idealExit, clientRequestId,
@@ -228,6 +243,27 @@ export function TradeForm({ setups }: TradeFormProps) {
           ))}
         </div>
       </div>
+
+      {/* Linked instrument (optional) — drives the PnL factor. None = factor 1. */}
+      {instruments.length > 0 && (
+        <Select
+          label="Linked Instrument (factor)"
+          placeholder="— None (factor 1) —"
+          value={instrumentId}
+          onChange={(e) => {
+            const id = e.target.value
+            setInstrumentId(id)
+            // Auto-fill the instrument string from the chosen symbol so the old
+            // free-text field stays consistent (used for backfill matching).
+            const picked = instruments.find(i => i.id === id)
+            if (picked) setInstrument(picked.symbol)
+          }}
+          options={instruments.map(i => ({
+            value: i.id,
+            label: `${i.symbol} · ${i.factorOp === 'DIVIDE' ? '÷' : '×'}${i.factor} · ${i.name}`,
+          }))}
+        />
+      )}
 
       {/* Instrument + Asset */}
       <div className="grid grid-cols-2 gap-3">

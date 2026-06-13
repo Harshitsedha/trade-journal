@@ -3,8 +3,13 @@ import { auth } from '@/auth'
 import { UpdateTradeSchema } from '@/lib/validations/trade'
 import { getTradeById } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
-import { computeRMultiple, computePnl, computeRuleBreakImpact } from '@/lib/calculations'
-import { computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
+import { computeRMultiple } from '@/lib/calculations'
+import {
+  computePnl,
+  computeExecutionPnl,
+  computeRuleBreakPnlImpact,
+  type InstrumentFactor,
+} from '@/lib/pnl'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -38,7 +43,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate,
     exitPrice, status, triggerRules, ruleBreak,
-    idealExit, entryRuleCorrect,
+    idealExit, entryRuleCorrect, instrumentId,
   } = parsed.data
 
   // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
@@ -49,6 +54,19 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
   const targets = targetsRaw?.length ? targetsRaw : (existing.targets as { toString(): string }[]).map(t => t.toString())
   const quantity = qtyRaw ?? existing.quantity.toString()
   const riskAmount = riskRaw ?? existing.riskAmount.toString()
+
+  // Resolve the linked instrument (carries the PnL factor). Use the incoming
+  // instrumentId when provided, else keep the trade's existing link. Unlinked ⇒
+  // null ⇒ factor-1 fallback inside lib/pnl.
+  const resolvedInstrumentId = instrumentId !== undefined
+    ? (instrumentId ?? null)
+    : ((existing as { instrumentId?: string | null }).instrumentId ?? null)
+  const instrumentFactor: InstrumentFactor | null = resolvedInstrumentId
+    ? await db.instrument.findUnique({
+        where: { id: resolvedInstrumentId },
+        select: { factor: true, factorOp: true },
+      })
+    : null
 
   // Resolve idealExit
   const resolvedIdealExit = idealExit !== undefined
@@ -71,18 +89,23 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     notes: notes !== undefined ? (notes ?? null) : existing.notes,
     tradeDate: tradeDate ? new Date(tradeDate) : existing.tradeDate,
     idealExit: resolvedIdealExit,
+    instrumentId: resolvedInstrumentId,
     ...(entryRuleCorrect !== undefined && { entryRuleCorrect }),
     ...(status && { status }),
   }
 
-  // Recompute pnl / rMultiple
+  // Recompute pnl (factor-scaled) / rMultiple (never scaled). rMultiple stays in
+  // calculations.ts; pnl goes through lib/pnl so the instrument factor is applied.
+  // Track the actual exit used so executionPnl recomputes its UNSCALED base below.
+  let resolvedActualExit: string | null = null
   if (exitPrice) {
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, exitPrice)
-    const pnl = computePnl(direction, entryPrice, exitPrice, quantity)
+    const pnl = computePnl(instrumentFactor, { direction, entryPrice, exitPrice, quantity })
     updateData.exitPrice = exitPrice
     updateData.status = 'CLOSED'
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
+    resolvedActualExit = exitPrice
   } else if (isMissed) {
     // Not-taken (MISSED/SKIP): zero the realized pnl even if reclassified from a
     // CLOSED trade that had an exit price. executionPnl below uses 0 - idealPnl.
@@ -90,25 +113,24 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
   } else if (existing.exitPrice) {
     const existingExit = existing.exitPrice.toString()
     const rMultiple = computeRMultiple(direction, entryPrice, stopLoss, existingExit)
-    const pnl = computePnl(direction, entryPrice, existingExit, quantity)
+    const pnl = computePnl(instrumentFactor, { direction, entryPrice, exitPrice: existingExit, quantity })
     updateData.rMultiple = rMultiple.toDecimalPlaces(2).toString()
     updateData.pnl = pnl.toDecimalPlaces(2).toString()
+    resolvedActualExit = existingExit
   }
 
-  // executionPnl: always stored; 0 when no idealExit
-  const idealPnl = computeIdealPnl({
-    entryPrice,
-    idealExit: resolvedIdealExit,
-    direction,
-    quantity: Number(quantity),
-  })
-  const resolvedActualPnl = isMissed ? 0
-    : (updateData.pnl != null ? Number(String(updateData.pnl))
-      : (existing.pnl != null ? Number(existing.pnl.toString()) : null))
-  const execPnl = resolvedActualPnl !== null
-    ? computeExecutionPnl(resolvedActualPnl, idealPnl)
-    : 0  // OPEN trade with no exit yet
-  updateData.executionPnl = String(execPnl)
+  // executionPnl: always stored; factor-scaled, computed from its own UNSCALED
+  // base (actual − ideal in price terms) — never derived from the scaled pnl above.
+  updateData.executionPnl = String(
+    computeExecutionPnl(instrumentFactor, {
+      direction,
+      entryPrice,
+      idealExit: resolvedIdealExit,
+      quantity,
+      exitPrice: resolvedActualExit,
+      notTaken: isMissed,
+    }),
+  )
 
   await db.trade.update({ where: { id }, data: updateData })
 
@@ -118,7 +140,8 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     let pnlImpact = '0'
     let rMultipleImpact = '0'
     if (ruleExitPrice) {
-      const impact = computeRuleBreakImpact({
+      // pnlImpact is factor-scaled (currency); rMultipleImpact is returned UNSCALED.
+      const impact = computeRuleBreakPnlImpact(instrumentFactor, {
         direction,
         entryPrice,
         stopLoss,

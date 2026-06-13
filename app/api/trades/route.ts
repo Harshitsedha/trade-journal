@@ -5,8 +5,7 @@ import { auth } from '@/auth'
 import { CreateTradeSchema, TradeFilterSchema } from '@/lib/validations/trade'
 import { getTrades } from '@/lib/queries/trades'
 import { db } from '@/lib/db'
-import { computeRMultiple, computePnl } from '@/lib/calculations'
-import { computeIdealPnl, computeExecutionPnl } from '@/lib/analytics/compute'
+import { computeExecutionPnl, type InstrumentFactor } from '@/lib/pnl'
 
 const TRADE_INCLUDE = {
   setup: true,
@@ -45,7 +44,7 @@ export async function POST(req: NextRequest) {
     direction: directionRaw, entryPrice: entryRaw, stopLoss: stopRaw,
     targets: targetsRaw, quantity: qtyRaw, riskAmount: riskRaw,
     thesis, notes, tradeDate, triggerRules, status,
-    idealExit, clientRequestId,
+    idealExit, clientRequestId, instrumentId,
   } = parsed.data
 
   // MISSED and SKIP are both not-taken trades: actualPnl = 0, executionPnl = 0 - idealPnl.
@@ -57,21 +56,29 @@ export async function POST(req: NextRequest) {
   const quantity = qtyRaw ?? '0'
   const riskAmount = riskRaw ?? '0'
 
-  // executionPnl: always stored (0 when no idealExit)
-  const idealPnl = computeIdealPnl({
+  // Linked instrument carries the PnL factor; unlinked ⇒ null ⇒ factor-1 fallback.
+  const instrumentFactor: InstrumentFactor | null = instrumentId
+    ? await db.instrument.findUnique({
+        where: { id: instrumentId },
+        select: { factor: true, factorOp: true },
+      })
+    : null
+
+  // executionPnl: always stored, factor-scaled. A new trade has no exit yet, so
+  // OPEN ⇒ 0; MISSED/SKIP ⇒ (0 − idealPnl) × factor.
+  const executionPnlVal = computeExecutionPnl(instrumentFactor, {
+    direction,
     entryPrice,
     idealExit: idealExit ?? null,
-    direction,
-    quantity: Number(quantity),
+    quantity,
+    exitPrice: null,
+    notTaken: isMissed,
   })
-  const actualPnl = isMissed ? 0 : null
-  const executionPnlVal = actualPnl !== null
-    ? computeExecutionPnl(actualPnl, idealPnl)
-    : 0  // OPEN trade, no exit yet
 
   const tradeData: Record<string, unknown> = {
     clientRequestId: clientRequestId ?? null,
     instrument: instrument.toUpperCase().trim(),
+    instrumentId: instrumentId ?? null,
     assetClass,
     expiry: expiry ? new Date(expiry) : null,
     setupId,
