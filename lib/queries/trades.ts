@@ -36,6 +36,28 @@ export async function getTrades(filters: TradeFilterInput) {
   return { trades, total, page, limit }
 }
 
+// Dashboard list: EVERY trade, no pagination. Ordered OPEN first (live trades up
+// top), then CLOSED by date desc, then MISSED, then SKIP. Prisma can't express a
+// custom status priority cheaply, so we order by date in SQL and bucket in JS.
+const STATUS_RANK: Record<string, number> = { OPEN: 0, CLOSED: 1, MISSED: 2, SKIP: 3 }
+
+export async function getDashboardTrades() {
+  const trades = await db.trade.findMany({
+    include: TRADE_INCLUDE,
+    orderBy: { tradeDate: 'desc' },
+  })
+
+  const sorted = [...trades].sort((a, b) => {
+    const ra = STATUS_RANK[a.status] ?? 99
+    const rb = STATUS_RANK[b.status] ?? 99
+    if (ra !== rb) return ra - rb
+    // within a status bucket keep date desc (already sorted, but stable-guard)
+    return b.tradeDate.getTime() - a.tradeDate.getTime()
+  })
+
+  return sorted
+}
+
 export async function getTradeById(id: string) {
   return db.trade.findUnique({
     where: { id },

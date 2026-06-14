@@ -36,92 +36,127 @@ function toRows(points: CurrencyEquity['points']): Row[] {
   }))
 }
 
-function CurrencyChart({ currency, points }: CurrencyEquity) {
+const tooltipContentStyle: React.CSSProperties = {
+  background: 'var(--color-surface-raised)',
+  border: '0.5px solid var(--color-border)',
+  borderRadius: 'var(--radius-sm)',
+  fontSize: 12,
+}
+
+function ChartHeading({ title, currency }: { title: string; currency: string }) {
+  return (
+    <div className="flex items-baseline justify-between">
+      <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
+        {title}
+      </span>
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
+        {currency || '—'}
+      </span>
+    </div>
+  )
+}
+
+function CurrencyCharts({ currency, points }: CurrencyEquity) {
   const sym = currencySymbol(currency)
   const rows = toRows(points)
 
+  // Shared Y domain so the two charts are visually comparable.
+  let min = 0
+  let max = 0
+  for (const r of rows) {
+    min = Math.min(min, r.actual, r.ideal)
+    max = Math.max(max, r.actual, r.ideal)
+  }
+  const yDomain: [number, number] = [min, max]
+
+  const yTickFormatter = (v: number) => `${sym}${Number(v).toLocaleString('en-IN')}`
+  const xTickFormatter = (d: string) => d.slice(5)
+  const valueFormatter = (value: unknown, name: unknown): [string, string] => [
+    `${sym}${Number(value).toLocaleString('en-IN')}`,
+    String(name),
+  ]
+
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-baseline justify-between">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
-          Equity Curve
-        </span>
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
-          {currency || '—'}
-        </span>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {/* LEFT — Actual PnL only (clean) */}
+      <div className="flex flex-col gap-2">
+        <ChartHeading title="Actual PnL" currency={currency} />
+        <ResponsiveContainer width="100%" height={240}>
+          <ComposedChart data={rows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+            <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} tickFormatter={xTickFormatter} />
+            <YAxis domain={yDomain} tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} width={70} tickFormatter={yTickFormatter} />
+            <Tooltip contentStyle={tooltipContentStyle} formatter={valueFormatter} labelFormatter={d => `Exit ${d}`} />
+            <Legend wrapperStyle={{ fontSize: 11 }} />
+            <Line
+              type="monotone"
+              dataKey="actual"
+              name="Actual"
+              stroke="var(--color-accent)"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
       </div>
-      <ResponsiveContainer width="100%" height={240}>
-        <ComposedChart data={rows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-          <XAxis
-            dataKey="date"
-            tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }}
-            tickFormatter={d => d.slice(5)}
-          />
-          <YAxis
-            tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }}
-            width={70}
-            tickFormatter={v => `${sym}${Number(v).toLocaleString('en-IN')}`}
-          />
-          <Tooltip
-            contentStyle={{
-              background: 'var(--color-surface-raised)',
-              border: '0.5px solid var(--color-border)',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: 12,
-            }}
-            formatter={(value: unknown, name: unknown) => [
-              `${sym}${Number(value).toLocaleString('en-IN')}`,
-              String(name),
-            ]}
-            labelFormatter={d => `Exit ${d}`}
-          />
-          <Legend wrapperStyle={{ fontSize: 11 }} />
-          {/* Shaded band between the two lines = execution drag.
-              Invisible baseline area stacks the visible gap area on top. */}
-          <Area
-            type="monotone"
-            dataKey="lower"
-            name="band-base"
-            stackId="band"
-            stroke="none"
-            fill="none"
-            fillOpacity={0}
-            isAnimationActive={false}
-            legendType="none"
-            tooltipType="none"
-          />
-          <Area
-            type="monotone"
-            dataKey="gap"
-            name="Execution drag"
-            stackId="band"
-            stroke="none"
-            fill="var(--color-loss)"
-            fillOpacity={0.12}
-            isAnimationActive={false}
-          />
-          <Line
-            type="monotone"
-            dataKey="ideal"
-            name="Possible (ideal)"
-            stroke="var(--color-profit)"
-            strokeWidth={1.5}
-            strokeDasharray="4 3"
-            dot={false}
-            isAnimationActive={false}
-          />
-          <Line
-            type="monotone"
-            dataKey="actual"
-            name="Actual"
-            stroke="var(--color-accent)"
-            strokeWidth={2}
-            dot={false}
-            isAnimationActive={false}
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
+
+      {/* RIGHT — Actual + Execution PnL (ideal) with execution-drag band */}
+      <div className="flex flex-col gap-2">
+        <ChartHeading title="Actual + Execution PnL" currency={currency} />
+        <ResponsiveContainer width="100%" height={240}>
+          <ComposedChart data={rows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+            <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} tickFormatter={xTickFormatter} />
+            <YAxis domain={yDomain} tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} width={70} tickFormatter={yTickFormatter} />
+            <Tooltip contentStyle={tooltipContentStyle} formatter={valueFormatter} labelFormatter={d => `Exit ${d}`} />
+            <Legend wrapperStyle={{ fontSize: 11 }} />
+            {/* Shaded band between the two lines = execution drag.
+                Invisible baseline area stacks the visible gap area on top. */}
+            <Area
+              type="monotone"
+              dataKey="lower"
+              name="band-base"
+              stackId="band"
+              stroke="none"
+              fill="none"
+              fillOpacity={0}
+              isAnimationActive={false}
+              legendType="none"
+              tooltipType="none"
+            />
+            <Area
+              type="monotone"
+              dataKey="gap"
+              name="Execution drag"
+              stackId="band"
+              stroke="none"
+              fill="var(--color-loss)"
+              fillOpacity={0.12}
+              isAnimationActive={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="ideal"
+              name="Possible (ideal)"
+              stroke="var(--color-profit)"
+              strokeWidth={1.5}
+              strokeDasharray="4 3"
+              dot={false}
+              isAnimationActive={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="actual"
+              name="Actual"
+              stroke="var(--color-accent)"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   )
 }
@@ -133,7 +168,7 @@ export function DashboardEquity({ series }: Props) {
   return (
     <div className="mx-6 mt-4 flex flex-col gap-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-4" style={{ borderWidth: '0.5px' }}>
       {withData.map(s => (
-        <CurrencyChart key={s.currency || 'none'} currency={s.currency} points={s.points} />
+        <CurrencyCharts key={s.currency || 'none'} currency={s.currency} points={s.points} />
       ))}
     </div>
   )
