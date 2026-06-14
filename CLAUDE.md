@@ -23,8 +23,11 @@ production endpoint or if `TEST_DATABASE_URL` is unset.
 The seed script has a production guard, but do not test fate.
 
 **Run `bash scripts/backup-db.sh` before any DB-touching work.**
-This dumps the current state to `backups/`. Always do this before
-schema changes, seeding, or anything that could mutate production data.
+This dumps the current state to `backups/` (read-only `pg_dump`). Always do this
+before schema changes, seeding, or anything that could mutate production data.
+For a **prod** backup, opt in explicitly:
+`ALLOW_PROD_BACKUP=1 DIRECT_URL=<prod> bash scripts/backup-db.sh` — run this
+before any prod DB-touching step. Without `ALLOW_PROD_BACKUP=1` a prod target aborts.
 
 ## Safe schema workflow
 
