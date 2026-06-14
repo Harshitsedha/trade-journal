@@ -23,7 +23,7 @@ function buildQueryString(f: FilterState): string {
   if (f.subSetupId) p.set('subSetupId', f.subSetupId)
   if (f.instrument) p.set('instrument', f.instrument)
   if (f.tagId) p.set('tagId', f.tagId)
-  if (f.cleanliness) p.set('cleanliness', f.cleanliness)
+  if (f.quality) p.set('quality', f.quality)
   if (f.currency) p.set('currency', f.currency)
   p.set('groupBy', f.groupBy)
   return p.toString()
@@ -32,7 +32,7 @@ function buildQueryString(f: FilterState): string {
 export function AnalysisClient({ initial, options }: Props) {
   const [filters, setFilters] = useState<FilterState>(() => ({
     from: '', to: '', side: '', setupId: '', subSetupId: '', instrument: '',
-    tagId: '', cleanliness: '',
+    tagId: '', quality: '',
     currency: initial.currency ?? options.currencies[0] ?? 'INR',
     groupBy: 'setup',
   }))

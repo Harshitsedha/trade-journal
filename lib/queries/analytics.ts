@@ -1,7 +1,15 @@
 import { TradeStatus, Prisma } from '@/generated/prisma/client'
 import { db } from '@/lib/db'
 import { DEFAULT_CURRENCY } from '@/lib/currency'
-import type { TradeForStat } from '@/lib/analytics/compute'
+import { tradeQuality, type TradeForStat, type TradeQuality } from '@/lib/analytics/compute'
+
+// URL/filter slugs for the 3-way quality axis → internal TradeQuality.
+export type QualityFilter = 'rule_followed' | 'rule_broken' | 'missed'
+const QUALITY_FILTER_MAP: Record<QualityFilter, TradeQuality> = {
+  rule_followed: 'TAKEN_RULE_FOLLOWED',
+  rule_broken: 'TAKEN_RULE_BROKEN',
+  missed: 'MISSED',
+}
 
 export interface AnalysisFilters {
   from?: Date
@@ -11,7 +19,7 @@ export interface AnalysisFilters {
   subSetupId?: string
   instrument?: string
   tagId?: string
-  cleanliness?: 'clean' | 'broken'
+  quality?: QualityFilter
   // Single-currency scope. Required in practice so totals never blend currencies.
   currency?: string
 }
@@ -28,11 +36,6 @@ function buildBaseWhere(f: AnalysisFilters): Prisma.TradeWhereInput {
   if (f.setupId) where.setupId = f.setupId
   if (f.subSetupId) where.subSetupId = f.subSetupId
   if (f.instrument) where.instrument = f.instrument
-  if (f.cleanliness === 'broken') {
-    where.ruleBreak = { isNot: null }
-  } else if (f.cleanliness === 'clean') {
-    where.ruleBreak = null
-  }
   if (f.tagId) {
     where.triggerRules = { some: { triggerRuleId: f.tagId } }
   }
@@ -48,11 +51,12 @@ function buildBaseWhere(f: AnalysisFilters): Prisma.TradeWhereInput {
 }
 
 export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeForStat[]> {
+  // Fetch CLOSED (real exits) + MISSED (taken=no, but carry idealExit/executionPnl).
+  // The quality axis needs both; the quality FILTER is applied in JS afterwards
+  // because it spans status + entryRuleCorrect.
   const where = {
     ...buildBaseWhere(f),
-    status: TradeStatus.CLOSED,
-    pnl: { not: null },
-    rMultiple: { not: null },
+    status: { in: [TradeStatus.CLOSED, TradeStatus.MISSED] },
   }
 
   const trades = await db.trade.findMany({
@@ -67,38 +71,32 @@ export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeFor
     orderBy: { tradeDate: 'asc' },
   })
 
-  return trades.map(t => ({
-    id: t.id,
-    tradeDate: t.tradeDate,
-    direction: t.direction as 'LONG' | 'SHORT',
-    pnl: Number(t.pnl!.toString()),
-    rMultiple: Number(t.rMultiple!.toString()),
-    instrument: t.instrument,
-    currency: t.instrumentRef?.currency ?? DEFAULT_CURRENCY,
-    setupName: t.setup.name,
-    subSetupName: t.subSetup?.name ?? null,
-    tagNames: t.triggerRules.map(tr => tr.triggerRule.name),
-    hasRuleBreak: t.ruleBreak !== null,
-    ruleBreakPnlImpact: t.ruleBreak ? Number(t.ruleBreak.pnlImpact.toString()) : undefined,
-    ruleBreakRImpact: t.ruleBreak ? Number(t.ruleBreak.rMultipleImpact.toString()) : undefined,
-    executionPnl: t.executionPnl != null ? Number(t.executionPnl.toString()) : null,
-    status: t.status,
-  }))
-}
+  const mapped: TradeForStat[] = trades
+    // CLOSED trades without computed pnl/rMultiple are incomplete — skip them
+    // (matches the old closed-only filter). MISSED trades keep pnl/rMultiple = 0.
+    .filter(t => t.status !== TradeStatus.CLOSED || (t.pnl != null && t.rMultiple != null))
+    .map(t => ({
+      id: t.id,
+      tradeDate: t.tradeDate,
+      direction: t.direction as 'LONG' | 'SHORT',
+      pnl: t.pnl != null ? Number(t.pnl.toString()) : 0,
+      rMultiple: t.rMultiple != null ? Number(t.rMultiple.toString()) : 0,
+      instrument: t.instrument,
+      currency: t.instrumentRef?.currency ?? DEFAULT_CURRENCY,
+      setupName: t.setup.name,
+      subSetupName: t.subSetup?.name ?? null,
+      tagNames: t.triggerRules.map(tr => tr.triggerRule.name),
+      hasRuleBreak: t.ruleBreak !== null,
+      ruleBreakPnlImpact: t.ruleBreak ? Number(t.ruleBreak.pnlImpact.toString()) : undefined,
+      ruleBreakRImpact: t.ruleBreak ? Number(t.ruleBreak.rMultipleImpact.toString()) : undefined,
+      executionPnl: t.executionPnl != null ? Number(t.executionPnl.toString()) : null,
+      status: t.status,
+      entryRuleCorrect: t.entryRuleCorrect,
+    }))
 
-/** Sum of executionPnl across CLOSED + MISSED + SKIP, respecting the same filters. Skips nulls. */
-export async function getExecutionPnlSum(f: AnalysisFilters): Promise<number | null> {
-  const where = {
-    ...buildBaseWhere(f),
-    status: { in: [TradeStatus.CLOSED, TradeStatus.MISSED, TradeStatus.SKIP] },
-    executionPnl: { not: null },
+  if (f.quality) {
+    const target = QUALITY_FILTER_MAP[f.quality]
+    return mapped.filter(t => tradeQuality(t) === target)
   }
-
-  const result = await db.trade.aggregate({
-    where,
-    _sum: { executionPnl: true },
-  })
-
-  const sum = result._sum?.executionPnl
-  return sum != null ? Number(sum.toString()) : null
+  return mapped
 }

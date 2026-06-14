@@ -45,6 +45,8 @@ export type CurrencyStat = {
   winRate: number
   avgRMultiple: number
   totalPnl: number
+  // Cumulative executionPnl (actual − ideal) across CLOSED + MISSED for this currency.
+  executionDrag: number
 }
 
 export type DashboardStats = {
@@ -52,6 +54,9 @@ export type DashboardStats = {
   // Per-currency subtotals — never a blended cross-currency P&L.
   byCurrency: CurrencyStat[]
 }
+
+export type EquityPoint = { date: string; actual: number; ideal: number }
+export type CurrencyEquity = { currency: string; points: EquityPoint[] }
 
 export type UploadSignatureResponse = {
   timestamp: number

@@ -35,6 +35,7 @@ export type TradeAvgAggregateOutputType = {
   riskAmount: runtime.Decimal | null
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  pnlOverride: number | null
   idealExit: runtime.Decimal | null
   executionPnl: runtime.Decimal | null
 }
@@ -48,13 +49,16 @@ export type TradeSumAggregateOutputType = {
   riskAmount: runtime.Decimal | null
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  pnlOverride: number | null
   idealExit: runtime.Decimal | null
   executionPnl: runtime.Decimal | null
 }
 
 export type TradeMinAggregateOutputType = {
   id: string | null
+  clientRequestId: string | null
   instrument: string | null
+  instrumentId: string | null
   assetClass: $Enums.AssetClass | null
   expiry: Date | null
   setupId: string | null
@@ -67,6 +71,7 @@ export type TradeMinAggregateOutputType = {
   riskAmount: runtime.Decimal | null
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  pnlOverride: number | null
   status: $Enums.TradeStatus | null
   thesis: string | null
   notes: string | null
@@ -81,7 +86,9 @@ export type TradeMinAggregateOutputType = {
 
 export type TradeMaxAggregateOutputType = {
   id: string | null
+  clientRequestId: string | null
   instrument: string | null
+  instrumentId: string | null
   assetClass: $Enums.AssetClass | null
   expiry: Date | null
   setupId: string | null
@@ -94,6 +101,7 @@ export type TradeMaxAggregateOutputType = {
   riskAmount: runtime.Decimal | null
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  pnlOverride: number | null
   status: $Enums.TradeStatus | null
   thesis: string | null
   notes: string | null
@@ -108,7 +116,9 @@ export type TradeMaxAggregateOutputType = {
 
 export type TradeCountAggregateOutputType = {
   id: number
+  clientRequestId: number
   instrument: number
+  instrumentId: number
   assetClass: number
   expiry: number
   setupId: number
@@ -122,6 +132,7 @@ export type TradeCountAggregateOutputType = {
   riskAmount: number
   rMultiple: number
   pnl: number
+  pnlOverride: number
   status: number
   thesis: number
   notes: number
@@ -145,6 +156,7 @@ export type TradeAvgAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  pnlOverride?: true
   idealExit?: true
   executionPnl?: true
 }
@@ -158,13 +170,16 @@ export type TradeSumAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  pnlOverride?: true
   idealExit?: true
   executionPnl?: true
 }
 
 export type TradeMinAggregateInputType = {
   id?: true
+  clientRequestId?: true
   instrument?: true
+  instrumentId?: true
   assetClass?: true
   expiry?: true
   setupId?: true
@@ -177,6 +192,7 @@ export type TradeMinAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  pnlOverride?: true
   status?: true
   thesis?: true
   notes?: true
@@ -191,7 +207,9 @@ export type TradeMinAggregateInputType = {
 
 export type TradeMaxAggregateInputType = {
   id?: true
+  clientRequestId?: true
   instrument?: true
+  instrumentId?: true
   assetClass?: true
   expiry?: true
   setupId?: true
@@ -204,6 +222,7 @@ export type TradeMaxAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  pnlOverride?: true
   status?: true
   thesis?: true
   notes?: true
@@ -218,7 +237,9 @@ export type TradeMaxAggregateInputType = {
 
 export type TradeCountAggregateInputType = {
   id?: true
+  clientRequestId?: true
   instrument?: true
+  instrumentId?: true
   assetClass?: true
   expiry?: true
   setupId?: true
@@ -232,6 +253,7 @@ export type TradeCountAggregateInputType = {
   riskAmount?: true
   rMultiple?: true
   pnl?: true
+  pnlOverride?: true
   status?: true
   thesis?: true
   notes?: true
@@ -333,7 +355,9 @@ export type TradeGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type TradeGroupByOutputType = {
   id: string
+  clientRequestId: string | null
   instrument: string
+  instrumentId: string | null
   assetClass: $Enums.AssetClass
   expiry: Date | null
   setupId: string
@@ -347,6 +371,7 @@ export type TradeGroupByOutputType = {
   riskAmount: runtime.Decimal
   rMultiple: runtime.Decimal | null
   pnl: runtime.Decimal | null
+  pnlOverride: number | null
   status: $Enums.TradeStatus
   thesis: string | null
   notes: string | null
@@ -384,7 +409,9 @@ export type TradeWhereInput = {
   OR?: Prisma.TradeWhereInput[]
   NOT?: Prisma.TradeWhereInput | Prisma.TradeWhereInput[]
   id?: Prisma.StringFilter<"Trade"> | string
+  clientRequestId?: Prisma.StringNullableFilter<"Trade"> | string | null
   instrument?: Prisma.StringFilter<"Trade"> | string
+  instrumentId?: Prisma.StringNullableFilter<"Trade"> | string | null
   assetClass?: Prisma.EnumAssetClassFilter<"Trade"> | $Enums.AssetClass
   expiry?: Prisma.DateTimeNullableFilter<"Trade"> | Date | string | null
   setupId?: Prisma.StringFilter<"Trade"> | string
@@ -398,6 +425,7 @@ export type TradeWhereInput = {
   riskAmount?: Prisma.DecimalFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.FloatNullableFilter<"Trade"> | number | null
   status?: Prisma.EnumTradeStatusFilter<"Trade"> | $Enums.TradeStatus
   thesis?: Prisma.StringNullableFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableFilter<"Trade"> | string | null
@@ -408,6 +436,7 @@ export type TradeWhereInput = {
   entryRuleCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
+  instrumentRef?: Prisma.XOR<Prisma.InstrumentNullableScalarRelationFilter, Prisma.InstrumentWhereInput> | null
   setup?: Prisma.XOR<Prisma.SetupScalarRelationFilter, Prisma.SetupWhereInput>
   subSetup?: Prisma.XOR<Prisma.SubSetupNullableScalarRelationFilter, Prisma.SubSetupWhereInput> | null
   images?: Prisma.ChartImageListRelationFilter
@@ -417,7 +446,9 @@ export type TradeWhereInput = {
 
 export type TradeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  clientRequestId?: Prisma.SortOrderInput | Prisma.SortOrder
   instrument?: Prisma.SortOrder
+  instrumentId?: Prisma.SortOrderInput | Prisma.SortOrder
   assetClass?: Prisma.SortOrder
   expiry?: Prisma.SortOrderInput | Prisma.SortOrder
   setupId?: Prisma.SortOrder
@@ -431,6 +462,7 @@ export type TradeOrderByWithRelationInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrderInput | Prisma.SortOrder
   pnl?: Prisma.SortOrderInput | Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   thesis?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -441,6 +473,7 @@ export type TradeOrderByWithRelationInput = {
   entryRuleCorrect?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  instrumentRef?: Prisma.InstrumentOrderByWithRelationInput
   setup?: Prisma.SetupOrderByWithRelationInput
   subSetup?: Prisma.SubSetupOrderByWithRelationInput
   images?: Prisma.ChartImageOrderByRelationAggregateInput
@@ -450,10 +483,12 @@ export type TradeOrderByWithRelationInput = {
 
 export type TradeWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  clientRequestId?: string
   AND?: Prisma.TradeWhereInput | Prisma.TradeWhereInput[]
   OR?: Prisma.TradeWhereInput[]
   NOT?: Prisma.TradeWhereInput | Prisma.TradeWhereInput[]
   instrument?: Prisma.StringFilter<"Trade"> | string
+  instrumentId?: Prisma.StringNullableFilter<"Trade"> | string | null
   assetClass?: Prisma.EnumAssetClassFilter<"Trade"> | $Enums.AssetClass
   expiry?: Prisma.DateTimeNullableFilter<"Trade"> | Date | string | null
   setupId?: Prisma.StringFilter<"Trade"> | string
@@ -467,6 +502,7 @@ export type TradeWhereUniqueInput = Prisma.AtLeast<{
   riskAmount?: Prisma.DecimalFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.FloatNullableFilter<"Trade"> | number | null
   status?: Prisma.EnumTradeStatusFilter<"Trade"> | $Enums.TradeStatus
   thesis?: Prisma.StringNullableFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableFilter<"Trade"> | string | null
@@ -477,16 +513,19 @@ export type TradeWhereUniqueInput = Prisma.AtLeast<{
   entryRuleCorrect?: Prisma.BoolNullableFilter<"Trade"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trade"> | Date | string
+  instrumentRef?: Prisma.XOR<Prisma.InstrumentNullableScalarRelationFilter, Prisma.InstrumentWhereInput> | null
   setup?: Prisma.XOR<Prisma.SetupScalarRelationFilter, Prisma.SetupWhereInput>
   subSetup?: Prisma.XOR<Prisma.SubSetupNullableScalarRelationFilter, Prisma.SubSetupWhereInput> | null
   images?: Prisma.ChartImageListRelationFilter
   ruleBreak?: Prisma.XOR<Prisma.RuleBreakNullableScalarRelationFilter, Prisma.RuleBreakWhereInput> | null
   triggerRules?: Prisma.TradeTriggerListRelationFilter
-}, "id">
+}, "id" | "clientRequestId">
 
 export type TradeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  clientRequestId?: Prisma.SortOrderInput | Prisma.SortOrder
   instrument?: Prisma.SortOrder
+  instrumentId?: Prisma.SortOrderInput | Prisma.SortOrder
   assetClass?: Prisma.SortOrder
   expiry?: Prisma.SortOrderInput | Prisma.SortOrder
   setupId?: Prisma.SortOrder
@@ -500,6 +539,7 @@ export type TradeOrderByWithAggregationInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrderInput | Prisma.SortOrder
   pnl?: Prisma.SortOrderInput | Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   thesis?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -522,7 +562,9 @@ export type TradeScalarWhereWithAggregatesInput = {
   OR?: Prisma.TradeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TradeScalarWhereWithAggregatesInput | Prisma.TradeScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Trade"> | string
+  clientRequestId?: Prisma.StringNullableWithAggregatesFilter<"Trade"> | string | null
   instrument?: Prisma.StringWithAggregatesFilter<"Trade"> | string
+  instrumentId?: Prisma.StringNullableWithAggregatesFilter<"Trade"> | string | null
   assetClass?: Prisma.EnumAssetClassWithAggregatesFilter<"Trade"> | $Enums.AssetClass
   expiry?: Prisma.DateTimeNullableWithAggregatesFilter<"Trade"> | Date | string | null
   setupId?: Prisma.StringWithAggregatesFilter<"Trade"> | string
@@ -536,6 +578,7 @@ export type TradeScalarWhereWithAggregatesInput = {
   riskAmount?: Prisma.DecimalWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.DecimalNullableWithAggregatesFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.FloatNullableWithAggregatesFilter<"Trade"> | number | null
   status?: Prisma.EnumTradeStatusWithAggregatesFilter<"Trade"> | $Enums.TradeStatus
   thesis?: Prisma.StringNullableWithAggregatesFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Trade"> | string | null
@@ -550,6 +593,7 @@ export type TradeScalarWhereWithAggregatesInput = {
 
 export type TradeCreateInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -562,6 +606,7 @@ export type TradeCreateInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -572,6 +617,7 @@ export type TradeCreateInput = {
   entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  instrumentRef?: Prisma.InstrumentCreateNestedOneWithoutTradesInput
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
@@ -581,7 +627,9 @@ export type TradeCreateInput = {
 
 export type TradeUncheckedCreateInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   setupId: string
@@ -595,6 +643,7 @@ export type TradeUncheckedCreateInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -612,6 +661,7 @@ export type TradeUncheckedCreateInput = {
 
 export type TradeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -624,6 +674,7 @@ export type TradeUpdateInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -634,6 +685,7 @@ export type TradeUpdateInput = {
   entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  instrumentRef?: Prisma.InstrumentUpdateOneWithoutTradesNestedInput
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
@@ -643,7 +695,9 @@ export type TradeUpdateInput = {
 
 export type TradeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -657,6 +711,7 @@ export type TradeUncheckedUpdateInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -674,7 +729,9 @@ export type TradeUncheckedUpdateInput = {
 
 export type TradeCreateManyInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   setupId: string
@@ -688,6 +745,7 @@ export type TradeCreateManyInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -702,6 +760,7 @@ export type TradeCreateManyInput = {
 
 export type TradeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -714,6 +773,7 @@ export type TradeUpdateManyMutationInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -728,7 +788,9 @@ export type TradeUpdateManyMutationInput = {
 
 export type TradeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -742,6 +804,7 @@ export type TradeUncheckedUpdateManyInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -774,7 +837,9 @@ export type DecimalNullableListFilter<$PrismaModel = never> = {
 
 export type TradeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clientRequestId?: Prisma.SortOrder
   instrument?: Prisma.SortOrder
+  instrumentId?: Prisma.SortOrder
   assetClass?: Prisma.SortOrder
   expiry?: Prisma.SortOrder
   setupId?: Prisma.SortOrder
@@ -788,6 +853,7 @@ export type TradeCountOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrder
   status?: Prisma.SortOrder
   thesis?: Prisma.SortOrder
   notes?: Prisma.SortOrder
@@ -809,13 +875,16 @@ export type TradeAvgOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrder
   idealExit?: Prisma.SortOrder
   executionPnl?: Prisma.SortOrder
 }
 
 export type TradeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clientRequestId?: Prisma.SortOrder
   instrument?: Prisma.SortOrder
+  instrumentId?: Prisma.SortOrder
   assetClass?: Prisma.SortOrder
   expiry?: Prisma.SortOrder
   setupId?: Prisma.SortOrder
@@ -828,6 +897,7 @@ export type TradeMaxOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrder
   status?: Prisma.SortOrder
   thesis?: Prisma.SortOrder
   notes?: Prisma.SortOrder
@@ -842,7 +912,9 @@ export type TradeMaxOrderByAggregateInput = {
 
 export type TradeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clientRequestId?: Prisma.SortOrder
   instrument?: Prisma.SortOrder
+  instrumentId?: Prisma.SortOrder
   assetClass?: Prisma.SortOrder
   expiry?: Prisma.SortOrder
   setupId?: Prisma.SortOrder
@@ -855,6 +927,7 @@ export type TradeMinOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrder
   status?: Prisma.SortOrder
   thesis?: Prisma.SortOrder
   notes?: Prisma.SortOrder
@@ -876,6 +949,7 @@ export type TradeSumOrderByAggregateInput = {
   riskAmount?: Prisma.SortOrder
   rMultiple?: Prisma.SortOrder
   pnl?: Prisma.SortOrder
+  pnlOverride?: Prisma.SortOrder
   idealExit?: Prisma.SortOrder
   executionPnl?: Prisma.SortOrder
 }
@@ -1002,12 +1076,62 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type EnumTradeStatusFieldUpdateOperationsInput = {
   set?: $Enums.TradeStatus
 }
 
 export type NullableBoolFieldUpdateOperationsInput = {
   set?: boolean | null
+}
+
+export type TradeCreateNestedManyWithoutInstrumentRefInput = {
+  create?: Prisma.XOR<Prisma.TradeCreateWithoutInstrumentRefInput, Prisma.TradeUncheckedCreateWithoutInstrumentRefInput> | Prisma.TradeCreateWithoutInstrumentRefInput[] | Prisma.TradeUncheckedCreateWithoutInstrumentRefInput[]
+  connectOrCreate?: Prisma.TradeCreateOrConnectWithoutInstrumentRefInput | Prisma.TradeCreateOrConnectWithoutInstrumentRefInput[]
+  createMany?: Prisma.TradeCreateManyInstrumentRefInputEnvelope
+  connect?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+}
+
+export type TradeUncheckedCreateNestedManyWithoutInstrumentRefInput = {
+  create?: Prisma.XOR<Prisma.TradeCreateWithoutInstrumentRefInput, Prisma.TradeUncheckedCreateWithoutInstrumentRefInput> | Prisma.TradeCreateWithoutInstrumentRefInput[] | Prisma.TradeUncheckedCreateWithoutInstrumentRefInput[]
+  connectOrCreate?: Prisma.TradeCreateOrConnectWithoutInstrumentRefInput | Prisma.TradeCreateOrConnectWithoutInstrumentRefInput[]
+  createMany?: Prisma.TradeCreateManyInstrumentRefInputEnvelope
+  connect?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+}
+
+export type TradeUpdateManyWithoutInstrumentRefNestedInput = {
+  create?: Prisma.XOR<Prisma.TradeCreateWithoutInstrumentRefInput, Prisma.TradeUncheckedCreateWithoutInstrumentRefInput> | Prisma.TradeCreateWithoutInstrumentRefInput[] | Prisma.TradeUncheckedCreateWithoutInstrumentRefInput[]
+  connectOrCreate?: Prisma.TradeCreateOrConnectWithoutInstrumentRefInput | Prisma.TradeCreateOrConnectWithoutInstrumentRefInput[]
+  upsert?: Prisma.TradeUpsertWithWhereUniqueWithoutInstrumentRefInput | Prisma.TradeUpsertWithWhereUniqueWithoutInstrumentRefInput[]
+  createMany?: Prisma.TradeCreateManyInstrumentRefInputEnvelope
+  set?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  disconnect?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  delete?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  connect?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  update?: Prisma.TradeUpdateWithWhereUniqueWithoutInstrumentRefInput | Prisma.TradeUpdateWithWhereUniqueWithoutInstrumentRefInput[]
+  updateMany?: Prisma.TradeUpdateManyWithWhereWithoutInstrumentRefInput | Prisma.TradeUpdateManyWithWhereWithoutInstrumentRefInput[]
+  deleteMany?: Prisma.TradeScalarWhereInput | Prisma.TradeScalarWhereInput[]
+}
+
+export type TradeUncheckedUpdateManyWithoutInstrumentRefNestedInput = {
+  create?: Prisma.XOR<Prisma.TradeCreateWithoutInstrumentRefInput, Prisma.TradeUncheckedCreateWithoutInstrumentRefInput> | Prisma.TradeCreateWithoutInstrumentRefInput[] | Prisma.TradeUncheckedCreateWithoutInstrumentRefInput[]
+  connectOrCreate?: Prisma.TradeCreateOrConnectWithoutInstrumentRefInput | Prisma.TradeCreateOrConnectWithoutInstrumentRefInput[]
+  upsert?: Prisma.TradeUpsertWithWhereUniqueWithoutInstrumentRefInput | Prisma.TradeUpsertWithWhereUniqueWithoutInstrumentRefInput[]
+  createMany?: Prisma.TradeCreateManyInstrumentRefInputEnvelope
+  set?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  disconnect?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  delete?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  connect?: Prisma.TradeWhereUniqueInput | Prisma.TradeWhereUniqueInput[]
+  update?: Prisma.TradeUpdateWithWhereUniqueWithoutInstrumentRefInput | Prisma.TradeUpdateWithWhereUniqueWithoutInstrumentRefInput[]
+  updateMany?: Prisma.TradeUpdateManyWithWhereWithoutInstrumentRefInput | Prisma.TradeUpdateManyWithWhereWithoutInstrumentRefInput[]
+  deleteMany?: Prisma.TradeScalarWhereInput | Prisma.TradeScalarWhereInput[]
 }
 
 export type TradeCreateNestedOneWithoutImagesInput = {
@@ -1054,6 +1178,7 @@ export type TradeUpdateOneRequiredWithoutTriggerRulesNestedInput = {
 
 export type TradeCreateWithoutSetupInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -1066,6 +1191,7 @@ export type TradeCreateWithoutSetupInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1076,6 +1202,7 @@ export type TradeCreateWithoutSetupInput = {
   entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  instrumentRef?: Prisma.InstrumentCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
@@ -1084,7 +1211,9 @@ export type TradeCreateWithoutSetupInput = {
 
 export type TradeUncheckedCreateWithoutSetupInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   subSetupId?: string | null
@@ -1097,6 +1226,7 @@ export type TradeUncheckedCreateWithoutSetupInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1143,7 +1273,9 @@ export type TradeScalarWhereInput = {
   OR?: Prisma.TradeScalarWhereInput[]
   NOT?: Prisma.TradeScalarWhereInput | Prisma.TradeScalarWhereInput[]
   id?: Prisma.StringFilter<"Trade"> | string
+  clientRequestId?: Prisma.StringNullableFilter<"Trade"> | string | null
   instrument?: Prisma.StringFilter<"Trade"> | string
+  instrumentId?: Prisma.StringNullableFilter<"Trade"> | string | null
   assetClass?: Prisma.EnumAssetClassFilter<"Trade"> | $Enums.AssetClass
   expiry?: Prisma.DateTimeNullableFilter<"Trade"> | Date | string | null
   setupId?: Prisma.StringFilter<"Trade"> | string
@@ -1157,6 +1289,7 @@ export type TradeScalarWhereInput = {
   riskAmount?: Prisma.DecimalFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.DecimalNullableFilter<"Trade"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.FloatNullableFilter<"Trade"> | number | null
   status?: Prisma.EnumTradeStatusFilter<"Trade"> | $Enums.TradeStatus
   thesis?: Prisma.StringNullableFilter<"Trade"> | string | null
   notes?: Prisma.StringNullableFilter<"Trade"> | string | null
@@ -1171,6 +1304,7 @@ export type TradeScalarWhereInput = {
 
 export type TradeCreateWithoutSubSetupInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -1183,6 +1317,7 @@ export type TradeCreateWithoutSubSetupInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1193,6 +1328,7 @@ export type TradeCreateWithoutSubSetupInput = {
   entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  instrumentRef?: Prisma.InstrumentCreateNestedOneWithoutTradesInput
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
@@ -1201,7 +1337,9 @@ export type TradeCreateWithoutSubSetupInput = {
 
 export type TradeUncheckedCreateWithoutSubSetupInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   setupId: string
@@ -1214,6 +1352,7 @@ export type TradeUncheckedCreateWithoutSubSetupInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1255,8 +1394,9 @@ export type TradeUpdateManyWithWhereWithoutSubSetupInput = {
   data: Prisma.XOR<Prisma.TradeUpdateManyMutationInput, Prisma.TradeUncheckedUpdateManyWithoutSubSetupInput>
 }
 
-export type TradeCreateWithoutImagesInput = {
+export type TradeCreateWithoutInstrumentRefInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -1269,6 +1409,7 @@ export type TradeCreateWithoutImagesInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1281,12 +1422,14 @@ export type TradeCreateWithoutImagesInput = {
   updatedAt?: Date | string
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
+  images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
   ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
   triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
 }
 
-export type TradeUncheckedCreateWithoutImagesInput = {
+export type TradeUncheckedCreateWithoutInstrumentRefInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -1301,6 +1444,100 @@ export type TradeUncheckedCreateWithoutImagesInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
+  status?: $Enums.TradeStatus
+  thesis?: string | null
+  notes?: string | null
+  tradeDate?: Date | string
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.ChartImageUncheckedCreateNestedManyWithoutTradeInput
+  ruleBreak?: Prisma.RuleBreakUncheckedCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerUncheckedCreateNestedManyWithoutTradeInput
+}
+
+export type TradeCreateOrConnectWithoutInstrumentRefInput = {
+  where: Prisma.TradeWhereUniqueInput
+  create: Prisma.XOR<Prisma.TradeCreateWithoutInstrumentRefInput, Prisma.TradeUncheckedCreateWithoutInstrumentRefInput>
+}
+
+export type TradeCreateManyInstrumentRefInputEnvelope = {
+  data: Prisma.TradeCreateManyInstrumentRefInput | Prisma.TradeCreateManyInstrumentRefInput[]
+  skipDuplicates?: boolean
+}
+
+export type TradeUpsertWithWhereUniqueWithoutInstrumentRefInput = {
+  where: Prisma.TradeWhereUniqueInput
+  update: Prisma.XOR<Prisma.TradeUpdateWithoutInstrumentRefInput, Prisma.TradeUncheckedUpdateWithoutInstrumentRefInput>
+  create: Prisma.XOR<Prisma.TradeCreateWithoutInstrumentRefInput, Prisma.TradeUncheckedCreateWithoutInstrumentRefInput>
+}
+
+export type TradeUpdateWithWhereUniqueWithoutInstrumentRefInput = {
+  where: Prisma.TradeWhereUniqueInput
+  data: Prisma.XOR<Prisma.TradeUpdateWithoutInstrumentRefInput, Prisma.TradeUncheckedUpdateWithoutInstrumentRefInput>
+}
+
+export type TradeUpdateManyWithWhereWithoutInstrumentRefInput = {
+  where: Prisma.TradeScalarWhereInput
+  data: Prisma.XOR<Prisma.TradeUpdateManyMutationInput, Prisma.TradeUncheckedUpdateManyWithoutInstrumentRefInput>
+}
+
+export type TradeCreateWithoutImagesInput = {
+  id?: string
+  clientRequestId?: string | null
+  instrument: string
+  assetClass: $Enums.AssetClass
+  expiry?: Date | string | null
+  direction: $Enums.Direction
+  entryPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss: runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeCreatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
+  status?: $Enums.TradeStatus
+  thesis?: string | null
+  notes?: string | null
+  tradeDate?: Date | string
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  instrumentRef?: Prisma.InstrumentCreateNestedOneWithoutTradesInput
+  setup: Prisma.SetupCreateNestedOneWithoutTradesInput
+  subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
+  ruleBreak?: Prisma.RuleBreakCreateNestedOneWithoutTradeInput
+  triggerRules?: Prisma.TradeTriggerCreateNestedManyWithoutTradeInput
+}
+
+export type TradeUncheckedCreateWithoutImagesInput = {
+  id?: string
+  clientRequestId?: string | null
+  instrument: string
+  instrumentId?: string | null
+  assetClass: $Enums.AssetClass
+  expiry?: Date | string | null
+  setupId: string
+  subSetupId?: string | null
+  direction: $Enums.Direction
+  entryPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss: runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeCreatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1333,6 +1570,7 @@ export type TradeUpdateToOneWithWhereWithoutImagesInput = {
 
 export type TradeUpdateWithoutImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1345,6 +1583,7 @@ export type TradeUpdateWithoutImagesInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1355,6 +1594,7 @@ export type TradeUpdateWithoutImagesInput = {
   entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  instrumentRef?: Prisma.InstrumentUpdateOneWithoutTradesNestedInput
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
@@ -1363,7 +1603,9 @@ export type TradeUpdateWithoutImagesInput = {
 
 export type TradeUncheckedUpdateWithoutImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1377,6 +1619,7 @@ export type TradeUncheckedUpdateWithoutImagesInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1393,6 +1636,7 @@ export type TradeUncheckedUpdateWithoutImagesInput = {
 
 export type TradeCreateWithoutRuleBreakInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -1405,6 +1649,7 @@ export type TradeCreateWithoutRuleBreakInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1415,6 +1660,7 @@ export type TradeCreateWithoutRuleBreakInput = {
   entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  instrumentRef?: Prisma.InstrumentCreateNestedOneWithoutTradesInput
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
@@ -1423,7 +1669,9 @@ export type TradeCreateWithoutRuleBreakInput = {
 
 export type TradeUncheckedCreateWithoutRuleBreakInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   setupId: string
@@ -1437,6 +1685,7 @@ export type TradeUncheckedCreateWithoutRuleBreakInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1469,6 +1718,7 @@ export type TradeUpdateToOneWithWhereWithoutRuleBreakInput = {
 
 export type TradeUpdateWithoutRuleBreakInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1481,6 +1731,7 @@ export type TradeUpdateWithoutRuleBreakInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1491,6 +1742,7 @@ export type TradeUpdateWithoutRuleBreakInput = {
   entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  instrumentRef?: Prisma.InstrumentUpdateOneWithoutTradesNestedInput
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
@@ -1499,7 +1751,9 @@ export type TradeUpdateWithoutRuleBreakInput = {
 
 export type TradeUncheckedUpdateWithoutRuleBreakInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1513,6 +1767,7 @@ export type TradeUncheckedUpdateWithoutRuleBreakInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1529,6 +1784,7 @@ export type TradeUncheckedUpdateWithoutRuleBreakInput = {
 
 export type TradeCreateWithoutTriggerRulesInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
@@ -1541,6 +1797,7 @@ export type TradeCreateWithoutTriggerRulesInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1551,6 +1808,7 @@ export type TradeCreateWithoutTriggerRulesInput = {
   entryRuleCorrect?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  instrumentRef?: Prisma.InstrumentCreateNestedOneWithoutTradesInput
   setup: Prisma.SetupCreateNestedOneWithoutTradesInput
   subSetup?: Prisma.SubSetupCreateNestedOneWithoutTradesInput
   images?: Prisma.ChartImageCreateNestedManyWithoutTradeInput
@@ -1559,7 +1817,9 @@ export type TradeCreateWithoutTriggerRulesInput = {
 
 export type TradeUncheckedCreateWithoutTriggerRulesInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   setupId: string
@@ -1573,6 +1833,7 @@ export type TradeUncheckedCreateWithoutTriggerRulesInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1605,6 +1866,7 @@ export type TradeUpdateToOneWithWhereWithoutTriggerRulesInput = {
 
 export type TradeUpdateWithoutTriggerRulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1617,6 +1879,7 @@ export type TradeUpdateWithoutTriggerRulesInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1627,6 +1890,7 @@ export type TradeUpdateWithoutTriggerRulesInput = {
   entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  instrumentRef?: Prisma.InstrumentUpdateOneWithoutTradesNestedInput
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
@@ -1635,7 +1899,9 @@ export type TradeUpdateWithoutTriggerRulesInput = {
 
 export type TradeUncheckedUpdateWithoutTriggerRulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1649,6 +1915,7 @@ export type TradeUncheckedUpdateWithoutTriggerRulesInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1665,7 +1932,9 @@ export type TradeUncheckedUpdateWithoutTriggerRulesInput = {
 
 export type TradeCreateManySetupInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   subSetupId?: string | null
@@ -1678,6 +1947,7 @@ export type TradeCreateManySetupInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1692,6 +1962,7 @@ export type TradeCreateManySetupInput = {
 
 export type TradeUpdateWithoutSetupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1704,6 +1975,7 @@ export type TradeUpdateWithoutSetupInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1714,6 +1986,7 @@ export type TradeUpdateWithoutSetupInput = {
   entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  instrumentRef?: Prisma.InstrumentUpdateOneWithoutTradesNestedInput
   subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
@@ -1722,7 +1995,9 @@ export type TradeUpdateWithoutSetupInput = {
 
 export type TradeUncheckedUpdateWithoutSetupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   subSetupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1735,6 +2010,7 @@ export type TradeUncheckedUpdateWithoutSetupInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1752,7 +2028,9 @@ export type TradeUncheckedUpdateWithoutSetupInput = {
 
 export type TradeUncheckedUpdateManyWithoutSetupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   subSetupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1765,6 +2043,7 @@ export type TradeUncheckedUpdateManyWithoutSetupInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1779,7 +2058,9 @@ export type TradeUncheckedUpdateManyWithoutSetupInput = {
 
 export type TradeCreateManySubSetupInput = {
   id?: string
+  clientRequestId?: string | null
   instrument: string
+  instrumentId?: string | null
   assetClass: $Enums.AssetClass
   expiry?: Date | string | null
   setupId: string
@@ -1792,6 +2073,7 @@ export type TradeCreateManySubSetupInput = {
   riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
   status?: $Enums.TradeStatus
   thesis?: string | null
   notes?: string | null
@@ -1806,6 +2088,7 @@ export type TradeCreateManySubSetupInput = {
 
 export type TradeUpdateWithoutSubSetupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1818,6 +2101,7 @@ export type TradeUpdateWithoutSubSetupInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1828,6 +2112,7 @@ export type TradeUpdateWithoutSubSetupInput = {
   entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  instrumentRef?: Prisma.InstrumentUpdateOneWithoutTradesNestedInput
   setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
   images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
   ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
@@ -1836,7 +2121,9 @@ export type TradeUpdateWithoutSubSetupInput = {
 
 export type TradeUncheckedUpdateWithoutSubSetupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1849,6 +2136,7 @@ export type TradeUncheckedUpdateWithoutSubSetupInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1866,7 +2154,9 @@ export type TradeUncheckedUpdateWithoutSubSetupInput = {
 
 export type TradeUncheckedUpdateManyWithoutSubSetupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  instrumentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
   expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   setupId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1879,6 +2169,133 @@ export type TradeUncheckedUpdateManyWithoutSubSetupInput = {
   riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
+  thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TradeCreateManyInstrumentRefInput = {
+  id?: string
+  clientRequestId?: string | null
+  instrument: string
+  assetClass: $Enums.AssetClass
+  expiry?: Date | string | null
+  setupId: string
+  subSetupId?: string | null
+  direction: $Enums.Direction
+  entryPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss: runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeCreatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: number | null
+  status?: $Enums.TradeStatus
+  thesis?: string | null
+  notes?: string | null
+  tradeDate?: Date | string
+  idealExit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sideCorrect?: boolean | null
+  executionPnl?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type TradeUpdateWithoutInstrumentRefInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
+  expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  direction?: Prisma.EnumDirectionFieldUpdateOperationsInput | $Enums.Direction
+  entryPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeUpdatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
+  thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  setup?: Prisma.SetupUpdateOneRequiredWithoutTradesNestedInput
+  subSetup?: Prisma.SubSetupUpdateOneWithoutTradesNestedInput
+  images?: Prisma.ChartImageUpdateManyWithoutTradeNestedInput
+  ruleBreak?: Prisma.RuleBreakUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUpdateManyWithoutTradeNestedInput
+}
+
+export type TradeUncheckedUpdateWithoutInstrumentRefInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
+  expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  setupId?: Prisma.StringFieldUpdateOperationsInput | string
+  subSetupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  direction?: Prisma.EnumDirectionFieldUpdateOperationsInput | $Enums.Direction
+  entryPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeUpdatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
+  thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tradeDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  idealExit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sideCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  executionPnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  entryRuleCorrect?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ChartImageUncheckedUpdateManyWithoutTradeNestedInput
+  ruleBreak?: Prisma.RuleBreakUncheckedUpdateOneWithoutTradeNestedInput
+  triggerRules?: Prisma.TradeTriggerUncheckedUpdateManyWithoutTradeNestedInput
+}
+
+export type TradeUncheckedUpdateManyWithoutInstrumentRefInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instrument?: Prisma.StringFieldUpdateOperationsInput | string
+  assetClass?: Prisma.EnumAssetClassFieldUpdateOperationsInput | $Enums.AssetClass
+  expiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  setupId?: Prisma.StringFieldUpdateOperationsInput | string
+  subSetupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  direction?: Prisma.EnumDirectionFieldUpdateOperationsInput | $Enums.Direction
+  entryPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stopLoss?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  targets?: Prisma.TradeUpdatetargetsInput | runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[]
+  exitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  riskAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rMultiple?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnl?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pnlOverride?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumTradeStatusFieldUpdateOperationsInput | $Enums.TradeStatus
   thesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1933,7 +2350,9 @@ export type TradeCountOutputTypeCountTriggerRulesArgs<ExtArgs extends runtime.Ty
 
 export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clientRequestId?: boolean
   instrument?: boolean
+  instrumentId?: boolean
   assetClass?: boolean
   expiry?: boolean
   setupId?: boolean
@@ -1947,6 +2366,7 @@ export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   riskAmount?: boolean
   rMultiple?: boolean
   pnl?: boolean
+  pnlOverride?: boolean
   status?: boolean
   thesis?: boolean
   notes?: boolean
@@ -1957,6 +2377,7 @@ export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  instrumentRef?: boolean | Prisma.Trade$instrumentRefArgs<ExtArgs>
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
   images?: boolean | Prisma.Trade$imagesArgs<ExtArgs>
@@ -1967,7 +2388,9 @@ export type TradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type TradeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clientRequestId?: boolean
   instrument?: boolean
+  instrumentId?: boolean
   assetClass?: boolean
   expiry?: boolean
   setupId?: boolean
@@ -1981,6 +2404,7 @@ export type TradeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   riskAmount?: boolean
   rMultiple?: boolean
   pnl?: boolean
+  pnlOverride?: boolean
   status?: boolean
   thesis?: boolean
   notes?: boolean
@@ -1991,13 +2415,16 @@ export type TradeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  instrumentRef?: boolean | Prisma.Trade$instrumentRefArgs<ExtArgs>
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
 }, ExtArgs["result"]["trade"]>
 
 export type TradeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clientRequestId?: boolean
   instrument?: boolean
+  instrumentId?: boolean
   assetClass?: boolean
   expiry?: boolean
   setupId?: boolean
@@ -2011,6 +2438,7 @@ export type TradeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   riskAmount?: boolean
   rMultiple?: boolean
   pnl?: boolean
+  pnlOverride?: boolean
   status?: boolean
   thesis?: boolean
   notes?: boolean
@@ -2021,13 +2449,16 @@ export type TradeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   entryRuleCorrect?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  instrumentRef?: boolean | Prisma.Trade$instrumentRefArgs<ExtArgs>
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
 }, ExtArgs["result"]["trade"]>
 
 export type TradeSelectScalar = {
   id?: boolean
+  clientRequestId?: boolean
   instrument?: boolean
+  instrumentId?: boolean
   assetClass?: boolean
   expiry?: boolean
   setupId?: boolean
@@ -2041,6 +2472,7 @@ export type TradeSelectScalar = {
   riskAmount?: boolean
   rMultiple?: boolean
   pnl?: boolean
+  pnlOverride?: boolean
   status?: boolean
   thesis?: boolean
   notes?: boolean
@@ -2053,8 +2485,9 @@ export type TradeSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "instrument" | "assetClass" | "expiry" | "setupId" | "subSetupId" | "direction" | "entryPrice" | "stopLoss" | "targets" | "exitPrice" | "quantity" | "riskAmount" | "rMultiple" | "pnl" | "status" | "thesis" | "notes" | "tradeDate" | "idealExit" | "sideCorrect" | "executionPnl" | "entryRuleCorrect" | "createdAt" | "updatedAt", ExtArgs["result"]["trade"]>
+export type TradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientRequestId" | "instrument" | "instrumentId" | "assetClass" | "expiry" | "setupId" | "subSetupId" | "direction" | "entryPrice" | "stopLoss" | "targets" | "exitPrice" | "quantity" | "riskAmount" | "rMultiple" | "pnl" | "pnlOverride" | "status" | "thesis" | "notes" | "tradeDate" | "idealExit" | "sideCorrect" | "executionPnl" | "entryRuleCorrect" | "createdAt" | "updatedAt", ExtArgs["result"]["trade"]>
 export type TradeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  instrumentRef?: boolean | Prisma.Trade$instrumentRefArgs<ExtArgs>
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
   images?: boolean | Prisma.Trade$imagesArgs<ExtArgs>
@@ -2063,10 +2496,12 @@ export type TradeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   _count?: boolean | Prisma.TradeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TradeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  instrumentRef?: boolean | Prisma.Trade$instrumentRefArgs<ExtArgs>
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
 }
 export type TradeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  instrumentRef?: boolean | Prisma.Trade$instrumentRefArgs<ExtArgs>
   setup?: boolean | Prisma.SetupDefaultArgs<ExtArgs>
   subSetup?: boolean | Prisma.Trade$subSetupArgs<ExtArgs>
 }
@@ -2074,6 +2509,7 @@ export type TradeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type $TradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Trade"
   objects: {
+    instrumentRef: Prisma.$InstrumentPayload<ExtArgs> | null
     setup: Prisma.$SetupPayload<ExtArgs>
     subSetup: Prisma.$SubSetupPayload<ExtArgs> | null
     images: Prisma.$ChartImagePayload<ExtArgs>[]
@@ -2082,7 +2518,9 @@ export type $TradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    clientRequestId: string | null
     instrument: string
+    instrumentId: string | null
     assetClass: $Enums.AssetClass
     expiry: Date | null
     setupId: string
@@ -2096,6 +2534,7 @@ export type $TradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     riskAmount: runtime.Decimal
     rMultiple: runtime.Decimal | null
     pnl: runtime.Decimal | null
+    pnlOverride: number | null
     status: $Enums.TradeStatus
     thesis: string | null
     notes: string | null
@@ -2500,6 +2939,7 @@ readonly fields: TradeFieldRefs;
  */
 export interface Prisma__TradeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  instrumentRef<T extends Prisma.Trade$instrumentRefArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$instrumentRefArgs<ExtArgs>>): Prisma.Prisma__InstrumentClient<runtime.Types.Result.GetResult<Prisma.$InstrumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   setup<T extends Prisma.SetupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SetupDefaultArgs<ExtArgs>>): Prisma.Prisma__SetupClient<runtime.Types.Result.GetResult<Prisma.$SetupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   subSetup<T extends Prisma.Trade$subSetupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$subSetupArgs<ExtArgs>>): Prisma.Prisma__SubSetupClient<runtime.Types.Result.GetResult<Prisma.$SubSetupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   images<T extends Prisma.Trade$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trade$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChartImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2535,7 +2975,9 @@ export interface Prisma__TradeClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface TradeFieldRefs {
   readonly id: Prisma.FieldRef<"Trade", 'String'>
+  readonly clientRequestId: Prisma.FieldRef<"Trade", 'String'>
   readonly instrument: Prisma.FieldRef<"Trade", 'String'>
+  readonly instrumentId: Prisma.FieldRef<"Trade", 'String'>
   readonly assetClass: Prisma.FieldRef<"Trade", 'AssetClass'>
   readonly expiry: Prisma.FieldRef<"Trade", 'DateTime'>
   readonly setupId: Prisma.FieldRef<"Trade", 'String'>
@@ -2549,6 +2991,7 @@ export interface TradeFieldRefs {
   readonly riskAmount: Prisma.FieldRef<"Trade", 'Decimal'>
   readonly rMultiple: Prisma.FieldRef<"Trade", 'Decimal'>
   readonly pnl: Prisma.FieldRef<"Trade", 'Decimal'>
+  readonly pnlOverride: Prisma.FieldRef<"Trade", 'Float'>
   readonly status: Prisma.FieldRef<"Trade", 'TradeStatus'>
   readonly thesis: Prisma.FieldRef<"Trade", 'String'>
   readonly notes: Prisma.FieldRef<"Trade", 'String'>
@@ -2957,6 +3400,25 @@ export type TradeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Trades to delete.
    */
   limit?: number
+}
+
+/**
+ * Trade.instrumentRef
+ */
+export type Trade$instrumentRefArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Instrument
+   */
+  select?: Prisma.InstrumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Instrument
+   */
+  omit?: Prisma.InstrumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InstrumentInclude<ExtArgs> | null
+  where?: Prisma.InstrumentWhereInput
 }
 
 /**

@@ -48,6 +48,7 @@ export function TradeDetail({ trade }: TradeDetailProps) {
 
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
+  const exec = trade.executionPnl != null ? new Decimal(trade.executionPnl.toString()) : null
   const isOpen = trade.status === 'OPEN'
 
   // Currency symbol from the linked instrument's currency (USD→$, INR→₹); unlinked
@@ -196,16 +197,35 @@ export function TradeDetail({ trade }: TradeDetailProps) {
             )}
             {pnl !== null && (
               <p
-                className={`text-sm font-mono ${
+                className={`text-sm font-mono tabular-nums ${
                   pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
                 }`}
               >
+                <span className="text-[10px] uppercase tracking-wide text-[var(--color-ink-muted)] mr-1">Actual</span>
                 {pnl.gt(0) ? '+' : ''}{ccy}{pnl.toFixed(0)}
                 {pnlOverride != null && (
                   <span className="ml-1 text-[10px] uppercase tracking-wide text-[var(--color-accent)]">override</span>
                 )}
               </p>
             )}
+            <p className="text-xs font-mono tabular-nums">
+              <span className="text-[10px] uppercase tracking-wide text-[var(--color-ink-muted)] mr-1">Exec</span>
+              {exec !== null ? (
+                <span
+                  className={
+                    exec.gt(0)
+                      ? 'text-[var(--color-profit)]'
+                      : exec.lt(0)
+                      ? 'text-[var(--color-loss)]'
+                      : 'text-[var(--color-ink-muted)]'
+                  }
+                >
+                  {exec.gt(0) ? '+' : ''}{ccy}{exec.toFixed(0)}
+                </span>
+              ) : (
+                <span className="text-[var(--color-ink-muted)]">—</span>
+              )}
+            </p>
             {pnlOverride != null && calcBase !== null && (
               <p className="text-[11px] font-mono text-[var(--color-ink-muted)]">
                 calculated (×1): {ccy}{calcBase.toFixed(2)} · implied ×{calcBase.isZero() ? '—' : new Decimal(pnlOverride).div(calcBase).toFixed(3)}

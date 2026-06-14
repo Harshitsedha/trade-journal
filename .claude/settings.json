@@ -33,7 +33,30 @@
       "Bash(git push *)",
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\sedha\\\\trading-journal\\\\app\\\\\\(app\\)\" -Recurse -Directory)",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "PowerShell($env:DATABASE_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; $env:DIRECT_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; npx prisma migrate dev --name quick-exit-side-check-execution-pnl 2>&1)",
+      "PowerShell($env:DATABASE_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; $env:DIRECT_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; npx prisma migrate diff --from-schema-datasource --to-schema-datamodel --script 2>&1)",
+      "PowerShell($env:DATABASE_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; $env:DIRECT_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script 2>&1)",
+      "PowerShell($env:DATABASE_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; $env:DIRECT_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; npx prisma db execute --file \"prisma/migrations/20250608000000_quick_exit_side_check_execution_pnl/migration.sql\" --url \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" 2>&1)",
+      "PowerShell($env:DATABASE_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; $env:DIRECT_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; npx prisma db execute --file \"prisma/migrations/20250608000000_quick_exit_side_check_execution_pnl/migration.sql\" 2>&1)",
+      "PowerShell($env:DATABASE_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; $env:DIRECT_URL = \"postgresql://neondb_owner_2:npg_CgQJdEn5bTt9@ep-patient-lab-aozgjedo.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\"; npx prisma generate 2>&1)",
+      "Read(//c/Users/sedha/trading-journal/node_modules/@prisma/client/**)",
+      "PowerShell(cd \"C:\\\\Users\\\\sedha\\\\trading-journal\"; $env:DOTENV_CONFIG_PATH = \".env.test\"; npx prisma migrate dev --name simplify-ideal-fields 2>&1)",
+      "PowerShell(mkdir -Force \"C:\\\\Users\\\\sedha\\\\trading-journal\\\\prisma\\\\migrations\\\\20250608120000_simplify_ideal_fields\")",
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\sedha\\\\trading-journal\\\\prisma\\\\migrations\\\\20250608140000_remove_scratched_status\" -Force)",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(cmd /c \"set DIRECT_URL= && npx prisma migrate status 2>&1\")",
+      "PowerShell($env:DIRECT_URL = \"\"; npx prisma migrate status 2>&1)",
+      "Bash(cat > *)",
+      "Bash(Remove-Item c:\\\\Users\\\\sedha\\\\trading-journal\\\\check_db_verify.ts)",
+      "Bash(bash scripts/backup-db.sh)",
+      "Bash(node -e \"require\\('dotenv'\\).config\\({path:'.env.test'}\\); console.log\\('DIRECT_URL:', process.env.DIRECT_URL?.slice\\(0,60\\)\\); console.log\\('DATABASE_URL:', process.env.DATABASE_URL?.slice\\(0,60\\)\\);\")",
+      "Bash(node -e \"require\\('dotenv'\\).config\\({path:'.env.test'}\\); console.log\\(JSON.stringify\\(Object.keys\\(process.env\\).filter\\(k => k.includes\\('DATABASE'\\) || k.includes\\('DIRECT'\\) || k.includes\\('SHADOW'\\)\\)\\)\\)\")",
+      "Bash(node -e \"require\\('dotenv'\\).config\\({path:'.env.test'}\\); console.log\\('TEST_DIRECT_URL prefix:', process.env.TEST_DIRECT_URL?.slice\\(0,60\\)\\)\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }

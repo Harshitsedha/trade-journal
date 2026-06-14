@@ -40,6 +40,14 @@ const GROUP_OPTIONS: { value: GroupDimension; label: string }[] = [
   { value: 'instrument', label: 'Instrument' },
   { value: 'side', label: 'Side' },
   { value: 'tag', label: 'Tag' },
+  { value: 'quality', label: 'Quality' },
+]
+
+const QUALITY_OPTIONS: { value: FilterState['quality']; label: string }[] = [
+  { value: '', label: 'All' },
+  { value: 'rule_followed', label: 'Followed' },
+  { value: 'rule_broken', label: 'Broken' },
+  { value: 'missed', label: 'Missed' },
 ]
 
 const labelStyle: React.CSSProperties = {
@@ -260,13 +268,13 @@ export function FilterBar({ filters, options, onChange }: Props) {
           </select>
         </div>
 
-        {/* Cleanliness */}
+        {/* Trade quality — real 3-way axis: status + entryRuleCorrect */}
         <div>
           <span style={labelStyle}>Trade Quality</span>
           <div style={toggleGroupStyle}>
-            {(['', 'clean', 'broken'] as const).map(c => (
-              <ToggleBtn key={c} active={filters.cleanliness === c} onClick={() => set({ cleanliness: c })}>
-                {c || 'All'}
+            {QUALITY_OPTIONS.map(q => (
+              <ToggleBtn key={q.value} active={filters.quality === q.value} onClick={() => set({ quality: q.value })}>
+                {q.label}
               </ToggleBtn>
             ))}
           </div>

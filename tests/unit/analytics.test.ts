@@ -4,6 +4,9 @@ import {
   groupBy,
   cleanVsBroken,
   equityCurve,
+  tradeQuality,
+  groupByQuality,
+  QUALITY_LABELS,
   type TradeForStat,
 } from '@/lib/analytics/compute'
 
@@ -194,6 +197,57 @@ describe('cleanVsBroken', () => {
     expect(result.broken.trades).toBe(2)
     expect(result.brokenCostPnl).toBeCloseTo(-80, 5)
     expect(result.brokenCostR).toBeCloseTo(-0.8, 5)
+  })
+})
+
+describe('tradeQuality', () => {
+  it('MISSED status → MISSED regardless of entryRuleCorrect', () => {
+    expect(tradeQuality({ status: 'MISSED', entryRuleCorrect: true })).toBe('MISSED')
+    expect(tradeQuality({ status: 'MISSED', entryRuleCorrect: false })).toBe('MISSED')
+    expect(tradeQuality({ status: 'MISSED', entryRuleCorrect: null })).toBe('MISSED')
+  })
+
+  it('taken + entryRuleCorrect=true → TAKEN_RULE_FOLLOWED', () => {
+    expect(tradeQuality({ status: 'CLOSED', entryRuleCorrect: true })).toBe('TAKEN_RULE_FOLLOWED')
+  })
+
+  it('taken + entryRuleCorrect false/null → TAKEN_RULE_BROKEN', () => {
+    expect(tradeQuality({ status: 'CLOSED', entryRuleCorrect: false })).toBe('TAKEN_RULE_BROKEN')
+    expect(tradeQuality({ status: 'CLOSED', entryRuleCorrect: null })).toBe('TAKEN_RULE_BROKEN')
+    expect(tradeQuality({ status: 'CLOSED' })).toBe('TAKEN_RULE_BROKEN')
+  })
+})
+
+describe('groupByQuality', () => {
+  it('splits into the 3 buckets in fixed order; missed win-rate is N/A', () => {
+    const trades = [
+      makeTrade({ pnl: 100, rMultiple: 1, status: 'CLOSED', entryRuleCorrect: true }),
+      makeTrade({ pnl: -50, rMultiple: -0.5, status: 'CLOSED', entryRuleCorrect: false }),
+      makeTrade({ pnl: 0, rMultiple: 0, status: 'MISSED', executionPnl: -300 }),
+      makeTrade({ pnl: 0, rMultiple: 0, status: 'MISSED', executionPnl: -120 }),
+    ]
+    const rows = groupByQuality(trades)
+    expect(rows.map(r => r.key)).toEqual([
+      QUALITY_LABELS.TAKEN_RULE_FOLLOWED,
+      QUALITY_LABELS.TAKEN_RULE_BROKEN,
+      QUALITY_LABELS.MISSED,
+    ])
+
+    const missed = rows.find(r => r.key === QUALITY_LABELS.MISSED)!
+    expect(missed.stat.trades).toBe(2) // count overridden to real misses
+    expect(Number.isNaN(missed.stat.winRate)).toBe(true) // N/A, not 0%
+
+    const followed = rows.find(r => r.key === QUALITY_LABELS.TAKEN_RULE_FOLLOWED)!
+    expect(followed.stat.trades).toBe(1)
+    expect(followed.stat.winRate).toBeCloseTo(1, 5)
+  })
+
+  it('drops empty buckets', () => {
+    const rows = groupByQuality([
+      makeTrade({ pnl: 100, rMultiple: 1, status: 'CLOSED', entryRuleCorrect: true }),
+    ])
+    expect(rows).toHaveLength(1)
+    expect(rows[0].key).toBe(QUALITY_LABELS.TAKEN_RULE_FOLLOWED)
   })
 })
 

@@ -58,6 +58,7 @@ export const ModelName = {
   Setup: 'Setup',
   SubSetup: 'SubSetup',
   Trade: 'Trade',
+  Instrument: 'Instrument',
   ChartImage: 'ChartImage',
   RuleBreak: 'RuleBreak',
   TriggerRule: 'TriggerRule',
@@ -154,7 +155,9 @@ export type SubSetupScalarFieldEnum = (typeof SubSetupScalarFieldEnum)[keyof typ
 
 export const TradeScalarFieldEnum = {
   id: 'id',
+  clientRequestId: 'clientRequestId',
   instrument: 'instrument',
+  instrumentId: 'instrumentId',
   assetClass: 'assetClass',
   expiry: 'expiry',
   setupId: 'setupId',
@@ -168,6 +171,7 @@ export const TradeScalarFieldEnum = {
   riskAmount: 'riskAmount',
   rMultiple: 'rMultiple',
   pnl: 'pnl',
+  pnlOverride: 'pnlOverride',
   status: 'status',
   thesis: 'thesis',
   notes: 'notes',
@@ -181,6 +185,20 @@ export const TradeScalarFieldEnum = {
 } as const
 
 export type TradeScalarFieldEnum = (typeof TradeScalarFieldEnum)[keyof typeof TradeScalarFieldEnum]
+
+
+export const InstrumentScalarFieldEnum = {
+  id: 'id',
+  symbol: 'symbol',
+  name: 'name',
+  factor: 'factor',
+  factorOp: 'factorOp',
+  currency: 'currency',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InstrumentScalarFieldEnum = (typeof InstrumentScalarFieldEnum)[keyof typeof InstrumentScalarFieldEnum]
 
 
 export const ChartImageScalarFieldEnum = {

@@ -14,6 +14,34 @@ export interface TradeForStat {
   ruleBreakRImpact?: number
   executionPnl: number | null
   status: string
+  entryRuleCorrect?: boolean | null
+}
+
+export type GroupDimension = 'setup' | 'subSetup' | 'instrument' | 'side' | 'tag' | 'quality'
+
+// ── Trade quality (the real 3-way axis) ──────────────────────────────────────
+// Derived ONLY from status + entryRuleCorrect — there is no "clean/broken" tag.
+// A null entryRuleCorrect on a taken trade counts as Rule Broken (unrated → broken).
+export type TradeQuality = 'TAKEN_RULE_FOLLOWED' | 'TAKEN_RULE_BROKEN' | 'MISSED'
+
+export const QUALITY_ORDER: TradeQuality[] = [
+  'TAKEN_RULE_FOLLOWED',
+  'TAKEN_RULE_BROKEN',
+  'MISSED',
+]
+
+export const QUALITY_LABELS: Record<TradeQuality, string> = {
+  TAKEN_RULE_FOLLOWED: 'Rule Followed',
+  TAKEN_RULE_BROKEN: 'Rule Broken',
+  MISSED: 'Missed',
+}
+
+export function tradeQuality(t: {
+  status: string
+  entryRuleCorrect?: boolean | null
+}): TradeQuality {
+  if (t.status === 'MISSED') return 'MISSED'
+  return t.entryRuleCorrect ? 'TAKEN_RULE_FOLLOWED' : 'TAKEN_RULE_BROKEN'
 }
 
 // ── Compute helpers ──────────────────────────────────────────────────────────
@@ -217,6 +245,61 @@ export function cleanVsBroken(trades: TradeForStat[]): CleanVsBroken {
     broken: computeStat(broken),
     brokenCostPnl,
     brokenCostR,
+  }
+}
+
+/**
+ * Group trades by the 3-way quality axis. MISSED trades are never "taken", so
+ * their win-rate is N/A (winRate = NaN) and they contribute no closed P&L — but
+ * their count and executionPnl are surfaced (the whole point of tracking misses).
+ * Returns groups in a fixed order (Followed, Broken, Missed); empty buckets drop.
+ */
+export function groupByQuality(trades: TradeForStat[]): GroupRow[] {
+  const buckets: Record<TradeQuality, TradeForStat[]> = {
+    TAKEN_RULE_FOLLOWED: [],
+    TAKEN_RULE_BROKEN: [],
+    MISSED: [],
+  }
+  for (const t of trades) buckets[tradeQuality(t)].push(t)
+
+  const rows: GroupRow[] = []
+  for (const q of QUALITY_ORDER) {
+    const ts = buckets[q]
+    if (ts.length === 0) continue
+    const stat = computeStat(ts)
+    if (q === 'MISSED') {
+      // computeStat excludes MISSED from closed-stats → trades/winRate are 0.
+      // Override count to the real number of misses and mark win-rate N/A.
+      rows.push({ key: QUALITY_LABELS[q], stat: { ...stat, trades: ts.length, winRate: NaN } })
+    } else {
+      rows.push({ key: QUALITY_LABELS[q], stat })
+    }
+  }
+  return rows
+}
+
+/**
+ * Assemble the full analysis payload from a trade list that may include MISSED
+ * trades. Non-quality groupings, the equity curve, the R distribution and the
+ * rule-break cost card are computed from CLOSED trades only (unchanged), while
+ * the overall stat's executionPnlSum and the quality grouping include MISSED.
+ */
+export function assembleAnalysis(trades: TradeForStat[], dimension: GroupDimension) {
+  const closed = trades.filter(t => t.status === 'CLOSED')
+  const overall = computeStat(trades) // executionPnlSum spans CLOSED + MISSED
+  const groups =
+    dimension === 'quality'
+      ? groupByQuality(trades)
+      : groupBy(closed, dimension).sort((a, b) => b.stat.totalPnl - a.stat.totalPnl)
+
+  return {
+    overall,
+    groups,
+    cleanVsBroken: cleanVsBroken(closed),
+    equity: equityCurve(closed),
+    rValues: closed.map(t => t.rMultiple),
+    tradeCount: closed.length,
+    executionPnlSum: overall.executionPnlSum,
   }
 }
 

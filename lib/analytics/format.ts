@@ -20,6 +20,7 @@ export function fmtR(value: number): string {
 }
 
 export function fmtPct(value: number): string {
+  if (Number.isNaN(value)) return 'N/A'
   return `${(value * 100).toFixed(1)}%`
 }
 

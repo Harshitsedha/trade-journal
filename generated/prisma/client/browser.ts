@@ -53,6 +53,11 @@ export type SubSetup = Prisma.SubSetupModel
  */
 export type Trade = Prisma.TradeModel
 /**
+ * Model Instrument
+ * 
+ */
+export type Instrument = Prisma.InstrumentModel
+/**
  * Model ChartImage
  * 
  */

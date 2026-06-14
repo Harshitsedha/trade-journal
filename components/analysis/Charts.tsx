@@ -130,9 +130,11 @@ export function PnlByGroup({ groups, sym = '₹' }: GroupChartProps) {
 
 export function WinRateByGroup({ groups }: GroupChartProps) {
   if (groups.length === 0) return null
+  // NaN win rate (e.g. the Missed quality bucket) → null so Recharts leaves a gap
+  // rather than drawing a misleading 0% bar.
   const data = groups.map(g => ({
     key: g.key,
-    winRate: Math.round(g.stat.winRate * 100),
+    winRate: Number.isNaN(g.stat.winRate) ? null : Math.round(g.stat.winRate * 100),
   }))
   return (
     <ChartWrap title="Win Rate by Group">
@@ -164,7 +166,7 @@ export function WinRateByGroup({ groups }: GroupChartProps) {
             {data.map((d, i) => (
               <Cell
                 key={i}
-                fill={d.winRate >= 50 ? 'var(--color-profit)' : 'var(--color-loss)'}
+                fill={d.winRate != null && d.winRate >= 50 ? 'var(--color-profit)' : 'var(--color-loss)'}
                 fillOpacity={0.8}
               />
             ))}

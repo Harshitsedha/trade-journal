@@ -391,6 +391,7 @@ export const ModelName = {
   Setup: 'Setup',
   SubSetup: 'SubSetup',
   Trade: 'Trade',
+  Instrument: 'Instrument',
   ChartImage: 'ChartImage',
   RuleBreak: 'RuleBreak',
   TriggerRule: 'TriggerRule',
@@ -410,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "session" | "user" | "verificationToken" | "setup" | "subSetup" | "trade" | "chartImage" | "ruleBreak" | "triggerRule" | "tradeTrigger"
+    modelProps: "account" | "session" | "user" | "verificationToken" | "setup" | "subSetup" | "trade" | "instrument" | "chartImage" | "ruleBreak" | "triggerRule" | "tradeTrigger"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -932,6 +933,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Instrument: {
+      payload: Prisma.$InstrumentPayload<ExtArgs>
+      fields: Prisma.InstrumentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InstrumentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InstrumentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>
+        }
+        findFirst: {
+          args: Prisma.InstrumentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InstrumentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>
+        }
+        findMany: {
+          args: Prisma.InstrumentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>[]
+        }
+        create: {
+          args: Prisma.InstrumentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>
+        }
+        createMany: {
+          args: Prisma.InstrumentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InstrumentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>[]
+        }
+        delete: {
+          args: Prisma.InstrumentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>
+        }
+        update: {
+          args: Prisma.InstrumentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>
+        }
+        deleteMany: {
+          args: Prisma.InstrumentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InstrumentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InstrumentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>[]
+        }
+        upsert: {
+          args: Prisma.InstrumentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstrumentPayload>
+        }
+        aggregate: {
+          args: Prisma.InstrumentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInstrument>
+        }
+        groupBy: {
+          args: Prisma.InstrumentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InstrumentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InstrumentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InstrumentCountAggregateOutputType> | number
+        }
+      }
+    }
     ChartImage: {
       payload: Prisma.$ChartImagePayload<ExtArgs>
       fields: Prisma.ChartImageFieldRefs
@@ -1341,7 +1416,9 @@ export type SubSetupScalarFieldEnum = (typeof SubSetupScalarFieldEnum)[keyof typ
 
 export const TradeScalarFieldEnum = {
   id: 'id',
+  clientRequestId: 'clientRequestId',
   instrument: 'instrument',
+  instrumentId: 'instrumentId',
   assetClass: 'assetClass',
   expiry: 'expiry',
   setupId: 'setupId',
@@ -1355,6 +1432,7 @@ export const TradeScalarFieldEnum = {
   riskAmount: 'riskAmount',
   rMultiple: 'rMultiple',
   pnl: 'pnl',
+  pnlOverride: 'pnlOverride',
   status: 'status',
   thesis: 'thesis',
   notes: 'notes',
@@ -1368,6 +1446,20 @@ export const TradeScalarFieldEnum = {
 } as const
 
 export type TradeScalarFieldEnum = (typeof TradeScalarFieldEnum)[keyof typeof TradeScalarFieldEnum]
+
+
+export const InstrumentScalarFieldEnum = {
+  id: 'id',
+  symbol: 'symbol',
+  name: 'name',
+  factor: 'factor',
+  factorOp: 'factorOp',
+  currency: 'currency',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InstrumentScalarFieldEnum = (typeof InstrumentScalarFieldEnum)[keyof typeof InstrumentScalarFieldEnum]
 
 
 export const ChartImageScalarFieldEnum = {
@@ -1552,6 +1644,20 @@ export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMo
 
 
 /**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
  * Reference to a field of type 'TradeStatus'
  */
 export type EnumTradeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TradeStatus'>
@@ -1611,20 +1717,6 @@ export type EnumOrbDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'OrbDirection[]'
  */
 export type ListEnumOrbDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrbDirection[]'>
-    
-
-
-/**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -1744,6 +1836,7 @@ export type GlobalOmitConfig = {
   setup?: Prisma.SetupOmit
   subSetup?: Prisma.SubSetupOmit
   trade?: Prisma.TradeOmit
+  instrument?: Prisma.InstrumentOmit
   chartImage?: Prisma.ChartImageOmit
   ruleBreak?: Prisma.RuleBreakOmit
   triggerRule?: Prisma.TriggerRuleOmit

@@ -13,7 +13,10 @@ export interface AnalysisResult {
   currency?: string | null // active single-currency scope
 }
 
-export type GroupDimension = 'setup' | 'subSetup' | 'instrument' | 'side' | 'tag'
+export type GroupDimension = 'setup' | 'subSetup' | 'instrument' | 'side' | 'tag' | 'quality'
+
+// '' = all, else one of the 3-way quality slugs.
+export type QualityFilterValue = '' | 'rule_followed' | 'rule_broken' | 'missed'
 
 export interface FilterState {
   from: string
@@ -23,7 +26,7 @@ export interface FilterState {
   subSetupId: string
   instrument: string
   tagId: string
-  cleanliness: string
+  quality: QualityFilterValue
   currency: string
   groupBy: GroupDimension
 }

@@ -76,7 +76,8 @@ export async function getSubSetupsBySetup(setupId: string) {
 export async function getDashboardStats() {
   // Closed trades carry their currency via the linked instrument. We group in JS
   // so the P&L is summed PER CURRENCY — never a single blended USD+INR number.
-  const [openTrades, closed] = await Promise.all([
+  // Execution drag also folds in MISSED trades (actual 0, but full ideal missed).
+  const [openTrades, closed, execTrades] = await Promise.all([
     db.trade.count({ where: { status: 'OPEN' } }),
     db.trade.findMany({
       where: { status: 'CLOSED', pnl: { not: null }, rMultiple: { not: null } },
@@ -86,19 +87,32 @@ export async function getDashboardStats() {
         instrumentRef: { select: { currency: true } },
       },
     }),
+    db.trade.findMany({
+      where: { status: { in: ['CLOSED', 'MISSED'] }, executionPnl: { not: null } },
+      select: {
+        executionPnl: true,
+        instrumentRef: { select: { currency: true } },
+      },
+    }),
   ])
 
-  const groups = new Map<string, { pnl: number; r: number; wins: number; n: number }>()
+  const groups = new Map<string, { pnl: number; r: number; wins: number; n: number; drag: number }>()
+  const get = (ccy: string) => {
+    const g = groups.get(ccy) ?? { pnl: 0, r: 0, wins: 0, n: 0, drag: 0 }
+    groups.set(ccy, g)
+    return g
+  }
   for (const t of closed) {
     const ccy = isCurrencyCode(t.instrumentRef?.currency) ? t.instrumentRef!.currency : DEFAULT_CURRENCY
-    const g = groups.get(ccy) ?? { pnl: 0, r: 0, wins: 0, n: 0 }
-    const pnl = Number(t.pnl!.toString())
-    const r = Number(t.rMultiple!.toString())
-    g.pnl += pnl
-    g.r += r
+    const g = get(ccy)
+    g.pnl += Number(t.pnl!.toString())
+    g.r += Number(t.rMultiple!.toString())
     g.n += 1
-    if (r > 0) g.wins += 1
-    groups.set(ccy, g)
+    if (Number(t.rMultiple!.toString()) > 0) g.wins += 1
+  }
+  for (const t of execTrades) {
+    const ccy = isCurrencyCode(t.instrumentRef?.currency) ? t.instrumentRef!.currency : DEFAULT_CURRENCY
+    get(ccy).drag += Number(t.executionPnl!.toString())
   }
 
   const byCurrency = Array.from(groups.entries())
@@ -106,10 +120,59 @@ export async function getDashboardStats() {
       currency,
       totalClosed: g.n,
       totalPnl: g.pnl,
+      executionDrag: g.drag,
       winRate: g.n > 0 ? Number(((g.wins / g.n) * 100).toFixed(1)) : 0,
       avgRMultiple: g.n > 0 ? g.r / g.n : 0,
     }))
     .sort((a, b) => a.currency.localeCompare(b.currency))
 
   return { openTrades, byCurrency }
+}
+
+/**
+ * Per-currency dual equity series for the dashboard chart. Trades are ordered
+ * chronologically (CLOSED + MISSED). For each point:
+ *   actual = cumulative pnl (MISSED contribute 0)
+ *   ideal  = cumulative idealPnl, where idealPnl = pnl − executionPnl
+ *            (executionPnl = actual − ideal). When no idealExit is recorded
+ *            executionPnl is null ⇒ ideal tracks actual (no divergence).
+ * The gap between the two lines is "execution drag". Never blends currencies.
+ */
+export async function getDashboardEquity() {
+  const trades = await db.trade.findMany({
+    where: { status: { in: ['CLOSED', 'MISSED'] } },
+    select: {
+      pnl: true,
+      executionPnl: true,
+      tradeDate: true,
+      instrumentRef: { select: { currency: true } },
+    },
+    orderBy: { tradeDate: 'asc' },
+  })
+
+  const series = new Map<string, { date: string; actual: number; ideal: number }[]>()
+  const cum = new Map<string, { actual: number; ideal: number }>()
+
+  for (const t of trades) {
+    const ccy = isCurrencyCode(t.instrumentRef?.currency) ? t.instrumentRef!.currency : DEFAULT_CURRENCY
+    const actual = t.pnl != null ? Number(t.pnl.toString()) : 0
+    const exec = t.executionPnl != null ? Number(t.executionPnl.toString()) : 0
+    const ideal = actual - exec
+
+    const c = cum.get(ccy) ?? { actual: 0, ideal: 0 }
+    c.actual += actual
+    c.ideal += ideal
+    cum.set(ccy, c)
+
+    if (!series.has(ccy)) series.set(ccy, [])
+    series.get(ccy)!.push({
+      date: t.tradeDate.toISOString().slice(0, 10),
+      actual: c.actual,
+      ideal: c.ideal,
+    })
+  }
+
+  return Array.from(series.entries())
+    .map(([currency, points]) => ({ currency, points }))
+    .sort((a, b) => a.currency.localeCompare(b.currency))
 }

@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/auth'
-import { getTradesForAnalysis, getExecutionPnlSum } from '@/lib/queries/analytics'
-import { computeStat, groupBy, cleanVsBroken, equityCurve } from '@/lib/analytics/compute'
+import { getTradesForAnalysis } from '@/lib/queries/analytics'
+import { assembleAnalysis } from '@/lib/analytics/compute'
 
 const AnalysisQuerySchema = z.object({
   from: z.string().datetime().optional(),
@@ -12,9 +12,9 @@ const AnalysisQuerySchema = z.object({
   subSetupId: z.string().optional(),
   instrument: z.string().optional(),
   tagId: z.string().optional(),
-  cleanliness: z.enum(['clean', 'broken']).optional(),
+  quality: z.enum(['rule_followed', 'rule_broken', 'missed']).optional(),
   currency: z.string().optional(),
-  groupBy: z.enum(['setup', 'subSetup', 'instrument', 'side', 'tag']).default('setup'),
+  groupBy: z.enum(['setup', 'subSetup', 'instrument', 'side', 'tag', 'quality']).default('setup'),
 })
 
 export async function GET(req: NextRequest) {
@@ -35,23 +35,10 @@ export async function GET(req: NextRequest) {
     ...(to ? { to: new Date(to) } : {}),
   }
 
-  const [trades, executionPnlSum] = await Promise.all([
-    getTradesForAnalysis(filters),
-    getExecutionPnlSum(filters),
-  ])
-
-  const groups = groupBy(trades, groupByDim).sort(
-    (a, b) => b.stat.totalPnl - a.stat.totalPnl
-  )
+  const trades = await getTradesForAnalysis(filters)
 
   return Response.json({
-    overall: computeStat(trades),
-    groups,
-    cleanVsBroken: cleanVsBroken(trades),
-    equity: equityCurve(trades),
-    rValues: trades.map(t => t.rMultiple),
-    tradeCount: trades.length,
-    executionPnlSum,
+    ...assembleAnalysis(trades, groupByDim),
     currency: filterFields.currency ?? null, // active single-currency scope
   })
 }

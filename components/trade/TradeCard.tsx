@@ -19,6 +19,8 @@ export function TradeCard({ trade }: TradeCardProps) {
 
   const r = trade.rMultiple ? new Decimal(trade.rMultiple.toString()) : null
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
+  const exec = trade.executionPnl != null ? new Decimal(trade.executionPnl.toString()) : null
+  const sym = currencySymbol(tradeCurrency(trade))
   const entryRuleCorrect: boolean | null = (trade as Record<string, unknown>).entryRuleCorrect as boolean | null ?? null
 
   function statusBadgeVariant(status: string) {
@@ -90,22 +92,48 @@ export function TradeCard({ trade }: TradeCardProps) {
           )}
           {r !== null && (
             <span
-              className={`font-mono text-sm font-semibold ${
+              className={`font-mono text-sm font-semibold tabular-nums ${
                 r.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
               }`}
             >
               {r.gt(0) ? '+' : ''}{r.toFixed(2)}R
             </span>
           )}
-          {pnl !== null && (
-            <span
-              className={`font-mono text-sm ${
-                pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
-              }`}
-            >
-              {pnl.gt(0) ? '+' : ''}{currencySymbol(tradeCurrency(trade))}{pnl.toFixed(0)}
+          {/* Dual PnL: Actual (primary) over Execution (muted/secondary) */}
+          <div className="flex flex-col items-end leading-tight min-w-[88px]">
+            <span className="flex items-baseline gap-1">
+              <span className="text-[9px] uppercase tracking-wider text-[var(--color-ink-muted)]">Actual</span>
+              {pnl !== null ? (
+                <span
+                  className={`font-mono text-sm font-semibold tabular-nums ${
+                    pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
+                  }`}
+                >
+                  {pnl.gt(0) ? '+' : ''}{sym}{pnl.toFixed(0)}
+                </span>
+              ) : (
+                <span className="font-mono text-sm text-[var(--color-ink-muted)]">—</span>
+              )}
             </span>
-          )}
+            <span className="flex items-baseline gap-1">
+              <span className="text-[9px] uppercase tracking-wider text-[var(--color-ink-muted)]">Exec</span>
+              {exec !== null ? (
+                <span
+                  className={`font-mono text-xs tabular-nums ${
+                    exec.gt(0)
+                      ? 'text-[var(--color-profit)]'
+                      : exec.lt(0)
+                      ? 'text-[var(--color-loss)]'
+                      : 'text-[var(--color-ink-muted)]'
+                  }`}
+                >
+                  {exec.gt(0) ? '+' : ''}{sym}{exec.toFixed(0)}
+                </span>
+              ) : (
+                <span className="font-mono text-xs text-[var(--color-ink-muted)]">—</span>
+              )}
+            </span>
+          </div>
           <Badge variant={statusBadgeVariant(trade.status) as 'profit' | 'loss' | 'open' | 'accent' | 'muted'}>
             {trade.status}
           </Badge>
