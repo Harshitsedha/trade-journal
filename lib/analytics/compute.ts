@@ -5,6 +5,7 @@ export interface TradeForStat {
   pnl: number
   rMultiple: number
   instrument: string
+  currency: string
   setupName: string
   subSetupName: string | null
   tagNames: string[]

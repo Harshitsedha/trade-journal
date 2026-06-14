@@ -1,15 +1,17 @@
-export function fmtPnl(value: number): string {
+// Currency symbol is passed in (mixed-currency app); defaults to ₹ for callers
+// that haven't been threaded yet.
+export function fmtPnl(value: number, sym = '₹'): string {
   const abs = Math.abs(value).toLocaleString('en-IN', {
     maximumFractionDigits: 0,
   })
-  if (value >= 0) return `+₹${abs}`
-  return `−₹${abs}` // unicode minus
+  if (value >= 0) return `+${sym}${abs}`
+  return `−${sym}${abs}` // unicode minus
 }
 
-export function fmtPnlPlain(value: number): string {
+export function fmtPnlPlain(value: number, sym = '₹'): string {
   const abs = Math.abs(value).toLocaleString('en-IN', { maximumFractionDigits: 0 })
-  if (value >= 0) return `₹${abs}`
-  return `−₹${abs}`
+  if (value >= 0) return `${sym}${abs}`
+  return `−${sym}${abs}`
 }
 
 export function fmtR(value: number): string {

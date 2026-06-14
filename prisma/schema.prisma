@@ -177,6 +177,7 @@ model Instrument {
   // trade not linked to an Instrument behaves exactly as before.
   factor    Float    @default(1)
   factorOp  String   @default("MULTIPLY") // "MULTIPLY" | "DIVIDE"
+  currency  String   @default("USD")      // ISO-ish code: "USD" | "INR"
   trades    Trade[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

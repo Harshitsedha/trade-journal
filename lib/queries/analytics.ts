@@ -1,5 +1,6 @@
 import { TradeStatus, Prisma } from '@/generated/prisma/client'
 import { db } from '@/lib/db'
+import { DEFAULT_CURRENCY } from '@/lib/currency'
 import type { TradeForStat } from '@/lib/analytics/compute'
 
 export interface AnalysisFilters {
@@ -11,6 +12,8 @@ export interface AnalysisFilters {
   instrument?: string
   tagId?: string
   cleanliness?: 'clean' | 'broken'
+  // Single-currency scope. Required in practice so totals never blend currencies.
+  currency?: string
 }
 
 function buildBaseWhere(f: AnalysisFilters): Prisma.TradeWhereInput {
@@ -33,6 +36,14 @@ function buildBaseWhere(f: AnalysisFilters): Prisma.TradeWhereInput {
   if (f.tagId) {
     where.triggerRules = { some: { triggerRuleId: f.tagId } }
   }
+  // Currency scope: the default currency also covers unlinked trades.
+  if (f.currency) {
+    if (f.currency === DEFAULT_CURRENCY) {
+      where.OR = [{ instrumentRef: { is: { currency: f.currency } } }, { instrumentId: null }]
+    } else {
+      where.instrumentRef = { is: { currency: f.currency } }
+    }
+  }
   return where
 }
 
@@ -51,6 +62,7 @@ export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeFor
       subSetup: true,
       ruleBreak: true,
       triggerRules: { include: { triggerRule: true } },
+      instrumentRef: { select: { currency: true } },
     },
     orderBy: { tradeDate: 'asc' },
   })
@@ -62,6 +74,7 @@ export async function getTradesForAnalysis(f: AnalysisFilters): Promise<TradeFor
     pnl: Number(t.pnl!.toString()),
     rMultiple: Number(t.rMultiple!.toString()),
     instrument: t.instrument,
+    currency: t.instrumentRef?.currency ?? DEFAULT_CURRENCY,
     setupName: t.setup.name,
     subSetupName: t.subSetup?.name ?? null,
     tagNames: t.triggerRules.map(tr => tr.triggerRule.name),

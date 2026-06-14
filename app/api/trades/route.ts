@@ -13,6 +13,7 @@ const TRADE_INCLUDE = {
   images: true,
   ruleBreak: true,
   triggerRules: { include: { triggerRule: true } },
+  instrumentRef: { select: { symbol: true, currency: true } },
 } as const
 
 export async function GET(req: NextRequest) {

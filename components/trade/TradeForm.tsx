@@ -8,6 +8,7 @@ import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import type { Setup, SubSetup } from '@/types'
 import type { TriggerRule, TriggerDirection } from '@/generated/prisma/client'
+import { currencySymbol } from '@/lib/currency'
 
 interface SelectedTrigger {
   triggerRuleId: string
@@ -65,7 +66,7 @@ export function TradeForm({ setups }: TradeFormProps) {
   // Empty = no link = factor-1 fallback (behaves exactly as before).
   const [instrumentId, setInstrumentId] = useState('')
   const [instruments, setInstruments] = useState<
-    { id: string; symbol: string; name: string; factor: number; factorOp: string }[]
+    { id: string; symbol: string; name: string; factor: number; factorOp: string; currency: string }[]
   >([])
   const [assetClass, setAssetClass] = useState('FUTURES')
   const [expiry, setExpiry] = useState('')
@@ -455,7 +456,7 @@ export function TradeForm({ setups }: TradeFormProps) {
           className="font-mono"
         />
         <Input
-          label="Risk Amount (₹)"
+          label={`Risk Amount (${currencySymbol(instruments.find(i => i.id === instrumentId)?.currency)})`}
           placeholder="0.00"
           inputMode="decimal"
           value={riskAmount}

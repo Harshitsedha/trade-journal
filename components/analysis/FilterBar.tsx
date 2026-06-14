@@ -216,6 +216,20 @@ export function FilterBar({ filters, options, onChange }: Props) {
           </select>
         </div>
 
+        {/* Currency scope — always a single currency so totals never blend */}
+        <div>
+          <span style={labelStyle}>Currency</span>
+          <select
+            style={inputStyle}
+            value={filters.currency}
+            onChange={e => set({ currency: e.target.value })}
+          >
+            {options.currencies.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Instrument */}
         <div>
           <span style={labelStyle}>Instrument</span>

@@ -6,6 +6,10 @@ vi.mock('@/auth', () => ({
   auth: vi.fn().mockResolvedValue({ user: { email: 'test@test.com' } }),
 }))
 
+// revalidatePath needs Next's render/store context (absent when route handlers
+// are invoked directly in tests). One of these tests creates a trade via PostTrade.
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+
 import { GET as GetSetups, POST as PostSetup } from '@/app/api/setups/route'
 import { GET as GetById, PATCH as PatchSetup, DELETE as DeleteSetup } from '@/app/api/setups/[id]/route'
 import { GET as GetTriggerRules, POST as PostTriggerRule } from '@/app/api/setups/[id]/trigger-rules/route'

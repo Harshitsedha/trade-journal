@@ -5,6 +5,7 @@ import { fmtPnl, fmtR, fmtPct, fmtPnlPlain } from '@/lib/analytics/format'
 interface Props {
   stat: TradeStat
   executionPnlSum?: number | null
+  sym?: string
 }
 
 function Card({
@@ -68,7 +69,7 @@ function Card({
   )
 }
 
-export function StatCards({ stat, executionPnlSum }: Props) {
+export function StatCards({ stat, executionPnlSum, sym = '₹' }: Props) {
   const pnlPos = stat.totalPnl >= 0
   const eRPos = stat.expectancyR >= 0
 
@@ -95,14 +96,14 @@ export function StatCards({ stat, executionPnlSum }: Props) {
       />
       <Card
         label="Total PnL"
-        value={fmtPnl(stat.totalPnl)}
-        sub={`Avg ${fmtPnlPlain(stat.avgPnl)} / trade`}
+        value={fmtPnl(stat.totalPnl, sym)}
+        sub={`Avg ${fmtPnlPlain(stat.avgPnl, sym)} / trade`}
         positive={pnlPos}
       />
       {executionPnlSum != null && (
         <Card
           label="Execution PnL"
-          value={fmtPnl(executionPnlSum)}
+          value={fmtPnl(executionPnlSum, sym)}
           sub="actual − ideal"
           positive={executionPnlSum >= 0}
         />
@@ -130,8 +131,8 @@ export function StatCards({ stat, executionPnlSum }: Props) {
       />
       <Card
         label="Best PnL"
-        value={fmtPnl(stat.bestPnl)}
-        sub={`Worst: ${fmtPnl(stat.worstPnl)}`}
+        value={fmtPnl(stat.bestPnl, sym)}
+        sub={`Worst: ${fmtPnl(stat.worstPnl, sym)}`}
         positive={stat.bestPnl > 0}
       />
       <Card

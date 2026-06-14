@@ -13,6 +13,7 @@ export default async function InstrumentsSettingsPage() {
     name: i.name,
     factor: i.factor,
     factorOp: i.factorOp,
+    currency: i.currency,
   }))
 
   return (

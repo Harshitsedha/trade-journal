@@ -7,22 +7,11 @@ import { CleanVsBrokenCard } from './CleanVsBrokenCard'
 import { EquityCurve, PnlByGroup, WinRateByGroup, RDistributionRaw } from './Charts'
 import { BreakdownTable } from './BreakdownTable'
 import { CoachPanel } from './CoachPanel'
+import { currencySymbol } from '@/lib/currency'
 
 interface Props {
   initial: AnalysisResult
   options: AnalysisOptions
-}
-
-const DEFAULT_FILTERS: FilterState = {
-  from: '',
-  to: '',
-  side: '',
-  setupId: '',
-  subSetupId: '',
-  instrument: '',
-  tagId: '',
-  cleanliness: '',
-  groupBy: 'setup',
 }
 
 function buildQueryString(f: FilterState): string {
@@ -35,12 +24,18 @@ function buildQueryString(f: FilterState): string {
   if (f.instrument) p.set('instrument', f.instrument)
   if (f.tagId) p.set('tagId', f.tagId)
   if (f.cleanliness) p.set('cleanliness', f.cleanliness)
+  if (f.currency) p.set('currency', f.currency)
   p.set('groupBy', f.groupBy)
   return p.toString()
 }
 
 export function AnalysisClient({ initial, options }: Props) {
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const [filters, setFilters] = useState<FilterState>(() => ({
+    from: '', to: '', side: '', setupId: '', subSetupId: '', instrument: '',
+    tagId: '', cleanliness: '',
+    currency: initial.currency ?? options.currencies[0] ?? 'INR',
+    groupBy: 'setup',
+  }))
   const [result, setResult] = useState<AnalysisResult>(initial)
   const [loading, setLoading] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -53,6 +48,7 @@ export function AnalysisClient({ initial, options }: Props) {
   // NOTE: The API doesn't return individual rValues — we'd need to add that.
   // Using a simplified version: if result has rValues we use them, else skip chart.
   const rValues = (result as AnalysisResult & { rValues?: number[] }).rValues ?? []
+  const sym = currencySymbol(filters.currency)
 
   const fetchData = useCallback(async (f: FilterState) => {
     setLoading(true)
@@ -116,10 +112,10 @@ export function AnalysisClient({ initial, options }: Props) {
       <FilterBar filters={filters} options={options} onChange={handleFiltersChange} />
 
       {/* Stat cards */}
-      <StatCards stat={result.overall} executionPnlSum={result.executionPnlSum} />
+      <StatCards stat={result.overall} executionPnlSum={result.executionPnlSum} sym={sym} />
 
       {/* Clean vs broken */}
-      <CleanVsBrokenCard data={result.cleanVsBroken} />
+      <CleanVsBrokenCard data={result.cleanVsBroken} sym={sym} />
 
       {/* Charts — 2 column on wide screens */}
       <div
@@ -129,14 +125,14 @@ export function AnalysisClient({ initial, options }: Props) {
           gap: 'var(--space-4)',
         }}
       >
-        <EquityCurve data={result.equity} />
-        <PnlByGroup groups={result.groups} />
+        <EquityCurve data={result.equity} sym={sym} />
+        <PnlByGroup groups={result.groups} sym={sym} />
         <WinRateByGroup groups={result.groups} />
         {rValues.length > 0 && <RDistributionRaw rValues={rValues} />}
       </div>
 
       {/* Breakdown table */}
-      <BreakdownTable groups={result.groups} />
+      <BreakdownTable groups={result.groups} sym={sym} />
 
       {/* AI coach */}
       <CoachPanel result={result} filters={filters} />

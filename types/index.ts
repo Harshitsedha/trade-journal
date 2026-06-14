@@ -36,14 +36,21 @@ export type TradeWithRelations = Trade & {
   images: ChartImage[]
   ruleBreak: RuleBreak | null
   triggerRules: TradeTriggerWithRule[]
+  instrumentRef: { symbol: string; currency: string } | null
+}
+
+export type CurrencyStat = {
+  currency: string
+  totalClosed: number
+  winRate: number
+  avgRMultiple: number
+  totalPnl: number
 }
 
 export type DashboardStats = {
   openTrades: number
-  totalClosed: number
-  avgRMultiple: number
-  totalPnl: number
-  winRate: number
+  // Per-currency subtotals — never a blended cross-currency P&L.
+  byCurrency: CurrencyStat[]
 }
 
 export type UploadSignatureResponse = {

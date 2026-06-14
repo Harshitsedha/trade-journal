@@ -1,5 +1,5 @@
-import Decimal from 'decimal.js'
 import { db } from '@/lib/db'
+import { isCurrencyCode, DEFAULT_CURRENCY } from '@/lib/currency'
 import type { TradeFilterInput } from '@/lib/validations/trade'
 
 const TRADE_INCLUDE = {
@@ -8,6 +8,7 @@ const TRADE_INCLUDE = {
   images: true,
   ruleBreak: true,
   triggerRules: { include: { triggerRule: true } },
+  instrumentRef: { select: { symbol: true, currency: true } },
 } as const
 
 export async function getTrades(filters: TradeFilterInput) {
@@ -73,35 +74,42 @@ export async function getSubSetupsBySetup(setupId: string) {
 }
 
 export async function getDashboardStats() {
-  const [openTrades, closedStats, recentTrades] = await Promise.all([
+  // Closed trades carry their currency via the linked instrument. We group in JS
+  // so the P&L is summed PER CURRENCY — never a single blended USD+INR number.
+  const [openTrades, closed] = await Promise.all([
     db.trade.count({ where: { status: 'OPEN' } }),
-    db.trade.aggregate({
-      where: { status: 'CLOSED' },
-      _avg: { rMultiple: true, pnl: true },
-      _sum: { pnl: true },
-      _count: { id: true },
-    }),
     db.trade.findMany({
-      where: { status: 'CLOSED', rMultiple: { not: null } },
-      select: { rMultiple: true },
+      where: { status: 'CLOSED', pnl: { not: null }, rMultiple: { not: null } },
+      select: {
+        pnl: true,
+        rMultiple: true,
+        instrumentRef: { select: { currency: true } },
+      },
     }),
   ])
 
-  const closed = closedStats._count.id
-  const wins = recentTrades.filter(
-    (t: { rMultiple: Decimal | null }) => new Decimal(t.rMultiple!.toString()).gt(0)
-  ).length
-  const winRate = closed > 0 ? (wins / closed) * 100 : 0
-
-  return {
-    openTrades,
-    totalClosed: closed,
-    avgRMultiple: closedStats._avg.rMultiple
-      ? Number(closedStats._avg.rMultiple.toString())
-      : 0,
-    totalPnl: closedStats._sum.pnl
-      ? Number(closedStats._sum.pnl.toString())
-      : 0,
-    winRate: Number(winRate.toFixed(1)),
+  const groups = new Map<string, { pnl: number; r: number; wins: number; n: number }>()
+  for (const t of closed) {
+    const ccy = isCurrencyCode(t.instrumentRef?.currency) ? t.instrumentRef!.currency : DEFAULT_CURRENCY
+    const g = groups.get(ccy) ?? { pnl: 0, r: 0, wins: 0, n: 0 }
+    const pnl = Number(t.pnl!.toString())
+    const r = Number(t.rMultiple!.toString())
+    g.pnl += pnl
+    g.r += r
+    g.n += 1
+    if (r > 0) g.wins += 1
+    groups.set(ccy, g)
   }
+
+  const byCurrency = Array.from(groups.entries())
+    .map(([currency, g]) => ({
+      currency,
+      totalClosed: g.n,
+      totalPnl: g.pnl,
+      winRate: g.n > 0 ? Number(((g.wins / g.n) * 100).toFixed(1)) : 0,
+      avgRMultiple: g.n > 0 ? g.r / g.n : 0,
+    }))
+    .sort((a, b) => a.currency.localeCompare(b.currency))
+
+  return { openTrades, byCurrency }
 }

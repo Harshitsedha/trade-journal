@@ -1,4 +1,5 @@
 import type { DashboardStats } from '@/types'
+import { currencySymbol } from '@/lib/currency'
 
 interface StatCardProps {
   label: string
@@ -34,34 +35,45 @@ interface StatStripProps {
 }
 
 export function StatStrip({ stats }: StatStripProps) {
-  const pnlPositive = stats.totalPnl >= 0
-  const rPositive = stats.avgRMultiple >= 0
+  // One row of cards per currency — P&L is never summed across currencies.
+  const currencies = stats.byCurrency.length > 0 ? stats.byCurrency : [{
+    currency: '', totalClosed: 0, winRate: 0, avgRMultiple: 0, totalPnl: 0,
+  }]
 
   return (
-    <div className="flex gap-3 px-6 py-4">
-      <StatCard
-        label="Open Trades"
-        value={String(stats.openTrades)}
-        sub="currently running"
-      />
-      <StatCard
-        label="Win Rate"
-        value={`${stats.winRate.toFixed(1)}%`}
-        sub={`${stats.totalClosed} closed`}
-        variant={stats.winRate >= 50 ? 'profit' : 'loss'}
-      />
-      <StatCard
-        label="Avg R"
-        value={`${stats.avgRMultiple >= 0 ? '+' : ''}${stats.avgRMultiple.toFixed(2)}R`}
-        sub="per closed trade"
-        variant={rPositive ? 'profit' : 'loss'}
-      />
-      <StatCard
-        label="Total P&L"
-        value={`${pnlPositive ? '+' : ''}₹${Math.abs(stats.totalPnl).toLocaleString('en-IN')}`}
-        sub="realised"
-        variant={pnlPositive ? 'profit' : 'loss'}
-      />
+    <div className="flex flex-col gap-3 px-6 py-4">
+      <div className="flex gap-3">
+        <StatCard label="Open Trades" value={String(stats.openTrades)} sub="currently running" />
+      </div>
+      {currencies.map(c => {
+        const pnlPositive = c.totalPnl >= 0
+        const sym = currencySymbol(c.currency || undefined)
+        return (
+          <div key={c.currency || 'none'} className="flex gap-3 items-stretch">
+            <div className="flex items-center px-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] min-w-[52px]">
+              {c.currency || '—'}
+            </div>
+            <StatCard
+              label="Win Rate"
+              value={`${c.winRate.toFixed(1)}%`}
+              sub={`${c.totalClosed} closed`}
+              variant={c.winRate >= 50 ? 'profit' : 'loss'}
+            />
+            <StatCard
+              label="Avg R"
+              value={`${c.avgRMultiple >= 0 ? '+' : ''}${c.avgRMultiple.toFixed(2)}R`}
+              sub="per closed trade"
+              variant={c.avgRMultiple >= 0 ? 'profit' : 'loss'}
+            />
+            <StatCard
+              label="Total P&L"
+              value={`${pnlPositive ? '+' : ''}${sym}${Math.abs(c.totalPnl).toLocaleString('en-IN')}`}
+              sub="realised"
+              variant={pnlPositive ? 'profit' : 'loss'}
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }

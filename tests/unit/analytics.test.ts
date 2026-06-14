@@ -13,6 +13,7 @@ function makeTrade(overrides: Partial<TradeForStat> & { pnl: number; rMultiple: 
     tradeDate: new Date('2024-01-01'),
     direction: 'LONG',
     instrument: 'NIFTY',
+    currency: 'INR',
     setupName: 'ORB',
     subSetupName: null,
     tagNames: [],

@@ -15,10 +15,12 @@ import type { GroupRow } from './types'
 
 interface EquityProps {
   data: { date: string; cumPnl: number }[]
+  sym?: string
 }
 
 interface GroupChartProps {
   groups: GroupRow[]
+  sym?: string
 }
 
 interface RDistProps {
@@ -52,7 +54,7 @@ function ChartWrap({ title, children }: { title: string; children: React.ReactNo
   )
 }
 
-export function EquityCurve({ data }: EquityProps) {
+export function EquityCurve({ data, sym = '₹' }: EquityProps) {
   if (data.length === 0) return null
   return (
     <ChartWrap title="Equity Curve">
@@ -66,7 +68,7 @@ export function EquityCurve({ data }: EquityProps) {
           />
           <YAxis tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} width={70} />
           <Tooltip
-            formatter={(v: unknown) => [`₹${Number(v).toLocaleString('en-IN')}`, 'Cumulative PnL']}
+            formatter={(v: unknown) => [`${sym}${Number(v).toLocaleString('en-IN')}`, 'Cumulative PnL']}
             contentStyle={{
               background: 'var(--color-surface-raised)',
               border: '0.5px solid var(--color-border)',
@@ -87,7 +89,7 @@ export function EquityCurve({ data }: EquityProps) {
   )
 }
 
-export function PnlByGroup({ groups }: GroupChartProps) {
+export function PnlByGroup({ groups, sym = '₹' }: GroupChartProps) {
   if (groups.length === 0) return null
   const data = groups.map(g => ({ key: g.key, pnl: g.stat.totalPnl }))
   return (
@@ -103,7 +105,7 @@ export function PnlByGroup({ groups }: GroupChartProps) {
             width={90}
           />
           <Tooltip
-            formatter={(v: unknown) => [`₹${Number(v).toLocaleString('en-IN')}`, 'PnL']}
+            formatter={(v: unknown) => [`${sym}${Number(v).toLocaleString('en-IN')}`, 'PnL']}
             contentStyle={{
               background: 'var(--color-surface-raised)',
               border: '0.5px solid var(--color-border)',

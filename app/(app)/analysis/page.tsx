@@ -4,10 +4,13 @@ import { computeStat, groupBy, cleanVsBroken, equityCurve } from '@/lib/analytic
 import { AnalysisClient } from '@/components/analysis/AnalysisClient'
 
 export default async function AnalysisPage() {
-  const [options, trades, executionPnlSum] = await Promise.all([
-    getAnalysisOptions(),
-    getTradesForAnalysis({}),
-    getExecutionPnlSum({}),
+  const options = await getAnalysisOptions()
+  // Default to a single currency scope so the initial view never blends currencies.
+  const currency = options.currencies[0]
+
+  const [trades, executionPnlSum] = await Promise.all([
+    getTradesForAnalysis({ currency }),
+    getExecutionPnlSum({ currency }),
   ])
 
   const initial = {
@@ -18,6 +21,7 @@ export default async function AnalysisPage() {
     rValues: trades.map(t => t.rMultiple),
     tradeCount: trades.length,
     executionPnlSum,
+    currency,
   }
 
   return <AnalysisClient initial={initial} options={options} />

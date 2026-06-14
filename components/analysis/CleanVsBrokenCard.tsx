@@ -4,9 +4,10 @@ import { fmtPnl, fmtR, fmtPct } from '@/lib/analytics/format'
 
 interface Props {
   data: CleanVsBroken
+  sym?: string
 }
 
-function MiniBlock({ label, stat }: { label: string; stat: TradeStat }) {
+function MiniBlock({ label, stat, sym = '₹' }: { label: string; stat: TradeStat; sym?: string }) {
   return (
     <div
       style={{
@@ -35,13 +36,13 @@ function MiniBlock({ label, stat }: { label: string; stat: TradeStat }) {
         </span>
       </p>
       <p style={{ fontSize: 12, color: 'var(--color-ink-secondary)', marginTop: 2 }}>
-        {stat.trades} trades · {fmtPct(stat.winRate)} WR · {fmtPnl(stat.totalPnl)}
+        {stat.trades} trades · {fmtPct(stat.winRate)} WR · {fmtPnl(stat.totalPnl, sym)}
       </p>
     </div>
   )
 }
 
-export function CleanVsBrokenCard({ data }: Props) {
+export function CleanVsBrokenCard({ data, sym = '₹' }: Props) {
   if (data.broken.trades === 0) return null
 
   const costPnl = data.brokenCostPnl
@@ -66,13 +67,13 @@ export function CleanVsBrokenCard({ data }: Props) {
       >
         Rule breaks cost you{' '}
         <span style={{ color: 'var(--color-loss)' }}>
-          {fmtPnl(costPnl)} / {fmtR(costR)}
+          {fmtPnl(costPnl, sym)} / {fmtR(costR)}
         </span>{' '}
         across {data.broken.trades} trade{data.broken.trades !== 1 ? 's' : ''}
       </p>
       <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-        <MiniBlock label="Clean" stat={data.clean} />
-        <MiniBlock label="Broken" stat={data.broken} />
+        <MiniBlock label="Clean" stat={data.clean} sym={sym} />
+        <MiniBlock label="Broken" stat={data.broken} sym={sym} />
       </div>
     </div>
   )

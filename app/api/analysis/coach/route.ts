@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { auth } from '@/auth'
-import { COACH_SYSTEM_PROMPT } from '@/lib/analytics/coachPrompt'
+import { coachSystemPrompt } from '@/lib/analytics/coachPrompt'
+import { currencySymbol } from '@/lib/currency'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -18,6 +19,10 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
+  // Single-currency scope → coach speaks that currency's symbol.
+  const p = statsPayload as { filters?: { currency?: string }; result?: { currency?: string } }
+  const sym = currencySymbol(p?.filters?.currency ?? p?.result?.currency ?? undefined)
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -29,7 +34,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 900,
-        system: COACH_SYSTEM_PROMPT,
+        system: coachSystemPrompt(sym),
         messages: [{ role: 'user', content: JSON.stringify(statsPayload) }],
       }),
     })

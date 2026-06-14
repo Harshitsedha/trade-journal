@@ -176,6 +176,7 @@ function makeTrade(overrides: Partial<TradeForStat>): TradeForStat {
     pnl: 1000,
     rMultiple: 2,
     instrument: 'NIFTY',
+    currency: 'INR',
     setupName: 'Breakout',
     subSetupName: null,
     tagNames: [],

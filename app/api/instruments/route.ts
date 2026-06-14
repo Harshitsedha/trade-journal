@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { symbol, name, factor, factorOp } = parsed.data
+  const { symbol, name, factor, factorOp, currency } = parsed.data
   try {
     const created = await db.instrument.create({
-      data: { symbol: symbol.toUpperCase().trim(), name: name.trim(), factor, factorOp },
+      data: { symbol: symbol.toUpperCase().trim(), name: name.trim(), factor, factorOp, currency },
     })
     return Response.json(created, { status: 201 })
   } catch (err) {

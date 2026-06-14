@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Decimal from 'decimal.js'
 import type { TradeWithRelations } from '@/types'
 import { Badge } from '@/components/ui/Badge'
+import { currencySymbol, tradeCurrency } from '@/lib/currency'
 
 interface TradeCardProps {
   trade: TradeWithRelations
@@ -102,7 +103,7 @@ export function TradeCard({ trade }: TradeCardProps) {
                 pnl.gt(0) ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'
               }`}
             >
-              {pnl.gt(0) ? '+' : ''}₹{pnl.toFixed(0)}
+              {pnl.gt(0) ? '+' : ''}{currencySymbol(tradeCurrency(trade))}{pnl.toFixed(0)}
             </span>
           )}
           <Badge variant={statusBadgeVariant(trade.status) as 'profit' | 'loss' | 'open' | 'accent' | 'muted'}>

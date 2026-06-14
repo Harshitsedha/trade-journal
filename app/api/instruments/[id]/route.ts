@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     return Response.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { symbol, name, factor, factorOp } = parsed.data
+  const { symbol, name, factor, factorOp, currency } = parsed.data
   try {
     const updated = await db.instrument.update({
       where: { id },
@@ -26,6 +26,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
         ...(name !== undefined && { name: name.trim() }),
         ...(factor !== undefined && { factor }),
         ...(factorOp !== undefined && { factorOp }),
+        ...(currency !== undefined && { currency }),
       },
     })
     return Response.json(updated)

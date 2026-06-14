@@ -1,6 +1,8 @@
 import { z } from 'zod'
+import { CURRENCIES } from '@/lib/currency'
 
 export const FactorOpSchema = z.enum(['MULTIPLY', 'DIVIDE'])
+export const CurrencySchema = z.enum(CURRENCIES)
 
 export const CreateInstrumentSchema = z.object({
   symbol: z.string().min(1, 'Symbol is required').max(20),
@@ -9,6 +11,7 @@ export const CreateInstrumentSchema = z.object({
   // currency value it touches. Blocked here and in the UI.
   factor: z.number({ message: 'Factor must be a number' }).positive('Factor must be > 0'),
   factorOp: FactorOpSchema.default('MULTIPLY'),
+  currency: CurrencySchema.default('USD'),
 })
 
 export const UpdateInstrumentSchema = CreateInstrumentSchema.partial()

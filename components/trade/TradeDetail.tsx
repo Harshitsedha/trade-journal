@@ -11,6 +11,7 @@ import { Select } from '@/components/ui/Select'
 import { ImageUploader } from './ImageUploader'
 import { EditTradeForm } from './EditTradeForm'
 import { computePnl as baseCalcPnl } from '@/lib/calculations'
+import { currencySymbol, tradeCurrency } from '@/lib/currency'
 
 interface TradeDetailProps {
   trade: TradeWithRelations
@@ -49,11 +50,9 @@ export function TradeDetail({ trade }: TradeDetailProps) {
   const pnl = trade.pnl ? new Decimal(trade.pnl.toString()) : null
   const isOpen = trade.status === 'OPEN'
 
-  // Currency symbol. The app is mixed-currency (NIFTY in ₹, Silver/DAX prop in USD)
-  // and has no currency field, so derive from the link: a trade tied to a configured
-  // Instrument is one of the USD prop instruments → $; unlinked trades keep the
-  // app-default ₹. (A per-instrument `currency` field would make this exact.)
-  const ccy = trade.instrumentId ? '$' : '₹'
+  // Currency symbol from the linked instrument's currency (USD→$, INR→₹); unlinked
+  // trades fall back to the app default (₹).
+  const ccy = currencySymbol(tradeCurrency(trade))
 
   // Manual override: stored pnl IS the override; show the raw calculated (×1) base
   // alongside so the gap (and the implied factor) is visible.

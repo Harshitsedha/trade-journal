@@ -10,6 +10,7 @@ export interface AnalysisResult {
   equity: { date: string; cumPnl: number }[]
   tradeCount: number
   executionPnlSum?: number | null
+  currency?: string | null // active single-currency scope
 }
 
 export type GroupDimension = 'setup' | 'subSetup' | 'instrument' | 'side' | 'tag'
@@ -23,5 +24,6 @@ export interface FilterState {
   instrument: string
   tagId: string
   cleanliness: string
+  currency: string
   groupBy: GroupDimension
 }

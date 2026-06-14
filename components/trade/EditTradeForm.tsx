@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import type { Setup, SubSetup, TradeWithRelations, TriggerRule, TriggerDirection } from '@/types'
+import { currencySymbol } from '@/lib/currency'
 
 interface EditTradeFormProps {
   trade: TradeWithRelations
@@ -456,7 +457,7 @@ export function EditTradeForm({ trade, onDone }: EditTradeFormProps) {
           className="font-mono"
         />
         <Input
-          label="Risk Amount (₹)"
+          label={`Risk Amount (${currencySymbol(trade.instrumentRef?.currency)})`}
           placeholder="0.00"
           inputMode="decimal"
           value={riskAmount}

@@ -13,6 +13,7 @@ const AnalysisQuerySchema = z.object({
   instrument: z.string().optional(),
   tagId: z.string().optional(),
   cleanliness: z.enum(['clean', 'broken']).optional(),
+  currency: z.string().optional(),
   groupBy: z.enum(['setup', 'subSetup', 'instrument', 'side', 'tag']).default('setup'),
 })
 
@@ -51,5 +52,6 @@ export async function GET(req: NextRequest) {
     rValues: trades.map(t => t.rMultiple),
     tradeCount: trades.length,
     executionPnlSum,
+    currency: filterFields.currency ?? null, // active single-currency scope
   })
 }

@@ -5,11 +5,12 @@ import { fmtPnl, fmtR, fmtPct } from '@/lib/analytics/format'
 
 interface Props {
   groups: GroupRow[]
+  sym?: string
 }
 
 type SortKey = 'key' | 'trades' | 'winRate' | 'expectancyR' | 'totalPnl' | 'profitFactor'
 
-export function BreakdownTable({ groups }: Props) {
+export function BreakdownTable({ groups, sym = '₹' }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>('totalPnl')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
@@ -177,7 +178,7 @@ export function BreakdownTable({ groups }: Props) {
                       fontWeight: 500,
                     }}
                   >
-                    {fmtPnl(row.stat.totalPnl)}
+                    {fmtPnl(row.stat.totalPnl, sym)}
                   </td>
                   <td style={{ padding: 'var(--space-2) var(--space-3)', textAlign: 'right', color: 'var(--color-ink-secondary)' }}>
                     {row.stat.profitFactor === Infinity
