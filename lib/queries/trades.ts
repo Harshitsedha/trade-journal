@@ -41,8 +41,9 @@ export async function getTrades(filters: TradeFilterInput) {
 // custom status priority cheaply, so we order by date in SQL and bucket in JS.
 const STATUS_RANK: Record<string, number> = { OPEN: 0, CLOSED: 1, MISSED: 2, SKIP: 3 }
 
-export async function getDashboardTrades() {
+export async function getDashboardTrades(setupId?: string) {
   const trades = await db.trade.findMany({
+    where: setupId ? { setupId } : undefined,
     include: TRADE_INCLUDE,
     orderBy: { tradeDate: 'desc' },
   })

@@ -162,7 +162,9 @@ function CurrencyCharts({ currency, points }: CurrencyEquity) {
 }
 
 export function DashboardEquity({ series }: Props) {
-  const withData = series.filter(s => s.points.length > 0)
+  // Only render a currency's chart pair if it has ≥ 2 data points. A single point
+  // draws a flat, empty-looking chart (e.g. the lone-INR-trade case) — skip it.
+  const withData = series.filter(s => s.points.length >= 2)
   if (withData.length === 0) return null
 
   return (

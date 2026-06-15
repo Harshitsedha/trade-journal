@@ -38,6 +38,7 @@ export function AnalysisClient({ initial, options }: Props) {
   }))
   const [result, setResult] = useState<AnalysisResult>(initial)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Extract rMultiple values for R distribution
@@ -58,9 +59,14 @@ export function AnalysisClient({ initial, options }: Props) {
       if (res.ok) {
         const data = await res.json()
         setResult(data)
+        setError(null)
+      } else {
+        // Keep the existing data on the screen, but surface that the update failed
+        // instead of silently leaving stale numbers behind.
+        setError('Could not update analysis for these filters. Showing previous results.')
       }
     } catch {
-      // keep existing data on network error
+      setError('Network error — showing previous results. Check your connection.')
     } finally {
       setLoading(false)
     }
@@ -110,6 +116,22 @@ export function AnalysisClient({ initial, options }: Props) {
 
       {/* Filter bar */}
       <FilterBar filters={filters} options={options} onChange={handleFiltersChange} />
+
+      {/* Non-fatal fetch error — page keeps the last good result on screen */}
+      {error && (
+        <div
+          style={{
+            fontSize: 13,
+            color: 'var(--color-loss)',
+            background: 'var(--color-surface)',
+            border: '0.5px solid var(--color-border)',
+            borderRadius: 'var(--radius-sm)',
+            padding: 'var(--space-3) var(--space-4)',
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       {/* Stat cards */}
       <StatCards stat={result.overall} executionPnlSum={result.executionPnlSum} sym={sym} />
