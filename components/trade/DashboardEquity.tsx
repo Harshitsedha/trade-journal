@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
 } from 'recharts'
 import type { CurrencyEquity } from '@/types'
@@ -36,6 +37,22 @@ function toRows(points: CurrencyEquity['points']): Row[] {
   }))
 }
 
+// The day before the first trade, as a YYYY-MM-DD string — the x-position of the
+// synthetic zero origin so both lines visibly start from 0.
+function dayBefore(date: string): string {
+  const d = new Date(`${date}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() - 1)
+  return d.toISOString().slice(0, 10)
+}
+
+// Prepend a zero-origin point so the equity lines start from 0 rather than from
+// wherever the first trade landed. Both actual and ideal start at 0.
+function withZeroOrigin(rows: Row[]): Row[] {
+  if (rows.length === 0) return rows
+  const origin: Row = { date: dayBefore(rows[0].date), actual: 0, ideal: 0, lower: 0, gap: 0 }
+  return [origin, ...rows]
+}
+
 const tooltipContentStyle: React.CSSProperties = {
   background: 'var(--color-surface-raised)',
   border: '0.5px solid var(--color-border)',
@@ -58,7 +75,7 @@ function ChartHeading({ title, currency }: { title: string; currency: string }) 
 
 function CurrencyCharts({ currency, points }: CurrencyEquity) {
   const sym = currencySymbol(currency)
-  const rows = toRows(points)
+  const rows = withZeroOrigin(toRows(points))
 
   // Shared Y domain so the two charts are visually comparable.
   let min = 0
@@ -86,6 +103,7 @@ function CurrencyCharts({ currency, points }: CurrencyEquity) {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} tickFormatter={xTickFormatter} />
             <YAxis domain={yDomain} tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} width={70} tickFormatter={yTickFormatter} />
+            <ReferenceLine y={0} stroke="var(--color-border-strong)" />
             <Tooltip contentStyle={tooltipContentStyle} formatter={valueFormatter} labelFormatter={d => `Exit ${d}`} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             <Line
@@ -109,6 +127,7 @@ function CurrencyCharts({ currency, points }: CurrencyEquity) {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} tickFormatter={xTickFormatter} />
             <YAxis domain={yDomain} tick={{ fontSize: 10, fill: 'var(--color-ink-muted)' }} width={70} tickFormatter={yTickFormatter} />
+            <ReferenceLine y={0} stroke="var(--color-border-strong)" />
             <Tooltip contentStyle={tooltipContentStyle} formatter={valueFormatter} labelFormatter={d => `Exit ${d}`} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             {/* Shaded band between the two lines = execution drag.

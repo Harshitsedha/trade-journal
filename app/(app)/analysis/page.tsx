@@ -2,6 +2,7 @@ import { getAnalysisOptions } from '@/lib/queries/analysisOptions'
 import { getTradesForAnalysis } from '@/lib/queries/analytics'
 import { assembleAnalysis } from '@/lib/analytics/compute'
 import { AnalysisClient } from '@/components/analysis/AnalysisClient'
+import { AnalysisErrorBoundary } from '@/components/analysis/AnalysisErrorBoundary'
 
 export default async function AnalysisPage() {
   const options = await getAnalysisOptions()
@@ -15,5 +16,9 @@ export default async function AnalysisPage() {
     currency,
   }
 
-  return <AnalysisClient initial={initial} options={options} />
+  return (
+    <AnalysisErrorBoundary>
+      <AnalysisClient initial={initial} options={options} />
+    </AnalysisErrorBoundary>
+  )
 }

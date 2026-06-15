@@ -1,4 +1,5 @@
-﻿import Link from 'next/link'
+﻿import { Suspense } from 'react'
+import Link from 'next/link'
 import { auth, signOut } from '@/auth'
 import { getSetups } from '@/lib/queries/trades'
 import { SetupNavLinks } from './SetupNavLinks'
@@ -44,7 +45,16 @@ export async function Sidebar() {
             <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-[var(--color-ink-muted)]">
               Setups
             </p>
-            <SetupNavLinks setups={setups.map(s => ({ id: s.id, name: s.name }))} />
+            {/* useSearchParams() inside SetupNavLinks requires a Suspense boundary
+                in the App Router — without it the subtree bails out of rendering
+                and the links never become interactive. */}
+            <Suspense
+              fallback={
+                <div className="px-3 py-1.5 text-xs text-[var(--color-ink-muted)]">Loading setups…</div>
+              }
+            >
+              <SetupNavLinks setups={setups.map(s => ({ id: s.id, name: s.name }))} />
+            </Suspense>
           </div>
         )}
       </nav>

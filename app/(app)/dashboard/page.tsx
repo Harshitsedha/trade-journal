@@ -54,7 +54,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </span>
         </div>
       )}
-      <div className="flex-1 overflow-auto">
+      <div className="mt-3 max-h-[600px] overflow-y-auto">
         <TradeTable
           trades={trades as TradeWithRelations[]}
           total={trades.length}

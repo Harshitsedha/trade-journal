@@ -113,7 +113,7 @@ export interface GroupRow {
 }
 
 export function computeStat(trades: TradeForStat[]): TradeStat {
-  if (trades.length === 0) return emptyStat()
+  if (!trades || trades.length === 0) return emptyStat()
 
   // executionPnlSum: sum across all trades (executionPnl defaults to 0 when no idealExit)
   const execPnlTrades = trades.filter(t => t.executionPnl != null)
@@ -285,11 +285,12 @@ export function groupByQuality(trades: TradeForStat[]): GroupRow[] {
  * the overall stat's executionPnlSum and the quality grouping include MISSED.
  */
 export function assembleAnalysis(trades: TradeForStat[], dimension: GroupDimension) {
-  const closed = trades.filter(t => t.status === 'CLOSED')
-  const overall = computeStat(trades) // executionPnlSum spans CLOSED + MISSED
+  const safe = trades ?? []
+  const closed = safe.filter(t => t.status === 'CLOSED')
+  const overall = computeStat(safe) // executionPnlSum spans CLOSED + MISSED
   const groups =
     dimension === 'quality'
-      ? groupByQuality(trades)
+      ? groupByQuality(safe)
       : groupBy(closed, dimension).sort((a, b) => b.stat.totalPnl - a.stat.totalPnl)
 
   return {

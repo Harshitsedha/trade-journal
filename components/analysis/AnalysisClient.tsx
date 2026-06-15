@@ -51,6 +51,11 @@ export function AnalysisClient({ initial, options }: Props) {
   const rValues = (result as AnalysisResult & { rValues?: number[] }).rValues ?? []
   const sym = currencySymbol(filters.currency)
 
+  // Defensive defaults: a malformed/partial API payload must never crash render.
+  // Charts and tables receive arrays unconditionally; cards get safe fallbacks.
+  const groups = result.groups ?? []
+  const equity = result.equity ?? []
+
   const fetchData = useCallback(async (f: FilterState) => {
     setLoading(true)
     try {
@@ -63,9 +68,11 @@ export function AnalysisClient({ initial, options }: Props) {
       } else {
         // Keep the existing data on the screen, but surface that the update failed
         // instead of silently leaving stale numbers behind.
+        console.error('[AnalysisClient] non-OK response:', res.status)
         setError('Could not update analysis for these filters. Showing previous results.')
       }
-    } catch {
+    } catch (err) {
+      console.error('[AnalysisClient] fetch/compute error:', err)
       setError('Network error — showing previous results. Check your connection.')
     } finally {
       setLoading(false)
@@ -110,7 +117,7 @@ export function AnalysisClient({ initial, options }: Props) {
           Analysis
         </h1>
         <span style={{ fontSize: 12, color: 'var(--color-ink-muted)' }}>
-          {loading ? 'Loading…' : `${result.tradeCount} closed trade${result.tradeCount !== 1 ? 's' : ''}`}
+          {loading ? 'Loading…' : `${result.tradeCount ?? 0} closed trade${result.tradeCount !== 1 ? 's' : ''}`}
         </span>
       </div>
 
@@ -134,10 +141,12 @@ export function AnalysisClient({ initial, options }: Props) {
       )}
 
       {/* Stat cards */}
-      <StatCards stat={result.overall} executionPnlSum={result.executionPnlSum} sym={sym} />
+      {result.overall && (
+        <StatCards stat={result.overall} executionPnlSum={result.executionPnlSum} sym={sym} />
+      )}
 
       {/* Clean vs broken */}
-      <CleanVsBrokenCard data={result.cleanVsBroken} sym={sym} />
+      {result.cleanVsBroken && <CleanVsBrokenCard data={result.cleanVsBroken} sym={sym} />}
 
       {/* Charts — 2 column on wide screens */}
       <div
@@ -147,14 +156,14 @@ export function AnalysisClient({ initial, options }: Props) {
           gap: 'var(--space-4)',
         }}
       >
-        <EquityCurve data={result.equity} sym={sym} />
-        <PnlByGroup groups={result.groups} sym={sym} />
-        <WinRateByGroup groups={result.groups} />
+        <EquityCurve data={equity} sym={sym} />
+        <PnlByGroup groups={groups} sym={sym} />
+        <WinRateByGroup groups={groups} />
         {rValues.length > 0 && <RDistributionRaw rValues={rValues} />}
       </div>
 
       {/* Breakdown table */}
-      <BreakdownTable groups={result.groups} sym={sym} />
+      <BreakdownTable groups={groups} sym={sym} />
 
       {/* AI coach */}
       <CoachPanel result={result} filters={filters} />
