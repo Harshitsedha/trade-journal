@@ -185,7 +185,7 @@ export function BreakdownTable({ groups, sym = '₹' }: Props) {
                       ? '∞'
                       : row.stat.profitFactor === 0 && row.stat.wins === 0
                       ? '—'
-                      : row.stat.profitFactor.toFixed(2)}
+                      : (row.stat.profitFactor ?? 0).toFixed(2)}
                   </td>
                 </tr>
               )

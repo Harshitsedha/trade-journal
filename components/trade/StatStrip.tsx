@@ -36,9 +36,9 @@ interface StatStripProps {
 
 export function StatStrip({ stats }: StatStripProps) {
   // One row of cards per currency — P&L is never summed across currencies.
-  const currencies = stats.byCurrency.length > 0 ? stats.byCurrency : [{
-    currency: '', totalClosed: 0, winRate: 0, avgRMultiple: 0, totalPnl: 0, executionDrag: 0,
-  }]
+  // Hide a currency's row until it has ≥ 1 closed trade, so empty rows (e.g. INR
+  // with 0 closed trades) don't show noise like "0.0% win / +₹0 realised".
+  const currencies = stats.byCurrency.filter(c => c.totalClosed >= 1)
 
   return (
     <div className="flex flex-col gap-3 px-6 py-4">
@@ -68,12 +68,12 @@ export function StatStrip({ stats }: StatStripProps) {
             />
             <StatCard
               label="Win Rate"
-              value={`${c.winRate.toFixed(1)}%`}
+              value={`${(c.winRate ?? 0).toFixed(1)}%`}
               variant={c.winRate >= 50 ? 'profit' : 'loss'}
             />
             <StatCard
               label="Avg R"
-              value={`${c.avgRMultiple >= 0 ? '+' : ''}${c.avgRMultiple.toFixed(2)}R`}
+              value={`${c.avgRMultiple >= 0 ? '+' : ''}${(c.avgRMultiple ?? 0).toFixed(2)}R`}
               sub="per closed trade"
               variant={c.avgRMultiple >= 0 ? 'profit' : 'loss'}
             />

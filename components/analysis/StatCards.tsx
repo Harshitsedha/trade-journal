@@ -115,7 +115,7 @@ export function StatCards({ stat, executionPnlSum, sym = '₹' }: Props) {
             ? '∞'
             : stat.profitFactor === 0 && stat.wins === 0
             ? '—'
-            : stat.profitFactor.toFixed(2)
+            : (stat.profitFactor ?? 0).toFixed(2)
         }
         positive={stat.profitFactor > 1}
       />

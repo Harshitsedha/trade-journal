@@ -38,7 +38,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       />
       {/* Equity curve up top — Actual vs Possible (ideal) with execution-drag band */}
       <DashboardEquity series={equity} />
-      <StatStrip stats={stats} />
+
+      {/* Trades table sits right under the charts so it's visible without scrolling
+          past all the analytics; the stat cards follow below. */}
       {setupId && (
         <div className="mx-6 mt-3 flex items-center gap-2">
           <span className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-1.5 text-xs text-[var(--color-ink-secondary)]" style={{ borderWidth: '0.5px' }}>
@@ -62,6 +64,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           limit={Math.max(trades.length, 1)}
         />
       </div>
+
+      <StatStrip stats={stats} />
     </div>
   )
 }
